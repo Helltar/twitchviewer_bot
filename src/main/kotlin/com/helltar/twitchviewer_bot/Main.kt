@@ -52,7 +52,7 @@ private fun main() {
 
     bot {
         token = BOT_TOKEN
-        logLevel = if (!IFDEF_DEBUG) LogLevel.Error else LogLevel.Network.Body
+        logLevel = if (!IFDEF_DEBUG) LogLevel.Error else LogLevel.Network.Basic
 
         dispatch {
             command("add") { runCommand(AddCommand(bot, update.message!!, args), commandAdd) }
