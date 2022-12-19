@@ -99,7 +99,7 @@ private fun main() {
 private fun runKeyboardCommand(buttonName: String, bot: Bot, message: Message, ownerId: Long, callbackData: String) {
     val twitchChannel = getChannelNameFromCbData(callbackData)
 
-    checkRequestList(buttonName + REQUEST_KEY_DELIMITER + ownerId) {
+    addRequest(buttonName + REQUEST_KEY_DELIMITER + ownerId, bot, message, ownerId) {
         InlineKeyboard(bot, message, ownerId).run {
             when (buttonName) {
                 buttonBack -> update()
@@ -126,19 +126,22 @@ private fun runCommand(botCommand: BotCommand, requestKey: String) {
 
     User().saveUserInfo(user)
 
-    if (!checkRequestList(requestKey + REQUEST_KEY_DELIMITER + userId) { botCommand.run() })
-        botCommand.bot.sendMessage(
-            ChatId.fromId(chatId),
-            localizedString(Strings.many_request, userId),
-            replyToMessageId = botCommand.message.messageId, allowSendingWithoutReply = true
-        )
+    addRequest(requestKey + REQUEST_KEY_DELIMITER + userId, botCommand.bot, botCommand.message, userId) {
+        botCommand.run()
+    }
 }
 
-private fun checkRequestList(requestKey: String, func: () -> Unit): Boolean {
+private fun addRequest(requestKey: String, bot: Bot, message: Message, userId: Long, func: () -> Unit) {
     if (requestList.containsKey(requestKey))
-        if (requestList[requestKey]?.isCompleted == false)
-            return false
+        if (requestList[requestKey]?.isCompleted == false) {
+            bot.sendMessage(
+                ChatId.fromId(message.chat.id),
+                localizedString(Strings.many_request, userId),
+                replyToMessageId = message.messageId, allowSendingWithoutReply = true
+            )
+
+            return
+        }
 
     requestList[requestKey] = CoroutineScope(Dispatchers.Default).launch { func() }
-    return true
 }
