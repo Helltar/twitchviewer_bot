@@ -43,8 +43,10 @@ class AddCommand(bot: Bot, message: Message, args: List<String>) : TwitchCommand
         if (File(userListFilename).exists())
             list.addAll(Utils.getListFromFile(userListFilename))
 
-        return if (!list.contains(channel)) {
-            list.add(channel)
+        val channelName = channel.lowercase()
+
+        return if (!list.contains(channelName)) {
+            list.add(channelName)
             Utils.addLineToFile(userListFilename, list[list.lastIndex])
             true
         } else
