@@ -1,0 +1,68 @@
+package com.helltar.twitchviewer_bot.utils
+
+import org.slf4j.LoggerFactory
+import java.io.*
+import java.lang.management.ManagementFactory
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
+import kotlin.collections.ArrayList
+
+object Utils {
+
+    private val log = LoggerFactory.getLogger(javaClass)
+
+    fun randomUUID() = UUID.randomUUID().toString()
+
+    fun getLineFromFile(filename: String): String =
+        try {
+            BufferedReader(FileReader(filename)).readLine()
+        } catch (e: Exception) {
+            log.error(e.message, e)
+            ""
+        }
+
+    fun getListFromFile(filename: String) =
+        if (File(filename).exists())
+            ArrayList(BufferedReader(FileReader(filename)).readLines())
+        else
+            arrayListOf<String>()
+
+    fun addLineToFile(filename: String, line: String) {
+        try {
+            FileWriter(filename, true).use { it.appendLine(line) }
+        } catch (e: IOException) {
+            log.error(e.message)
+        }
+    }
+
+    fun getFirstRegexGroup(text: String, regex: String): String {
+        val m = Pattern.compile(regex).matcher(text)
+        return if (m.find()) {
+            if (m.groupCount() >= 1) m.group(1) else ""
+        } else ""
+    }
+
+    fun replaceTitleTag(text: String) = text
+        .replace("""[^\p{L}\p{Z}\d]""".toRegex(), "")
+        .replace("""\s""".toRegex(), "_")
+
+    fun getSysStat() =
+        "<code>Threads: ${ManagementFactory.getThreadMXBean().threadCount}\n${getMemUsage()}\n${getJVMUptime()}</code>"
+
+    private fun getJVMUptime() =
+        ManagementFactory.getRuntimeMXBean().run {
+            TimeUnit.MILLISECONDS.run {
+                "Uptime: " +
+                        "${toDays(uptime)} d. " +
+                        "${toHours(uptime) % 24} h. " +
+                        "${toMinutes(uptime) % 60} m. " +
+                        "${toSeconds(uptime) % 60} s."
+            }
+        }
+
+    private fun getMemUsage() =
+        ManagementFactory.getMemoryMXBean().heapMemoryUsage.run {
+            "Memory: ${used / (1024 * 1024)} / ${max / (1024 * 1024)}"
+        }
+}

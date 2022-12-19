@@ -1,0 +1,14 @@
+.gradle/
+.idea/
+
+build/
+db/
+temp/
+
+config/*
+!config/commands.txt
+
+scripts/*
+!scripts/*.sh
+
+logback.log
