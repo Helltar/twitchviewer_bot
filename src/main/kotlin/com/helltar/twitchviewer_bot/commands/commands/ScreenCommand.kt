@@ -2,7 +2,6 @@ package com.helltar.twitchviewer_bot.commands.commands
 
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.Message
-import com.helltar.twitchviewer_bot.BotConfig
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.TwitchCommand
 import com.helltar.twitchviewer_bot.utils.Utils
@@ -30,13 +29,9 @@ class ScreenCommand(bot: Bot, message: Message, args: List<String> = listOf()) :
     }
 
     private fun sendScreenshot(channelName: String, username: String, gameName: String) {
-        val filenameKey = "${channelName}_${Utils.randomUUID()}"
-
         val tempMessageId = sendMessage(String.format(localizedString(Strings.wait_get_screenshot), channelName))
-        twitch.getScreenshot(filenameKey, channelName)
+        val filename = twitch.getScreenshot(channelName)
         deleteMessage(tempMessageId)
-
-        val filename = String.format(BotConfig.FILE_FFMPEG_OUT_IMAGE, filenameKey)
 
         if (File(filename).exists()) {
             sendPhoto(

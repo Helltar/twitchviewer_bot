@@ -1,10 +1,11 @@
 package com.helltar.twitchviewer_bot.twitch
 
 import com.github.twitch4j.TwitchClientBuilder
-import com.helltar.twitchviewer_bot.BotConfig.SH_FFMPEG_SCREENSHOT
-import com.helltar.twitchviewer_bot.BotConfig.SH_YTDLP_FFMPEG
+import com.helltar.twitchviewer_bot.BotConfig.DIR_TEMP
 import com.helltar.twitchviewer_bot.BotConfig.TWITCH_TOKEN
+import com.helltar.twitchviewer_bot.utils.Utils
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -49,19 +50,46 @@ class Twitch {
         }
     }
 
-    /* todo: runProcess fun. */
+    fun getShortClip(channelName: String): String {
+        return try {
+            val tempName = "${channelName}_${Utils.randomUUID()}"
+            val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
+            val ytDlpOutFilename = "yt_dlp_$tempName.mp4"
 
-    fun getShortClip(filenameKey: String, channelName: String) =
-        try {
-            ProcessBuilder(SH_YTDLP_FFMPEG, channelName, filenameKey).start().waitFor()
+            runProcess("timeout -k 10 -s SIGINT 35 yt-dlp https://www.twitch.tv/$channelName -q -o $ytDlpOutFilename")
+            runProcess("timeout -k 5 -s SIGINT 60 ffmpeg -ss 00:00:16 -i $ytDlpOutFilename -c copy -loglevel quiet $ffmpegOutFilename")
+
+            File(DIR_TEMP + ytDlpOutFilename).delete()
+
+            DIR_TEMP + ffmpegOutFilename
         } catch (e: Exception) {
             log.error(e.message)
+            ""
         }
+    }
 
-    fun getScreenshot(filenameKey: String, channelName: String) =
-        try {
-            ProcessBuilder(SH_FFMPEG_SCREENSHOT, channelName, filenameKey).start().waitFor()
+    fun getScreenshot(channelName: String): String {
+        return try {
+            val tempName = "${channelName}_${Utils.randomUUID()}"
+            val ffmpegOutFilename = "ffmpeg_$tempName.jpg"
+            val ytDlpOutFilename = "yt_dlp_$tempName.mp4"
+
+            runProcess("timeout -k 10 -s SIGINT 25 yt-dlp https://www.twitch.tv/$channelName -q -o $ytDlpOutFilename")
+            runProcess("timeout -k 5 15 ffmpeg -ss 00:00:17 -i $ytDlpOutFilename -vframes 1 $ffmpegOutFilename")
+
+            File(DIR_TEMP + ytDlpOutFilename).delete()
+
+            DIR_TEMP + ffmpegOutFilename
         } catch (e: Exception) {
             log.error(e.message)
+            ""
         }
+    }
+
+    private fun runProcess(command: String) {
+        if (!File(DIR_TEMP).exists()) // todo: isDir?
+            File(DIR_TEMP).mkdir()
+
+        ProcessBuilder(command.split(" ")).directory(File(DIR_TEMP)).start().waitFor()
+    }
 }

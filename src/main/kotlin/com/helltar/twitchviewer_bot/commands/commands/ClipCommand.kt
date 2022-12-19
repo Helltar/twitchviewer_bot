@@ -45,12 +45,8 @@ class ClipCommand(bot: Bot, message: Message, args: List<String> = listOf()) : T
 
     private fun sendClip(twitchStreamsData: List<Twitch.StreamsData>) {
         twitchStreamsData.forEach {
-            val twitchChannel = it.login
-            val filenameKey = "${twitchChannel}_${Utils.randomUUID()}"
-            val filename = String.format(BotConfig.FILE_FFMPEG_OUT_VIDEO, filenameKey)
-
             val tempMessageId = sendMessage(String.format(localizedString(Strings.start_get_clip), it.username))
-            twitch.getShortClip(filenameKey, twitchChannel)
+            val filename = twitch.getShortClip(it.login)
             deleteMessage(tempMessageId)
 
             if (!File(filename).exists()) {
