@@ -50,8 +50,8 @@ class Twitch {
         }
     }
 
-    fun getShortClip(channelName: String): String {
-        return try {
+    fun getShortClip(channelName: String) =
+        try {
             val tempName = "${channelName}_${Utils.randomUUID()}"
             val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
             val ytDlpOutFilename = "yt_dlp_$tempName.mp4"
@@ -66,10 +66,9 @@ class Twitch {
             log.error(e.message)
             ""
         }
-    }
 
-    fun getScreenshot(channelName: String): String {
-        return try {
+    fun getScreenshot(channelName: String) =
+        try {
             val tempName = "${channelName}_${Utils.randomUUID()}"
             val ffmpegOutFilename = "ffmpeg_$tempName.jpg"
             val ytDlpOutFilename = "yt_dlp_$tempName.mp4"
@@ -84,12 +83,14 @@ class Twitch {
             log.error(e.message)
             ""
         }
-    }
 
-    private fun runProcess(command: String) {
-        if (!File(DIR_TEMP).exists()) // todo: isDir?
-            File(DIR_TEMP).mkdir()
+    private fun runProcess(command: String, workDir: String = DIR_TEMP) {
+        val file = File(workDir)
 
-        ProcessBuilder(command.split(" ")).directory(File(DIR_TEMP)).start().waitFor()
+        if (!file.exists()) {
+            if (!file.mkdir()) return
+        } else if (!file.isDirectory) return
+
+        ProcessBuilder(command.split(" ")).directory(file).start().waitFor()
     }
 }
