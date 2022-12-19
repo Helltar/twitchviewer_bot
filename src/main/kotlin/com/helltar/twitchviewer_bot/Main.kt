@@ -99,7 +99,7 @@ private fun main() {
 private fun runKeyboardCommand(buttonName: String, bot: Bot, message: Message, ownerId: Long, callbackData: String) {
     val twitchChannel = getChannelNameFromCbData(callbackData)
 
-    checkRequestList("$buttonName$REQUEST_KEY_DELIMITER$ownerId") {
+    checkRequestList(buttonName + REQUEST_KEY_DELIMITER + ownerId) {
         InlineKeyboard(bot, message, ownerId).run {
             when (buttonName) {
                 buttonBack -> update()
@@ -126,7 +126,7 @@ private fun runCommand(botCommand: BotCommand, requestKey: String) {
 
     User().saveUserInfo(user)
 
-    if (!checkRequestList("$requestKey$REQUEST_KEY_DELIMITER${userId}") { botCommand.run() })
+    if (!checkRequestList(requestKey + REQUEST_KEY_DELIMITER + userId) { botCommand.run() })
         botCommand.bot.sendMessage(
             ChatId.fromId(chatId),
             localizedString(Strings.many_request, userId),

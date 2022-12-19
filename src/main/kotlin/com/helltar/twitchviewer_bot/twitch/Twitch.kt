@@ -24,7 +24,7 @@ class Twitch {
         val uptime: String
     )
 
-    fun getOnlineList(userLogins: List<String>): ArrayList<StreamsData>? {
+    fun getOnlineList(userLogins: List<String>): List<StreamsData>? {
         try {
             val list = arrayListOf<StreamsData>()
 

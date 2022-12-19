@@ -43,7 +43,7 @@ class ClipCommand(bot: Bot, message: Message, args: List<String> = listOf()) : T
         sendMessage(localizedString(Strings.twitch_exception))
     }
 
-    private fun sendClip(twitchStreamsData: ArrayList<Twitch.StreamsData>) {
+    private fun sendClip(twitchStreamsData: List<Twitch.StreamsData>) {
         twitchStreamsData.forEach {
             val twitchChannel = it.login
             val filenameKey = "${twitchChannel}_${Utils.randomUUID()}"
