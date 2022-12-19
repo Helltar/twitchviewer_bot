@@ -92,19 +92,22 @@ class InlineKeyboard(private val bot: Bot, private val message: Message, private
     fun init(): InlineKeyboardMarkup {
         val firstRowButtons = arrayListOf<InlineKeyboardButton>()
         val secondRowButtons = arrayListOf<InlineKeyboardButton>()
-        val liveList = arrayListOf<String>()
 
-        val channelsList = twitchCommand.getUserChannelsList(ownerId)
-        val onlineList = Twitch().getOnlineList(channelsList)
+        val userChannels = twitchCommand.getUserChannelsList(ownerId)
+        val twitchOnlineList = Twitch().getOnlineList(userChannels) ?: listOf()
+        val liveChannels = arrayListOf<String>()
 
-        channelsList.forEachIndexed { i, channelName ->
+        twitchOnlineList.forEach {
+            liveChannels.add(it.login.lowercase())
+        }
+
+        userChannels.forEachIndexed { i, channelName ->
             var channelStatus = "⚪️"
             var isLive = 0
 
-            if (onlineList.toString().contains(channelName)) {
+            if (liveChannels.contains(channelName.lowercase())) {
                 channelStatus = "\uD83D\uDD34" // 🔴
                 isLive = 1
-                liveList.add(channelName)
             }
 
             if (i <= 1)
@@ -124,13 +127,13 @@ class InlineKeyboard(private val bot: Bot, private val message: Message, private
         }
 
         val btnShowLive =
-            if (liveList.isNotEmpty())
+            if (liveChannels.isNotEmpty())
                 createButtonAsList(localizedString(Strings.btn_who_is_online), CallbackData(buttonLive, ownerId))
             else
                 listOf()
 
         val btnClips =
-            if (liveList.isNotEmpty())
+            if (liveChannels.isNotEmpty())
                 createButtonAsList(localizedString(Strings.btn_get_all_screens), CallbackData(buttonClips, ownerId))
             else
                 listOf()
