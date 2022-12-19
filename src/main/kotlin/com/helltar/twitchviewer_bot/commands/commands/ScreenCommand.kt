@@ -19,14 +19,17 @@ class ScreenCommand(bot: Bot, message: Message, args: List<String> = listOf()) :
     }
 
     fun getScreenshot(channelName: String) {
-        if (checkIsChannelNameValid(channelName))
-            if (!twitch.getOnlineList(listOf(channelName)).isNullOrEmpty())
-                sendScreenshot(channelName)
+        if (checkIsChannelNameValid(channelName)) {
+            val streamData = twitch.getOnlineList(listOf(channelName))
+
+            if (!streamData.isNullOrEmpty())
+                sendScreenshot(channelName, streamData[0].username, streamData[0].gameName)
             else
                 sendMessage(localizedString(Strings.stream_offline))
+        }
     }
 
-    private fun sendScreenshot(channelName: String) {
+    private fun sendScreenshot(channelName: String, username: String, gameName: String) {
         val filenameKey = "${channelName}_${Utils.randomUUID()}"
 
         val tempMessageId = sendMessage(String.format(localizedString(Strings.wait_get_screenshot), channelName))
@@ -36,7 +39,11 @@ class ScreenCommand(bot: Bot, message: Message, args: List<String> = listOf()) :
         val filename = String.format(BotConfig.FILE_FFMPEG_OUT_IMAGE, filenameKey)
 
         if (File(filename).exists()) {
-            sendPhoto(File(filename), "#$channelName", message.messageId)
+            sendPhoto(
+                File(filename),
+                "#$username${if (gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(gameName)}" else ""}",
+                message.messageId
+            )
 
             try {
                 File(filename).delete()
