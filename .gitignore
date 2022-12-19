@@ -3,12 +3,10 @@
 
 build/
 db/
+scripts/
 temp/
 
 config/*
 !config/commands.txt
-
-scripts/*
-!scripts/*.sh
 
 logback.log
