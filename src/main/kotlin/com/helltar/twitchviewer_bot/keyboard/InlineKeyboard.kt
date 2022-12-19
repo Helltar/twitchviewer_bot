@@ -57,17 +57,13 @@ class InlineKeyboard(private val bot: Bot, private val message: Message, private
             return
         }
 
-        val btnScreenshot =
-            if (isChannelLive)
-                createButtonAsList(localizedString(Strings.btn_screenshot), CallbackData(buttonScreenshot, ownerId, twitchChannel))
-            else
-                listOf()
+        var btnScreenshot = listOf<InlineKeyboardButton>()
+        var btnClip = listOf<InlineKeyboardButton>()
 
-        val btnClip =
-            if (isChannelLive)
-                createButtonAsList(localizedString(Strings.btn_short_clip), CallbackData(buttonClip, ownerId, twitchChannel))
-            else
-                listOf()
+        if (isChannelLive) {
+            btnScreenshot = createButtonAsList(localizedString(Strings.btn_screenshot), CallbackData(buttonScreenshot, ownerId, twitchChannel))
+            btnClip = createButtonAsList(localizedString(Strings.btn_short_clip), CallbackData(buttonClip, ownerId, twitchChannel))
+        }
 
         val inlineKeyboardMarkup = InlineKeyboardMarkup.create(
             btnScreenshot, btnClip,
@@ -126,17 +122,13 @@ class InlineKeyboard(private val bot: Bot, private val message: Message, private
                 )
         }
 
-        val btnShowLive =
-            if (liveChannels.isNotEmpty())
-                createButtonAsList(localizedString(Strings.btn_who_is_online), CallbackData(buttonLive, ownerId))
-            else
-                listOf()
+        var btnShowLive = listOf<InlineKeyboardButton>()
+        var btnClips = listOf<InlineKeyboardButton>()
 
-        val btnClips =
-            if (liveChannels.isNotEmpty())
-                createButtonAsList(localizedString(Strings.btn_get_all_screens), CallbackData(buttonClips, ownerId))
-            else
-                listOf()
+        if (liveChannels.isNotEmpty()) {
+            btnShowLive = createButtonAsList(localizedString(Strings.btn_who_is_online), CallbackData(buttonLive, ownerId))
+            btnClips = createButtonAsList(localizedString(Strings.btn_get_all_screens), CallbackData(buttonClips, ownerId))
+        }
 
         return InlineKeyboardMarkup.create(
             firstRowButtons, secondRowButtons, btnShowLive, btnClips,
