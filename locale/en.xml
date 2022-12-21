@@ -15,7 +15,6 @@
     <string name="many_request">Wait, let me deal with the last request 🤖</string>
     <string name="screenshot_command_info">Enter the channel name: /screen <b>channel</b></string>
     <string name="start_get_clip">Starting to record <b>%s</b> stream, wait a minute ...</string>
-    <string name="start_hello">Hi, what do you need?</string>
     <string name="stream_offline">Stream offline 🤷‍♂️</string>
     <string name="stream_start_time">🕔 Streaming from <b>%s</b> Kyiv time (uptime <b>%s</b>)</string>
     <string name="twitch_exception">The channel does not exist or something is broken 🫡</string>
@@ -24,6 +23,16 @@
     <string name="wait_check_user_online">I'll see if <b>%s</b> is streaming ...</string>
     <string name="user_close_list"><b>%s</b> closed /list@twitchviewer_bot</string>
     <string name="wait_get_screenshot">Okay, 20 sec ...</string>
+
+    <string name="start_command_info">
+        👋 Hi, here is a quick help on the commands:
+
+        /list - show your favorite channels
+        /live - who online from your list
+        /clip - get short clips from all on your list
+        /screen - get screenshot from channel
+        /add - add channel to list
+    </string>
 
     <string name="clip_command_info">
         List is empty, use: /add <b>channel</b>

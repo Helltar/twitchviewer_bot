@@ -24,7 +24,7 @@ object Strings {
     const val many_request = "many_request"
     const val screenshot_command_info = "screenshot_command_info"
     const val start_get_clip = "start_get_clip"
-    const val start_hello = "start_hello"
+    const val start_command_info = "start_command_info"
     const val stream_offline = "stream_offline"
     const val stream_start_time = "stream_start_time"
     const val twitch_exception = "twitch_exception"
