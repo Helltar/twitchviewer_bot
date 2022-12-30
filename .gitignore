@@ -5,6 +5,7 @@ build/
 db/
 scripts/
 temp/
+test/
 
 config/*
 !config/commands.txt
