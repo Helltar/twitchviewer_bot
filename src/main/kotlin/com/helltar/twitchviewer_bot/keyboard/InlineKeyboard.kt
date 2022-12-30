@@ -3,12 +3,12 @@ package com.helltar.twitchviewer_bot.keyboard
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.*
 import com.github.kotlintelegrambot.entities.keyboard.InlineKeyboardButton
-import com.helltar.twitchviewer_bot.BotConfig.DIR_DB_USER_LIST
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.TwitchCommand
 import com.helltar.twitchviewer_bot.commands.commands.ClipCommand
 import com.helltar.twitchviewer_bot.commands.commands.LiveCommand
 import com.helltar.twitchviewer_bot.commands.commands.ScreenCommand
+import com.helltar.twitchviewer_bot.db.Databases.dbUserChannels
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.CallbackData
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonBack
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonChannel
@@ -21,8 +21,6 @@ import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonScreenshot
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonUpdate
 import com.helltar.twitchviewer_bot.localizedString
 import com.helltar.twitchviewer_bot.twitch.Twitch
-import com.helltar.twitchviewer_bot.utils.Utils
-import java.io.File
 
 class InlineKeyboard(private val bot: Bot, private val message: Message, private val ownerId: Long) {
 
@@ -158,17 +156,8 @@ class InlineKeyboard(private val bot: Bot, private val message: Message, private
         )
     }
 
-    private fun removeChannelFromUserList(channelName: String, userId: Long): Boolean {
-        val filename = DIR_DB_USER_LIST + userId
-        val list = Utils.getListFromFile(filename)
-
-        return if (list.remove(channelName)) {
-            if (File(filename).delete()) // todo: list del. list mk.
-                list.forEach { Utils.addLineToFile(filename, it) }
-            true
-        } else
-            false
-    }
+    private fun removeChannelFromUserList(channelName: String, userId: Long) =
+        dbUserChannels.delete(userId, channelName)
 
     private fun isChannelExistsInList(channelName: String) =
         twitchCommand.getUserChannelsList(ownerId).contains(channelName)

@@ -2,15 +2,11 @@ package com.helltar.twitchviewer_bot.commands.commands
 
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.Message
-import com.helltar.twitchviewer_bot.BotConfig.DIR_DB_USER_LIST
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.TwitchCommand
-import com.helltar.twitchviewer_bot.utils.Utils
-import java.io.File
+import com.helltar.twitchviewer_bot.db.Databases.dbUserChannels
 
 class AddCommand(bot: Bot, message: Message, args: List<String>) : TwitchCommand(bot, message, args) {
-
-    private val userListFilename = DIR_DB_USER_LIST + userId
 
     override fun run() {
         if (!isBot)
@@ -27,8 +23,9 @@ class AddCommand(bot: Bot, message: Message, args: List<String>) : TwitchCommand
             return
 
         val channel = args[0]
+        val listSize = dbUserChannels.getSize(userId)
 
-        if (Utils.getListFromFile(userListFilename).size <= 4) {
+        if (listSize <= 4) {
             if (addChannelToUserList(channel))
                 sendMessage(String.format(localizedString(Strings.channel_added_to_list), channel))
             else
@@ -37,19 +34,6 @@ class AddCommand(bot: Bot, message: Message, args: List<String>) : TwitchCommand
             sendMessage(localizedString(Strings.list_full))
     }
 
-    private fun addChannelToUserList(channel: String): Boolean {
-        val list = arrayListOf<String>()
-
-        if (File(userListFilename).exists())
-            list.addAll(Utils.getListFromFile(userListFilename))
-
-        val channelName = channel.lowercase()
-
-        return if (!list.contains(channelName)) {
-            list.add(channelName)
-            Utils.addLineToFile(userListFilename, list[list.lastIndex])
-            true
-        } else
-            false
-    }
+    private fun addChannelToUserList(channel: String) =
+        dbUserChannels.add(userId, channel.lowercase())
 }

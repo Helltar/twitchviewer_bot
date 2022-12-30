@@ -2,10 +2,9 @@ package com.helltar.twitchviewer_bot.commands
 
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.Message
-import com.helltar.twitchviewer_bot.BotConfig
 import com.helltar.twitchviewer_bot.Strings
+import com.helltar.twitchviewer_bot.db.Databases.dbUserChannels
 import com.helltar.twitchviewer_bot.twitch.Twitch
-import com.helltar.twitchviewer_bot.utils.Utils
 
 open class TwitchCommand(bot: Bot, message: Message, args: List<String> = listOf()) : BotCommand(bot, message, args) {
 
@@ -16,10 +15,11 @@ open class TwitchCommand(bot: Bot, message: Message, args: List<String> = listOf
         sendMessage("Hi, <b>Anonymous</b> \uD83C\uDF1A") // 🌚
     }
 
-    fun getUserChannelsList(userId: Long? = this.userId): List<String> =
-        Utils.getListFromFile(BotConfig.DIR_DB_USER_LIST + userId)
+    fun getUserChannelsList(userId: Long = this.userId) =
+        dbUserChannels.getList(userId)
 
-    protected fun isUserListNotEmpty() = Utils.getListFromFile(BotConfig.DIR_DB_USER_LIST + userId).isNotEmpty()
+    protected fun isUserListNotEmpty() =
+        dbUserChannels.isNotEmpty(userId)
 
     protected fun checkIsChannelNameValid(channelName: String = args[0] /* todo: args.empty! */): Boolean {
         if (channelName.length !in 2..25) {

@@ -1,12 +1,12 @@
 package com.helltar.twitchviewer_bot.utils
 
 import org.slf4j.LoggerFactory
-import java.io.*
+import java.io.BufferedReader
+import java.io.FileReader
 import java.lang.management.ManagementFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
-import kotlin.collections.ArrayList
 
 object Utils {
 
@@ -21,20 +21,6 @@ object Utils {
             log.error(e.message, e)
             ""
         }
-
-    fun getListFromFile(filename: String) =
-        if (File(filename).exists())
-            ArrayList(BufferedReader(FileReader(filename)).readLines())
-        else
-            arrayListOf<String>()
-
-    fun addLineToFile(filename: String, line: String) {
-        try {
-            FileWriter(filename, true).use { it.appendLine(line) }
-        } catch (e: IOException) {
-            log.error(e.message)
-        }
-    }
 
     fun getFirstRegexGroup(text: String, regex: String): String {
         val m = Pattern.compile(regex).matcher(text)

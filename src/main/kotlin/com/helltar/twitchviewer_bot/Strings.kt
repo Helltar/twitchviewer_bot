@@ -1,11 +1,12 @@
 package com.helltar.twitchviewer_bot
 
-import com.helltar.twitchviewer_bot.utils.Utils
+import com.helltar.twitchviewer_bot.BotConfig.DIR_LOCALE
+import com.helltar.twitchviewer_bot.BotConfig.EXT_XML
+import com.helltar.twitchviewer_bot.db.Databases.dbUsers
+import com.helltar.twitchviewer_bot.utils.Utils.getFirstRegexGroup
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileReader
-import java.util.*
 
 object Strings {
 
@@ -46,33 +47,18 @@ object Strings {
     const val title_choose_channel_or_action = "title_choose_channel_or_action"
 }
 
-private const val DEFAULT_LANGUAGE_CODE = "en"
-private var userLanguageCode = DEFAULT_LANGUAGE_CODE
-
-private fun setUserLanguage(languageCode: String?) {
-    userLanguageCode = languageCode ?: DEFAULT_LANGUAGE_CODE
-}
-
 fun localizedString(key: String, userId: Long): String {
-    try {
-        if (File(BotConfig.DIR_DB_USER + userId).exists())
-            Properties().run {
-                load(FileInputStream(BotConfig.DIR_DB_USER + userId))
-                setUserLanguage(getProperty(User.PROP_KEY_USER_LANGUAGECODE).ifEmpty { null })
-            }
-
-        var filename = BotConfig.DIR_LOCALE + userLanguageCode + BotConfig.EXT_XML
+    return try {
+        val languageCode = dbUsers.getLanguageCode(userId)
+        var filename = DIR_LOCALE + languageCode + EXT_XML
 
         if (!File(filename).exists())
-            filename = BotConfig.DIR_LOCALE + DEFAULT_LANGUAGE_CODE + BotConfig.EXT_XML
-
-        /* todo. locale. lib. */
+            filename = DIR_LOCALE + "en" + EXT_XML
 
         val regex = """<string name="$key">(\X*?)<\/string>"""
-
-        return Utils.getFirstRegexGroup(FileReader(filename).readText(), regex).trimIndent().ifEmpty { key }
+        getFirstRegexGroup(FileReader(filename).readText(), regex).trimIndent().ifEmpty { key }
     } catch (e: Exception) {
         LoggerFactory.getLogger(Strings.javaClass).error(e.message)
-        return key
+        key
     }
 }

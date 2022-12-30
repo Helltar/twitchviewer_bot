@@ -11,7 +11,6 @@ import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.ParseMode
 import com.github.kotlintelegrambot.logging.LogLevel
 import com.helltar.twitchviewer_bot.BotConfig.BOT_TOKEN
-import com.helltar.twitchviewer_bot.BotConfig.IFDEF_DEBUG
 import com.helltar.twitchviewer_bot.commands.BotCommand
 import com.helltar.twitchviewer_bot.commands.Commands.commandAdd
 import com.helltar.twitchviewer_bot.commands.Commands.commandClip
@@ -21,6 +20,8 @@ import com.helltar.twitchviewer_bot.commands.Commands.commandScreenshot
 import com.helltar.twitchviewer_bot.commands.Commands.commandStart
 import com.helltar.twitchviewer_bot.commands.Commands.commandUptime
 import com.helltar.twitchviewer_bot.commands.commands.*
+import com.helltar.twitchviewer_bot.db.Databases
+import com.helltar.twitchviewer_bot.db.Databases.dbUsers
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonBack
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonChannel
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonClip
@@ -35,10 +36,7 @@ import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getChannelNameFromCbDa
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getChannelStatusFromCbData
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getOwnerIdFromCbData
 import com.helltar.twitchviewer_bot.keyboard.InlineKeyboard
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("twitchviewer_bot")
@@ -48,11 +46,13 @@ private const val REQUEST_KEY_DELIMITER = "@"
 
 private fun main() {
 
+    Databases.init()
+
     log.info("start ...")
 
     bot {
         token = BOT_TOKEN
-        logLevel = if (!IFDEF_DEBUG) LogLevel.Error else LogLevel.Network.Basic
+        logLevel = LogLevel.Error
 
         dispatch {
             command("add") { runCommand(AddCommand(bot, update.message!!, args), commandAdd) }
@@ -124,7 +124,7 @@ private fun runCommand(botCommand: BotCommand, requestKey: String) {
 
     log.info("$commandName: $chatId $userId ${user.username} ${user.firstName} ${chat.title} : ${botCommand.args}")
 
-    User().saveUserInfo(user)
+    dbUsers.saveUserData(user)
 
     addRequest(requestKey + REQUEST_KEY_DELIMITER + userId, botCommand.bot, botCommand.message, userId) {
         botCommand.run()
