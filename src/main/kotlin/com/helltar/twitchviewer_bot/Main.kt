@@ -12,6 +12,7 @@ import com.github.kotlintelegrambot.entities.ParseMode
 import com.github.kotlintelegrambot.logging.LogLevel
 import com.helltar.twitchviewer_bot.BotConfig.BOT_TOKEN
 import com.helltar.twitchviewer_bot.commands.BotCommand
+import com.helltar.twitchviewer_bot.commands.Commands.commandAbout
 import com.helltar.twitchviewer_bot.commands.Commands.commandAdd
 import com.helltar.twitchviewer_bot.commands.Commands.commandClip
 import com.helltar.twitchviewer_bot.commands.Commands.commandList
@@ -63,6 +64,7 @@ private fun main() {
 
             command("start") { runCommand(StartCommand(bot, update.message!!), commandStart) }
             command("uptime") { runCommand(UptimeCommand(bot, update.message!!), commandUptime) }
+            command("about") { runCommand(AboutCommand(bot, update.message!!), commandAbout) }
 
             callbackQuery {
                 val message = callbackQuery.message ?: return@callbackQuery
