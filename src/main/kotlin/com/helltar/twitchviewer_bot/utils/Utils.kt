@@ -2,6 +2,7 @@ package com.helltar.twitchviewer_bot.utils
 
 import org.slf4j.LoggerFactory
 import java.io.BufferedReader
+import java.io.File
 import java.io.FileReader
 import java.lang.management.ManagementFactory
 import java.util.*
@@ -13,6 +14,20 @@ object Utils {
     private val log = LoggerFactory.getLogger(javaClass)
 
     fun randomUUID() = UUID.randomUUID().toString()
+
+    fun runProcess(command: String, workDir: String) {
+        try {
+            val file = File(workDir)
+
+            if (!file.exists()) {
+                if (!file.mkdir()) return
+            } else if (!file.isDirectory) return
+
+            ProcessBuilder(command.split(" ")).directory(file).start().waitFor()
+        } catch (e: Exception) {
+            log.error(e.message, e)
+        }
+    }
 
     fun getLineFromFile(filename: String): String =
         try {

@@ -4,6 +4,7 @@ import com.github.twitch4j.TwitchClientBuilder
 import com.helltar.twitchviewer_bot.BotConfig.DIR_TEMP
 import com.helltar.twitchviewer_bot.BotConfig.TWITCH_TOKEN
 import com.helltar.twitchviewer_bot.utils.Utils
+import com.helltar.twitchviewer_bot.utils.Utils.runProcess
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.time.LocalTime
@@ -50,47 +51,40 @@ class Twitch {
         }
     }
 
-    fun getShortClip(channelName: String) =
-        try {
-            val tempName = "${channelName}_${Utils.randomUUID()}"
-            val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
-            val ytDlpOutFilename = "yt_dlp_$tempName.mp4"
+    fun getShortClip(channelName: String): String {
+        val tempName = genRandomName(channelName)
+        val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
+        val ytDlpOutFilename = genYtDlpTempFilename(tempName)
 
-            runProcess("timeout -k 10 -s SIGINT 35 yt-dlp https://www.twitch.tv/$channelName -q -o $ytDlpOutFilename")
-            runProcess("timeout -k 5 -s SIGINT 60 ffmpeg -ss 00:00:16 -i $ytDlpOutFilename -c copy -loglevel quiet $ffmpegOutFilename")
+        runYtDlp(35, channelName, ytDlpOutFilename)
 
-            File(DIR_TEMP + ytDlpOutFilename).delete()
+        runProcess(
+            "timeout -k 5 -s SIGINT 60 ffmpeg -ss 00:00:16 -i $ytDlpOutFilename -c copy -loglevel quiet $ffmpegOutFilename",
+            DIR_TEMP
+        )
 
-            DIR_TEMP + ffmpegOutFilename
-        } catch (e: Exception) {
-            log.error(e.message)
-            ""
-        }
+        File(DIR_TEMP + ytDlpOutFilename).delete()
 
-    fun getScreenshot(channelName: String) =
-        try {
-            val tempName = "${channelName}_${Utils.randomUUID()}"
-            val ffmpegOutFilename = "ffmpeg_$tempName.jpg"
-            val ytDlpOutFilename = "yt_dlp_$tempName.mp4"
-
-            runProcess("timeout -k 10 -s SIGINT 25 yt-dlp https://www.twitch.tv/$channelName -q -o $ytDlpOutFilename")
-            runProcess("timeout -k 5 15 ffmpeg -ss 00:00:17 -i $ytDlpOutFilename -vframes 1 $ffmpegOutFilename")
-
-            File(DIR_TEMP + ytDlpOutFilename).delete()
-
-            DIR_TEMP + ffmpegOutFilename
-        } catch (e: Exception) {
-            log.error(e.message)
-            ""
-        }
-
-    private fun runProcess(command: String, workDir: String = DIR_TEMP) {
-        val file = File(workDir)
-
-        if (!file.exists()) {
-            if (!file.mkdir()) return
-        } else if (!file.isDirectory) return
-
-        ProcessBuilder(command.split(" ")).directory(file).start().waitFor()
+        return DIR_TEMP + ffmpegOutFilename
     }
+
+    fun getScreenshot(channelName: String): String {
+        val tempName = genRandomName(channelName)
+        val ffmpegOutFilename = "ffmpeg_$tempName.jpg"
+        val ytDlpOutFilename = genYtDlpTempFilename(tempName)
+
+        runYtDlp(25, channelName, ytDlpOutFilename)
+        runProcess("timeout -k 5 15 ffmpeg -ss 00:00:17 -i $ytDlpOutFilename -vframes 1 $ffmpegOutFilename", DIR_TEMP)
+
+        File(DIR_TEMP + ytDlpOutFilename).delete()
+
+        return DIR_TEMP + ffmpegOutFilename
+    }
+
+    private fun runYtDlp(timeout: Int, channelName: String, outFilename: String) =
+        runProcess("timeout -k 10 -s SIGINT $timeout yt-dlp https://www.twitch.tv/$channelName -q -o $outFilename", DIR_TEMP)
+
+    private fun genYtDlpTempFilename(name: String) = "yt_dlp_$name.mp4"
+
+    private fun genRandomName(name: String) = "${name}_${Utils.randomUUID()}"
 }
