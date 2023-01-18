@@ -5,16 +5,19 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.callbackQuery
 import com.github.kotlintelegrambot.dispatcher.command
+import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.dispatcher.telegramError
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.ParseMode
+import com.github.kotlintelegrambot.extensions.filters.Filter
 import com.github.kotlintelegrambot.logging.LogLevel
 import com.helltar.twitchviewer_bot.BotConfig.BOT_TOKEN
 import com.helltar.twitchviewer_bot.commands.BotCommand
 import com.helltar.twitchviewer_bot.commands.Commands.commandAbout
 import com.helltar.twitchviewer_bot.commands.Commands.commandAdd
 import com.helltar.twitchviewer_bot.commands.Commands.commandClip
+import com.helltar.twitchviewer_bot.commands.Commands.commandClipCompress
 import com.helltar.twitchviewer_bot.commands.Commands.commandList
 import com.helltar.twitchviewer_bot.commands.Commands.commandLive
 import com.helltar.twitchviewer_bot.commands.Commands.commandScreenshot
@@ -65,6 +68,13 @@ private fun main() {
             command("start") { runCommand(StartCommand(bot, update.message!!), commandStart) }
             command("uptime") { runCommand(UptimeCommand(bot, update.message!!), commandUptime) }
             command("about") { runCommand(AboutCommand(bot, update.message!!), commandAbout) }
+
+            message(Filter.Reply) {
+                val botId = update.message!!.replyToMessage!!.from!!.id
+
+                if (botId == 5605702829L)
+                    runCommand(ClipCompressCommand(bot, update.message!!), commandClipCompress)
+            }
 
             callbackQuery {
                 val message = callbackQuery.message ?: return@callbackQuery

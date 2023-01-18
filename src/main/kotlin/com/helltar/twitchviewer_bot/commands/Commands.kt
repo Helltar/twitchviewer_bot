@@ -11,6 +11,7 @@ object Commands {
     const val commandStart = "cmdStart"
     const val commandUptime = "cmdUptime"
     const val commandAbout = "cmdAbout"
+    const val commandClipCompress = "cmdCompress"
 
     const val commandClip = buttonClips
     const val commandLive = buttonLive

@@ -5,6 +5,7 @@
     <string name="channel_index_not_found">Number <b>%s</b> is not on the list</string>
     <string name="channel_not_exist_in_list">Not in the list</string>
     <string name="channel_removed_from_list">Channel <b>%s</b> removed from the list</string>
+    <string name="clip_compress_fail">Oops, fail 😐</string>
     <string name="dont_touch_is_not_your_list">%s, don't touch it, it's not your list</string>
     <string name="empty_online_list">No one is streaming 🤷‍♂️</string>
     <string name="get_clip_fail">Success is not final; failure is not fatal: it is the courage to continue that counts (с)</string>
@@ -18,10 +19,11 @@
     <string name="stream_offline">Stream offline 🤷‍♂️</string>
     <string name="stream_start_time">🕔 Streaming from <b>%s</b> Kyiv time (uptime <b>%s</b>)</string>
     <string name="twitch_exception">The channel does not exist or something is broken 🫡</string>
+    <string name="user_close_list"><b>%s</b> closed /list@twitchviewer_bot</string>
     <string name="wait_check_online">Ok, I'll run through the channels to see 🏃‍♂️ ...</string>
     <string name="wait_check_online_menu">One seconds, I update your list ... 🙏</string>
     <string name="wait_check_user_online">I'll see if <b>%s</b> is streaming ...</string>
-    <string name="user_close_list"><b>%s</b> closed /list@twitchviewer_bot</string>
+    <string name="wait_clip_compress">Wait, video compress ... 🦾</string>
     <string name="wait_get_screenshot">Okay, 20 sec ...</string>
 
     <string name="start_command_info">
