@@ -66,6 +66,8 @@ private fun main() {
             command("screen") { runCommand(ScreenCommand(bot, update.message!!, args), commandScreenshot) }
 
             command("start") { runCommand(StartCommand(bot, update.message!!), commandStart) }
+            command("help") { runCommand(HelpCommand(bot, update.message!!), commandStart) }
+
             command("uptime") { runCommand(UptimeCommand(bot, update.message!!), commandUptime) }
             command("about") { runCommand(AboutCommand(bot, update.message!!), commandAbout) }
 
