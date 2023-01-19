@@ -79,12 +79,13 @@ private fun main() {
             callbackQuery {
                 val message = callbackQuery.message ?: return@callbackQuery
                 val ownerId = getOwnerIdFromCbData(callbackQuery.data) ?: return@callbackQuery
+                val userId = callbackQuery.from.id
                 val username = callbackQuery.from.username ?: callbackQuery.from.firstName
 
                 if (callbackQuery.from.id != ownerId) {
                     bot.answerCallbackQuery(
                         callbackQuery.id,
-                        String.format(localizedString(Strings.dont_touch_is_not_your_list, ownerId), username)
+                        String.format(localizedString(Strings.dont_touch_is_not_your_list, userId), username)
                     )
 
                     return@callbackQuery
