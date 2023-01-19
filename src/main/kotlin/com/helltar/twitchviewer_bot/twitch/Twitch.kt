@@ -70,7 +70,7 @@ class Twitch {
 
     fun getScreenshot(channelName: String): String {
         val tempName = genRandomName(channelName)
-        val ffmpegOutFilename = "ffmpeg_$tempName.jpg"
+        val ffmpegOutFilename = "ffmpeg_$tempName.png"
         val ytDlpOutFilename = genYtDlpTempFilename(tempName)
 
         runYtDlp(25, channelName, ytDlpOutFilename)
