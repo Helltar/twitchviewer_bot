@@ -51,6 +51,13 @@ object Utils {
     fun getSysStat() =
         "<code>Threads: ${ManagementFactory.getThreadMXBean().threadCount}\n${getMemUsage()}\n${getJVMUptime()}</code>"
 
+    fun escapeHtml(text: String) = text
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\"", "&quot;")
+        .replace("'", "&#039;")
+
     private fun getJVMUptime() =
         ManagementFactory.getRuntimeMXBean().run {
             TimeUnit.MILLISECONDS.run {

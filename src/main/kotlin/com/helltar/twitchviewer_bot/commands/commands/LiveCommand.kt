@@ -4,6 +4,7 @@ import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.Message
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.TwitchCommand
+import com.helltar.twitchviewer_bot.utils.Utils
 
 class LiveCommand(bot: Bot, message: Message, args: List<String> = listOf()) : TwitchCommand(bot, message, args) {
 
@@ -59,11 +60,11 @@ class LiveCommand(bot: Bot, message: Message, args: List<String> = listOf()) : T
         val list = twitch.getOnlineList(userLogins) ?: return localizedString(Strings.twitch_exception)
 
         list.forEach {
-            val username = it.username
-            val title = it.title
+            val username = Utils.escapeHtml(it.username)
+            val title = Utils.escapeHtml(it.title)
             val htmlTitle = "<b><a href=\"https://www.twitch.tv/${it.login}\">$username</a></b> - $title\n\n"
             val viewerCount = "\uD83D\uDC64 <b>${it.viewerCount}</b>\n" // 👤
-            val gameName = if (it.gameName.isNotEmpty()) "\uD83C\uDFB2 <b>${it.gameName}</b>\n" else "" // 🎲
+            val gameName = if (it.gameName.isNotEmpty()) "\uD83C\uDFB2 <b>${Utils.escapeHtml(it.gameName)}</b>\n" else "" // 🎲
             val time = String.format(localizedString(Strings.stream_start_time), it.startedAt, it.uptime) + "\n\n"
 
             thumbnailUrls["#$username - $title"] = it.thumbnailUrl

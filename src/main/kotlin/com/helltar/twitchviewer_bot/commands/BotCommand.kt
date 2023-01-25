@@ -29,12 +29,14 @@ abstract class BotCommand(val bot: Bot, val message: Message, val args: List<Str
 
     protected fun sendPhoto(url: String, caption: String, replyTo: Long) =
         bot.sendPhoto(
-            chatId, TelegramFile.ByUrl(url), caption, replyToMessageId = replyTo, allowSendingWithoutReply = true
+            chatId, TelegramFile.ByUrl(url), caption, ParseMode.HTML,
+            replyToMessageId = replyTo, allowSendingWithoutReply = true
         )
 
     protected fun sendPhoto(file: File, caption: String, replyTo: Long) =
         bot.sendPhoto(
-            chatId, TelegramFile.ByFile(file), caption, replyToMessageId = replyTo, allowSendingWithoutReply = true
+            chatId, TelegramFile.ByFile(file), caption, ParseMode.HTML,
+            replyToMessageId = replyTo, allowSendingWithoutReply = true
         )
 
     protected fun editMessageText(text: String, messageId: Long, replyMarkup: ReplyMarkup? = null) {
