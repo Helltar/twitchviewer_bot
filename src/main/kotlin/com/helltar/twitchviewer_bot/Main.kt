@@ -40,10 +40,13 @@ import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getChannelNameFromCbDa
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getChannelStatusFromCbData
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getOwnerIdFromCbData
 import com.helltar.twitchviewer_bot.keyboard.InlineKeyboard
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 
-private val log = LoggerFactory.getLogger("twitchviewer_bot")
+private val log = LoggerFactory.getLogger("Main")
 
 private val requestList = hashMapOf<String, Job>()
 private const val REQUEST_KEY_DELIMITER = "@"
@@ -132,6 +135,12 @@ private fun runKeyboardCommand(buttonName: String, bot: Bot, message: Message, o
 
 private fun runCommand(botCommand: BotCommand, requestKey: String) {
     val user = botCommand.message.from ?: return
+    val text = botCommand.message.text ?: return
+
+    val botUsername = botCommand.bot.getMe().get().username
+
+    if (text.contains("@") && text.substringAfter("@") != botUsername) return
+
     val userId = user.id
     val chat = botCommand.message.chat
     val chatId = chat.id
