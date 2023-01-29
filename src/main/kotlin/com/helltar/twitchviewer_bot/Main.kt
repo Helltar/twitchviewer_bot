@@ -136,10 +136,12 @@ private fun runKeyboardCommand(buttonName: String, bot: Bot, message: Message, o
 private fun runCommand(botCommand: BotCommand, requestKey: String) {
     val user = botCommand.message.from ?: return
     val text = botCommand.message.text ?: return
+    val botUsername = botCommand.bot.getMe().get().username ?: return
 
-    val botUsername = botCommand.bot.getMe().get().username
-
-    if (text.contains("@") && text.substringAfter("@") != botUsername) return
+    // groups - if /sameCommandName@anotherBotUsername -> return
+    if (text.contains("@"))
+        if (!text.substringAfter("@").startsWith(botUsername))
+            return
 
     val userId = user.id
     val chat = botCommand.message.chat
