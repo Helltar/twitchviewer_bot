@@ -77,7 +77,7 @@ private fun main() {
             message(Filter.Reply) {
                 val botId = update.message!!.replyToMessage!!.from!!.id
 
-                if (botId == 5605702829L)
+                if (botId == bot.getMe().get().id)
                     runCommand(ClipCompressCommand(bot, update.message!!), commandClipCompress)
             }
 
