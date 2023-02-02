@@ -1,9 +1,9 @@
 package com.helltar.twitchviewer_bot.db
 
-import com.github.kotlintelegrambot.entities.User
 import com.helltar.twitchviewer_bot.db.Databases.dbQuery
 import com.helltar.twitchviewer_bot.db.Users.languageCode
 import org.jetbrains.exposed.sql.*
+import org.telegram.telegrambots.meta.api.objects.User
 
 class DbUsers {
 
@@ -13,13 +13,13 @@ class DbUsers {
         Users.insertIgnore {
             it[userId] = user.id
             it[firstName] = user.firstName
-            it[username] = user.username ?: "null"
+            it[username] = user.userName ?: "null"
             it[languageCode] = user.languageCode ?: defaultLanguageCode
         }
 
         Users.update({ Users.userId eq user.id }) {
             it[firstName] = user.firstName
-            it[username] = user.username ?: "null"
+            it[username] = user.userName ?: "null"
             it[languageCode] = user.languageCode ?: defaultLanguageCode
         }
     }

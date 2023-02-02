@@ -1,8 +1,7 @@
 package com.helltar.twitchviewer_bot.commands.commands
 
-import com.github.kotlintelegrambot.Bot
-import com.github.kotlintelegrambot.entities.Message
-import com.github.kotlintelegrambot.entities.TelegramFile
+import com.annimon.tgbotsmodule.api.methods.Methods
+import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewer_bot.BotConfig.DIR_TEMP
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.TwitchCommand
@@ -10,21 +9,24 @@ import com.helltar.twitchviewer_bot.utils.Utils
 import com.helltar.twitchviewer_bot.utils.Utils.runProcess
 import java.io.File
 
-open class ClipCompressCommand(bot: Bot, message: Message, args: List<String> = listOf()) : TwitchCommand(bot, message, args) {
+open class ClipCompressCommand(ctx: MessageContext, args: List<String> = listOf()) : TwitchCommand(ctx, args) {
 
     override fun run() {
-        val video = message.replyToMessage?.video ?: return
-        val text = message.text ?: return
+        val video = ctx.message().replyToMessage.video ?: return
+        val text = ctx.message().text ?: return
         if (!text.startsWith(".")) return
 
-        val tempMessageId = sendMessage(localizedString(Strings.wait_clip_compress))
+        val tempMessageId = replyToMessage(localizedString(Strings.wait_clip_compress))
 
-        bot.downloadFileBytes(video.fileId)?.let {
+        // todo: ?
+        try {
             val filename = DIR_TEMP + "video_${Utils.randomUUID()}.mp4"
-            File(filename).writeBytes(it)
+            val file = Methods.getFile(video.fileId).call(ctx.sender)
+            ctx.sender.downloadFile(file, File(filename))
             compressAndSendVideo(filename)
+        } catch (e: Exception) {
+            replyToMessage(localizedString(Strings.clip_compress_fail))
         }
-            ?: sendMessage(localizedString(Strings.clip_compress_fail))
 
         deleteMessage(tempMessageId)
     }
@@ -41,14 +43,9 @@ open class ClipCompressCommand(bot: Bot, message: Message, args: List<String> = 
         File(filename).delete()
 
         if (File(ffmpegOutFilename).exists()) {
-            bot.sendVideo(
-                chatId,
-                TelegramFile.ByFile(File(ffmpegOutFilename)),
-                replyToMessageId = replyToMessageId, allowSendingWithoutReply = true
-            )
-
+            replyToMessageWithVideo(ffmpegOutFilename)
             File(ffmpegOutFilename).delete()
         } else
-            sendMessage(localizedString(Strings.clip_compress_fail))
+            replyToMessage(localizedString(Strings.clip_compress_fail))
     }
 }

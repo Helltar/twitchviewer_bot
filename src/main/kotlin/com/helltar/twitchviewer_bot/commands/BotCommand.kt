@@ -1,15 +1,18 @@
 package com.helltar.twitchviewer_bot.commands
 
-import com.github.kotlintelegrambot.Bot
-import com.github.kotlintelegrambot.entities.*
+import com.annimon.tgbotsmodule.api.methods.Methods
+import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewer_bot.localizedString
+import org.telegram.telegrambots.meta.api.methods.ParseMode
+import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import java.io.File
+import java.io.Serializable
+import java.net.URL
 
-abstract class BotCommand(val bot: Bot, val message: Message, val args: List<String> = listOf()) {
+abstract class BotCommand(val ctx: MessageContext, val args: List<String> = listOf()) {
 
-    protected val userId = message.from!!.id
-    protected val chatId = ChatId.fromId(message.chat.id)
-    protected val replyToMessageId = message.messageId
+    protected val userId = ctx.user().id
 
     abstract fun run()
 
@@ -17,36 +20,48 @@ abstract class BotCommand(val bot: Bot, val message: Message, val args: List<Str
         return localizedString(key, userId)
     }
 
-    protected fun sendMessage(
-        text: String, replyTo: Long = replyToMessageId,
-        disableWebPagePreview: Boolean = true, replyMarkup: ReplyMarkup? = null
-    ) =
-        bot.sendMessage(
-            chatId, text, ParseMode.HTML, disableWebPagePreview,
-            replyToMessageId = replyTo, allowSendingWithoutReply = true,
-            replyMarkup = replyMarkup
-        ).get().messageId
+    protected fun replyToMessage(text: String, replyMarkup: InlineKeyboardMarkup? = null): Int =
+        ctx.replyToMessage(text)
+            .setReplyMarkup(replyMarkup)
+            .call(ctx.sender)
+            .messageId
 
-    protected fun sendPhoto(url: String, caption: String, replyTo: Long) =
-        bot.sendPhoto(
-            chatId, TelegramFile.ByUrl(url), caption, ParseMode.HTML,
-            replyToMessageId = replyTo, allowSendingWithoutReply = true
-        )
+    protected fun replyToMessageWithPhoto(file: File, caption: String): Message =
+        ctx.replyToMessageWithPhoto()
+            .setFile(file)
+            .setCaption(caption)
+            .setParseMode(ParseMode.HTML)
+            .call(ctx.sender)
 
-    protected fun sendPhoto(file: File, caption: String, replyTo: Long) =
-        bot.sendPhoto(
-            chatId, TelegramFile.ByFile(file), caption, ParseMode.HTML,
-            replyToMessageId = replyTo, allowSendingWithoutReply = true
-        )
+    protected fun replyToMessageWithPhoto(url: String, caption: String, messageId: Int = ctx.messageId()): Message =
+        ctx.replyToMessageWithPhoto()
+            .setFile(url, URL(url).openStream())
+            .setCaption(caption)
+            .setReplyToMessageId(messageId)
+            .setParseMode(ParseMode.HTML)
+            .call(ctx.sender)
 
-    protected fun editMessageText(text: String, messageId: Long, replyMarkup: ReplyMarkup? = null) {
-        bot.editMessageText(
-            chatId, messageId,
-            text = text, parseMode = ParseMode.HTML,
-            disableWebPagePreview = true, replyMarkup = replyMarkup
-        )
-    }
+    protected fun replyToMessageWithVideo(
+        filename: String,
+        caption: String = "",
+        duration: Int = 15,
+        height: Int = 1080,
+        width: Int = 1920
+    ): Message =
+        ctx.replyToMessageWithVideo()
+            .setFile(File(filename))
+            .setCaption(caption)
+            .setDuration(duration)
+            .setHeight(height)
+            .setWidth(width)
+            .setParseMode(ParseMode.HTML)
+            .call(ctx.sender)
 
-    protected fun deleteMessage(messageId: Long) =
-        bot.deleteMessage(chatId, messageId)
+    protected fun editMessageText(text: String, messageId: Int, replyMarkup: InlineKeyboardMarkup): Serializable =
+        Methods.editMessageText(ctx.chatId(), messageId, text)
+            .setReplyMarkup(replyMarkup)
+            .call(ctx.sender)
+
+    protected fun deleteMessage(messageId: Int) =
+        ctx.deleteMessage().setMessageId(messageId).callAsync(ctx.sender)
 }

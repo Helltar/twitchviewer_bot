@@ -1,18 +1,16 @@
 package com.helltar.twitchviewer_bot.commands.commands
 
-import com.github.kotlintelegrambot.Bot
-import com.github.kotlintelegrambot.entities.Message
+import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.TwitchCommand
 import com.helltar.twitchviewer_bot.utils.Utils
-import org.slf4j.LoggerFactory
 import java.io.File
 
-class ScreenCommand(bot: Bot, message: Message, args: List<String> = listOf()) : TwitchCommand(bot, message, args) {
+class ScreenCommand(ctx: MessageContext, args: List<String> = listOf()) : TwitchCommand(ctx, args) {
 
     override fun run() {
         if (args.isEmpty())
-            sendMessage(localizedString(Strings.screenshot_command_info))
+            replyToMessage(localizedString(Strings.screenshot_command_info))
         else
             getScreenshot(args[0])
     }
@@ -24,28 +22,25 @@ class ScreenCommand(bot: Bot, message: Message, args: List<String> = listOf()) :
             if (!streamData.isNullOrEmpty())
                 sendScreenshot(channelName, streamData[0].username, streamData[0].gameName)
             else
-                sendMessage(localizedString(Strings.stream_offline))
+                replyToMessage(localizedString(Strings.stream_offline))
         }
     }
 
     private fun sendScreenshot(channelName: String, username: String, gameName: String) {
-        val tempMessageId = sendMessage(String.format(localizedString(Strings.wait_get_screenshot), channelName))
+        val tempMessageId = replyToMessage(String.format(localizedString(Strings.wait_get_screenshot), channelName))
         val filename = twitch.getScreenshot(channelName)
         deleteMessage(tempMessageId)
 
         if (File(filename).exists()) {
-            sendPhoto(
+            val url = "<a href=\"https://www.twitch.tv/$channelName\">Twitch</a>"
+
+            replyToMessageWithPhoto(
                 File(filename),
-                "#$username${if (gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(gameName)}" else ""}",
-                message.messageId
+                "#$username${if (gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(gameName)}" else ""} - $url"
             )
 
-            try {
-                File(filename).delete()
-            } catch (e: Exception) {
-                LoggerFactory.getLogger(javaClass).error(e.message)
-            }
+            File(filename).delete()
         } else
-            sendMessage(String.format(localizedString(Strings.get_clip_fail)))
+            replyToMessage(String.format(localizedString(Strings.get_clip_fail)))
     }
 }

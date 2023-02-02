@@ -1,12 +1,11 @@
 package com.helltar.twitchviewer_bot.commands.commands
 
-import com.github.kotlintelegrambot.Bot
-import com.github.kotlintelegrambot.entities.Message
+import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.TwitchCommand
 import com.helltar.twitchviewer_bot.utils.Utils
 
-class LiveCommand(bot: Bot, message: Message, args: List<String> = listOf()) : TwitchCommand(bot, message, args) {
+class LiveCommand(ctx: MessageContext,  args: List<String> = listOf()) : TwitchCommand(ctx, args) {
 
     private val thumbnailUrls = hashMapOf<String, String>()
 
@@ -15,7 +14,7 @@ class LiveCommand(bot: Bot, message: Message, args: List<String> = listOf()) : T
             if (isUserListNotEmpty())
                 sendOnlineList(getUserChannelsList())
             else
-                sendMessage(localizedString(Strings.live_command_info))
+                replyToMessage(localizedString(Strings.live_command_info))
         else
             sendOnlineList(if (checkIsChannelNameValid()) listOf(args[0]) else return)
     }
@@ -23,19 +22,21 @@ class LiveCommand(bot: Bot, message: Message, args: List<String> = listOf()) : T
     fun sendOnlineList(userLogins: List<String>) {
         val isNotOneChannel = userLogins.size > 1
 
-        val waitText = if (isNotOneChannel)
+        val waitText =
+            if (isNotOneChannel)
             localizedString(Strings.wait_check_online)
         else
             String.format(localizedString(Strings.wait_check_user_online), userLogins[0])
 
-        val waitMessageId = sendMessage(waitText)
+        val waitMessageId = replyToMessage(waitText)
         var liveList = getOnlineList(userLogins)
         deleteMessage(waitMessageId)
 
         var isStreamsAvailable = true
 
         if (liveList.isEmpty()) {
-            liveList = if (isNotOneChannel)
+            liveList =
+                if (isNotOneChannel)
                 localizedString(Strings.empty_online_list)
             else
                 localizedString(Strings.stream_offline)
@@ -43,11 +44,11 @@ class LiveCommand(bot: Bot, message: Message, args: List<String> = listOf()) : T
             isStreamsAvailable = false
         }
 
-        val liveListMessageId = sendMessage(liveList)
+        val liveListMessageId = replyToMessage(liveList)
 
         if (isStreamsAvailable) {
             thumbnailUrls.forEach {
-                sendPhoto(it.value + "?t=${System.currentTimeMillis()}", it.key, liveListMessageId)
+                replyToMessageWithPhoto(it.value + "?t=${System.currentTimeMillis()}", it.key, liveListMessageId)
             }
 
             thumbnailUrls.clear()

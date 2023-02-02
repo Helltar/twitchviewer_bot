@@ -1,87 +1,160 @@
 package com.helltar.twitchviewer_bot.keyboard
 
-import com.github.kotlintelegrambot.Bot
-import com.github.kotlintelegrambot.entities.*
-import com.github.kotlintelegrambot.entities.keyboard.InlineKeyboardButton
+import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
+import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.TwitchCommand
 import com.helltar.twitchviewer_bot.commands.commands.ClipCommand
 import com.helltar.twitchviewer_bot.commands.commands.LiveCommand
 import com.helltar.twitchviewer_bot.commands.commands.ScreenCommand
-import com.helltar.twitchviewer_bot.db.Databases.dbUserChannels
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.CallbackData
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonBack
+import com.helltar.twitchviewer_bot.db.Databases
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonChannel
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonClip
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonClips
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonCloseList
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonDeleteChannel
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonLive
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonScreenshot
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonUpdate
+import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getChannelNameFromCbData
+import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getChannelStatusFromCbData
 import com.helltar.twitchviewer_bot.localizedString
 import com.helltar.twitchviewer_bot.twitch.Twitch
+import org.telegram.telegrambots.meta.api.methods.ParseMode
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import java.io.Serializable
 
-class InlineKeyboard(private val bot: Bot, private val message: Message, private val ownerId: Long) {
+class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
 
-    private val chatId = ChatId.fromId(message.chat.id)
-    private val twitchCommand = TwitchCommand(bot, message)
-    private val liveCommand = LiveCommand(bot, message)
-    private val clipCommand = ClipCommand(bot, message)
+    private val twitchCommand: TwitchCommand
+    private val liveCommand: LiveCommand
+    private val clipCommand: ClipCommand
+    private val twitchChannel: String
 
-    fun btnShow(twitchChannel: String) =
-        liveCommand.sendOnlineList(listOf(twitchChannel))
+    init {
+        //ctx.update().message = ctx.message()
+        val context = MessageContext(ctx.sender, ctx.update(), "")
+        twitchCommand = TwitchCommand(context)
+        liveCommand = LiveCommand(context)
+        clipCommand = ClipCommand(context)
+        twitchChannel = getChannelNameFromCbData(ctx.data())
+    }
+
+    fun btnClose(ctx: CallbackQueryContext): Serializable =
+        editMessage(ctx, String.format(localizedString(Strings.user_close_list, ownerId), ctx.user().firstName))
+
+    fun btnDeleteChannel(ctx: CallbackQueryContext) {
+        removeChannelFromUserList(twitchChannel, ownerId)
+        update(ctx)
+    }
+
+    fun btnScreenshot(ctx: CallbackQueryContext) =
+        ScreenCommand(MessageContext(ctx.sender, ctx.update(), "")).getScreenshot(twitchChannel)
 
     fun btnLive() =
         liveCommand.run { sendOnlineList(getUserChannelsList(ownerId)) }
 
-    fun btnClip(twitchChannel: String) =
+    fun btnShow() =
+        liveCommand.sendOnlineList(listOf(twitchChannel))
+
+    fun btnClip() =
         clipCommand.getClipsFromAll(listOf(twitchChannel))
 
     fun btnClips() =
         clipCommand.getClipsFromAll(twitchCommand.getUserChannelsList(ownerId))
 
-    fun btnDeleteChannel(twitchChannel: String) {
-        removeChannelFromUserList(twitchChannel, ownerId)
-        update()
-    }
+    fun btnChannel(ctx: CallbackQueryContext) {
+        val isChannelLive = getChannelStatusFromCbData(ctx.data())
 
-    fun btnScreenshot(twitchChannel: String) =
-        ScreenCommand(bot, message).getScreenshot(twitchChannel)
-
-    fun btnChannel(twitchChannel: String, isChannelLive: Boolean) {
         if (!isChannelExistsInList(twitchChannel)) {
-            update()
+            update(ctx)
             return
         }
 
-        var btnScreenshot = listOf<InlineKeyboardButton>()
-        var btnClip = listOf<InlineKeyboardButton>()
+        val inlineKeyboardMarkup = InlineKeyboardMarkup.builder()
 
         if (isChannelLive) {
-            btnScreenshot = createButtonAsList(localizedString(Strings.btn_screenshot), CallbackData(buttonScreenshot, ownerId, twitchChannel))
-            btnClip = createButtonAsList(localizedString(Strings.btn_short_clip), CallbackData(buttonClip, ownerId, twitchChannel))
+            inlineKeyboardMarkup.keyboardRow(
+                listOf(
+                    createButton(
+                        localizedString(Strings.btn_screenshot),
+                        setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonScreenshot, ownerId, twitchChannel))
+                    )
+                )
+            )
+
+            inlineKeyboardMarkup.keyboardRow(
+                listOf(
+                    createButton(
+                        localizedString(Strings.btn_short_clip),
+                        setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonClip, ownerId, twitchChannel))
+                    )
+                )
+            )
         }
 
-        val inlineKeyboardMarkup = InlineKeyboardMarkup.create(
-            btnScreenshot, btnClip,
+        inlineKeyboardMarkup.keyboardRow(
             listOf(
-                createButton(localizedString(Strings.btn_back), CallbackData(buttonBack, ownerId, twitchChannel)),
-                createButton(localizedString(Strings.btn_exit), CallbackData(buttonCloseList, ownerId, twitchChannel)),
-                createButton(localizedString(Strings.btn_delete), CallbackData(buttonDeleteChannel, ownerId, twitchChannel))
+                createButton(
+                    localizedString(Strings.btn_back),
+                    setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonBack, ownerId, twitchChannel))
+                ),
+                createButton(
+                    localizedString(Strings.btn_exit),
+                    setCallbackData(BtnCallbacks.CallbackData(buttonCloseList, ownerId, twitchChannel))
+                ),
+                createButton(
+                    localizedString(Strings.btn_delete),
+                    setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonDeleteChannel, ownerId, twitchChannel))
+                )
             )
         )
 
-        editMessageText(
-            String.format(
+        editMessage(
+            ctx, String.format(
                 localizedString(Strings.title_channel_is_selected),
                 "<b><a href=\"https://www.twitch.tv/$twitchChannel\">$twitchChannel</a></b>"
-            ), inlineKeyboardMarkup
+            ), inlineKeyboardMarkup.build()
         )
     }
 
+    private fun isChannelExistsInList(channelName: String) =
+        twitchCommand.getUserChannelsList(ownerId).contains(channelName)
+
+    private fun editMessage(ctx: CallbackQueryContext, text: String, replyMarkup: InlineKeyboardMarkup? = null) =
+        ctx.editMessage(text, replyMarkup)
+            .setParseMode(ParseMode.HTML)
+            .disableWebPagePreview()
+            .call(ctx.sender)
+
+    fun update(ctx: CallbackQueryContext) {
+        if (twitchCommand.getUserChannelsList(ownerId).isNotEmpty()) {
+            editMessage(ctx, localizedString(Strings.wait_check_online_menu), initWaitMenu())
+            editMessage(ctx, localizedString(Strings.title_choose_channel_or_action), init())
+        } else
+            editMessage(ctx, localizedString(Strings.list_is_empty))
+    }
+
+    private fun createButton(text: String, callbackData: BtnCallbacks.CallbackData) =
+        InlineKeyboardButton
+            .builder()
+            .text(text)
+            .callbackData(setCallbackData(listOf(callbackData)))
+            .build()
+
+    private fun setCallbackData(data: List<BtnCallbacks.CallbackData>): String = data[0].run {
+        return "$btnActName $ownerId $channelName $isChannelLive"
+    }
+
+    private fun setCallbackData(callbackData: BtnCallbacks.CallbackData) =
+        BtnCallbacks.CallbackData(
+            callbackData.btnActName, callbackData.ownerId,
+            callbackData.channelName, callbackData.isChannelLive
+        )
+
     fun initWaitMenu(): InlineKeyboardMarkup =
-        InlineKeyboardMarkup.create(createButtonAsList("\uD83D\uDD04", CallbackData(buttonUpdate, ownerId))) // 🔄
+        InlineKeyboardMarkup.builder().keyboardRow(
+            createButtonAsList( // 🔄
+                "\uD83D\uDD04", setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonUpdate, ownerId))
+            )
+        ).build()
 
     fun init(): InlineKeyboardMarkup {
         val firstRowButtons = arrayListOf<InlineKeyboardButton>()
@@ -108,14 +181,14 @@ class InlineKeyboard(private val bot: Bot, private val message: Message, private
                 firstRowButtons.add(
                     createButton(
                         "$channelStatus $channelName",
-                        CallbackData(buttonChannel, ownerId, channelName, isLive)
+                        BtnCallbacks.CallbackData(buttonChannel, ownerId, channelName, isLive)
                     )
                 )
             else
                 secondRowButtons.add(
                     createButton(
                         "$channelStatus $channelName",
-                        CallbackData(buttonChannel, ownerId, channelName, isLive)
+                        BtnCallbacks.CallbackData(buttonChannel, ownerId, channelName, isLive)
                     )
                 )
         }
@@ -124,49 +197,26 @@ class InlineKeyboard(private val bot: Bot, private val message: Message, private
         var btnClips = listOf<InlineKeyboardButton>()
 
         if (liveChannels.isNotEmpty()) {
-            btnShowLive = createButtonAsList(localizedString(Strings.btn_who_is_online), CallbackData(buttonLive, ownerId))
-            btnClips = createButtonAsList(localizedString(Strings.btn_get_all_screens), CallbackData(buttonClips, ownerId))
+            btnShowLive = createButtonAsList(localizedString(Strings.btn_who_is_online), BtnCallbacks.CallbackData(buttonLive, ownerId))
+            btnClips = createButtonAsList(localizedString(Strings.btn_get_all_screens), BtnCallbacks.CallbackData(buttonClips, ownerId))
         }
 
-        return InlineKeyboardMarkup.create(
-            firstRowButtons, secondRowButtons, btnShowLive, btnClips,
-            createButtonAsList(localizedString(Strings.btn_close_list), CallbackData(buttonCloseList, ownerId))
-        )
+        return InlineKeyboardMarkup.builder()
+            .keyboardRow(firstRowButtons)
+            .keyboardRow(secondRowButtons)
+            .keyboardRow(btnShowLive)
+            .keyboardRow(btnClips)
+            .keyboardRow(createButtonAsList(localizedString(Strings.btn_close_list), BtnCallbacks.CallbackData(buttonCloseList, ownerId)))
+            .build()
     }
 
-    fun update() {
-        if (twitchCommand.getUserChannelsList(ownerId).isNotEmpty()) {
-            editMessageText(localizedString(Strings.wait_check_online_menu), replyMarkup = initWaitMenu())
-            editMessageText(localizedString(Strings.title_choose_channel_or_action), replyMarkup = init())
-        } else
-            editMessageText(localizedString(Strings.list_is_empty))
-    }
-
-    private fun createButton(text: String, callbackData: CallbackData) =
-        InlineKeyboardButton.CallbackData(text, setCallbackData(listOf(callbackData)))
-
-    private fun createButtonAsList(text: String, callbackData: CallbackData) =
+    private fun createButtonAsList(text: String, callbackData: BtnCallbacks.CallbackData) =
         listOf(createButton(text, callbackData))
 
-    private fun editMessageText(text: String, replyMarkup: ReplyMarkup? = null) {
-        bot.editMessageText(
-            chatId, message.messageId,
-            text = text, parseMode = ParseMode.HTML,
-            disableWebPagePreview = true, replyMarkup = replyMarkup
-        )
-    }
-
     private fun removeChannelFromUserList(channelName: String, userId: Long) =
-        dbUserChannels.delete(userId, channelName)
-
-    private fun isChannelExistsInList(channelName: String) =
-        twitchCommand.getUserChannelsList(ownerId).contains(channelName)
+        Databases.dbUserChannels.delete(userId, channelName)
 
     private fun localizedString(key: String): String {
         return localizedString(key, ownerId)
-    }
-
-    private fun setCallbackData(data: List<CallbackData>): String = data[0].run {
-        return "$btnActName $ownerId $channelName $isChannelLive"
     }
 }

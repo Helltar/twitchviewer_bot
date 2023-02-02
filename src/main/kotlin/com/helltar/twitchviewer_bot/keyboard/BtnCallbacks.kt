@@ -4,13 +4,13 @@ object BtnCallbacks {
 
     const val buttonBack = "1"
     const val buttonChannel = "2"
-    const val buttonCloseList = "3"
-    const val buttonDeleteChannel = "4"
     const val buttonClip = "5"
     const val buttonClips = "6"
-    const val buttonShow = "7"
+    const val buttonCloseList = "3"
+    const val buttonDeleteChannel = "4"
     const val buttonLive = "8"
     const val buttonScreenshot = "9"
+    const val buttonShow = "7"
     const val buttonUpdate = "10"
 
     data class CallbackData(val btnActName: String, val ownerId: Long?, val channelName: String = "-", val isChannelLive: Int = 0)

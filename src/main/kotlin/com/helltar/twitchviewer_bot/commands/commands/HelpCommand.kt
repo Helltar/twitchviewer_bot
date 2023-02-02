@@ -1,13 +1,12 @@
 package com.helltar.twitchviewer_bot.commands.commands
 
-import com.github.kotlintelegrambot.Bot
-import com.github.kotlintelegrambot.entities.Message
+import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.BotCommand
 
-class HelpCommand(bot: Bot, message: Message) : BotCommand(bot, message) {
+class HelpCommand(ctx: MessageContext) : BotCommand(ctx) {
 
     override fun run() {
-        sendMessage(localizedString(Strings.start_command_info))
+        replyToMessage(localizedString(Strings.start_command_info))
     }
 }

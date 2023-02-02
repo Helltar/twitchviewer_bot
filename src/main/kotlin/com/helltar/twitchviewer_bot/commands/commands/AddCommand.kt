@@ -1,17 +1,16 @@
 package com.helltar.twitchviewer_bot.commands.commands
 
-import com.github.kotlintelegrambot.Bot
-import com.github.kotlintelegrambot.entities.Message
+import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.commands.TwitchCommand
 import com.helltar.twitchviewer_bot.db.Databases.dbUserChannels
 
-class AddCommand(bot: Bot, message: Message, args: List<String>) : TwitchCommand(bot, message, args) {
+class AddCommand(ctx: MessageContext,  args: List<String> = listOf()) : TwitchCommand(ctx, args) {
 
     override fun run() {
         if (!isBot)
             add(args.ifEmpty {
-                sendMessage(localizedString(Strings.add_command_info))
+                replyToMessage(localizedString(Strings.add_command_info))
                 return
             })
         else
@@ -27,11 +26,11 @@ class AddCommand(bot: Bot, message: Message, args: List<String>) : TwitchCommand
 
         if (listSize <= 4) {
             if (addChannelToUserList(channel))
-                sendMessage(String.format(localizedString(Strings.channel_added_to_list), channel))
+                replyToMessage(String.format(localizedString(Strings.channel_added_to_list), channel))
             else
-                sendMessage(String.format(localizedString(Strings.channel_already_exists_in_list), channel))
+                replyToMessage(String.format(localizedString(Strings.channel_already_exists_in_list), channel))
         } else
-            sendMessage(localizedString(Strings.list_full))
+            replyToMessage(localizedString(Strings.list_full))
     }
 
     private fun addChannelToUserList(channel: String) =

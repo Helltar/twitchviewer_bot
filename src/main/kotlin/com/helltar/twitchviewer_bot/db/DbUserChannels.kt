@@ -12,6 +12,7 @@ class DbUserChannels {
 
     fun getSize(userId: Long) = getList(userId).size
 
+    // todo: ._.
     fun add(userId: Long, channel: String): Boolean {
         arrayListOf<String>().run {
             addAll(getList(userId))
@@ -27,6 +28,7 @@ class DbUserChannels {
         return false
     }
 
+    // todo: ._.
     fun delete(userId: Long, channel: String) {
         arrayListOf<String>().run {
             addAll(getList(userId))
