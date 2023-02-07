@@ -11,7 +11,7 @@
     <string name="get_clip_fail">Success is not final; failure is not fatal: it is the courage to continue that counts (с)</string>
     <string name="invalid_channel_name">Some kind of crooked name 🌚</string>
     <string name="invalid_channel_name_length">Oops, min. <b>2</b> max. <b>25</b> characters</string>
-    <string name="list_full">The list is full, some channel was removed: /list@twitchviewer_bot</string>
+    <string name="list_full">List is full, delete some channels: /list@twitchviewer_bot</string>
     <string name="list_is_empty">List is empty, use: /add <b>channel</b></string>
     <string name="many_request">Wait, let me deal with the last request 🤖</string>
     <string name="screenshot_command_info">Enter the channel name: /screen <b>channel</b></string>
