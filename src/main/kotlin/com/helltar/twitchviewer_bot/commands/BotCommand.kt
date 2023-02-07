@@ -20,9 +20,11 @@ abstract class BotCommand(val ctx: MessageContext, val args: List<String> = list
         return localizedString(key, userId)
     }
 
-    protected fun replyToMessage(text: String, replyMarkup: InlineKeyboardMarkup? = null): Int =
+    protected fun replyToMessage(text: String, enableWebPagePreview: Boolean = false, replyMarkup: InlineKeyboardMarkup? = null): Int =
         ctx.replyToMessage(text)
             .setReplyMarkup(replyMarkup)
+            .setParseMode(ParseMode.HTML)
+            .setWebPagePreviewEnabled(enableWebPagePreview)
             .call(ctx.sender)
             .messageId
 
@@ -60,6 +62,8 @@ abstract class BotCommand(val ctx: MessageContext, val args: List<String> = list
     protected fun editMessageText(text: String, messageId: Int, replyMarkup: InlineKeyboardMarkup): Serializable =
         Methods.editMessageText(ctx.chatId(), messageId, text)
             .setReplyMarkup(replyMarkup)
+            .setParseMode(ParseMode.HTML)
+            .disableWebPagePreview()
             .call(ctx.sender)
 
     protected fun deleteMessage(messageId: Int) =

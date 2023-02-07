@@ -35,7 +35,7 @@ class ListCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             localizedString(Strings.title_choose_channel_or_action),
             replyToMessage(
                 localizedString(Strings.wait_check_online_menu),
-                inlineKeyboard.initWaitMenu()
+                replyMarkup = inlineKeyboard.initWaitMenu()
             ),
             inlineKeyboard.init()
         )

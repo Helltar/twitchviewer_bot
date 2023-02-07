@@ -24,7 +24,6 @@ import com.helltar.twitchviewer_bot.db.Databases
 import com.helltar.twitchviewer_bot.keyboard.KeyboardBundle
 import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 
 class TwitchViewerBotHandler : BotHandler() {
@@ -46,12 +45,6 @@ class TwitchViewerBotHandler : BotHandler() {
             register(SimpleCommand("/uptime") { runCommand(UptimeCommand(it), commandUptime) })
 
             registerBundle(KeyboardBundle())
-        }
-
-        addMethodPreprocessor(SendMessage::class.java) {
-            it.allowSendingWithoutReply = true
-            it.enableHtml(true)
-            it.disableWebPagePreview()
         }
     }
 
