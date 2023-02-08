@@ -29,8 +29,7 @@ class TwitchViewerBot : BotModule {
 
             LoggerFactory.getLogger(TwitchViewerBot::class.java).info("start ...")
 
-            val profile = args.firstOrNull() ?: ""
-            Runner.run(profile, listOf(TwitchViewerBot()))
+            Runner.run("", listOf(TwitchViewerBot()))
         }
 
         fun addRequest(requestKey: String, ctx: MessageContext, func: () -> Unit) {
@@ -46,5 +45,6 @@ class TwitchViewerBot : BotModule {
         }
     }
 
-    override fun botHandler(config: Config) = TwitchViewerBotHandler()
+    override fun botHandler(config: Config) =
+        TwitchViewerBotHandler()
 }
