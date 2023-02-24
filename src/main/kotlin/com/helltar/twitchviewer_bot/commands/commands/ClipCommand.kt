@@ -5,8 +5,9 @@ import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.twitch.Twitch
 import com.helltar.twitchviewer_bot.utils.Utils
 import java.io.File
+import java.util.concurrent.TimeUnit
 
-class ClipCommand(ctx: MessageContext,  args: List<String> = listOf()) : ClipCompressCommand(ctx, args) {
+class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipCompressCommand(ctx, args) {
 
     override fun run() {
         if (args.isEmpty())
@@ -41,10 +42,10 @@ class ClipCommand(ctx: MessageContext,  args: List<String> = listOf()) : ClipCom
         twitchStreamsData.forEach {
             val tempMessageId = replyToMessage(String.format(localizedString(Strings.start_get_clip), it.username))
             val filename = twitch.getShortClip(it.login)
-            deleteMessage(tempMessageId)
 
             if (!File(filename).exists()) {
                 replyToMessage(localizedString(Strings.get_clip_fail))
+                deleteMessage(tempMessageId)
                 return
             }
 
@@ -54,11 +55,13 @@ class ClipCommand(ctx: MessageContext,  args: List<String> = listOf()) : ClipCom
                 else ""
 
                 val url = "<a href=\"https://www.twitch.tv/${it.login}\">Twitch</a>"
-                replyToMessageWithVideo(filename, "#${it.username}$gameName - $url")
+                replyToMessageWithVideo(filename, "#${it.username}$gameName - $url").messageId
 
                 File(filename).delete()
             } else
                 compressAndSendVideo(filename)
+
+            deleteMessage(tempMessageId)
         }
     }
 }
