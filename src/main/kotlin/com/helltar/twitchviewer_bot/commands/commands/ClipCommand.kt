@@ -5,7 +5,6 @@ import com.helltar.twitchviewer_bot.Strings
 import com.helltar.twitchviewer_bot.twitch.Twitch
 import com.helltar.twitchviewer_bot.utils.Utils
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipCompressCommand(ctx, args) {
 
