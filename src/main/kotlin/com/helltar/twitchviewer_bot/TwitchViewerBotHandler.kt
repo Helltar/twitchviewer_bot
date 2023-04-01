@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Update
 
-class TwitchViewerBotHandler : BotHandler() {
+class TwitchViewerBotHandler : BotHandler(BOT_TOKEN) {
 
-    private val authority = SimpleAuthority(this, CREATOR_ID)
-    private val commands = CommandRegistry(this, authority)
+    private val authority = SimpleAuthority(CREATOR_ID)
+    private val commands = CommandRegistry(BOT_USERNAME, authority)
 
     init {
         commands.run {
@@ -56,7 +56,7 @@ class TwitchViewerBotHandler : BotHandler() {
             }
         }
 
-        commands.handleUpdate(update)
+        commands.handleUpdate(this, update)
 
         return null
     }
@@ -76,7 +76,6 @@ class TwitchViewerBotHandler : BotHandler() {
         addRequest("$requestKey@$userId", botCommand.ctx) { botCommand.run() }
     }
 
-    override fun getBotToken() = BOT_TOKEN
-
-    override fun getBotUsername() = BOT_USERNAME
+    override fun getBotUsername() =
+        BOT_USERNAME
 }
