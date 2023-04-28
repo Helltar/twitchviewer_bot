@@ -49,12 +49,15 @@ class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipComp
             }
 
             if (!compress) {
-                val gameName = if (it.gameName.isNotEmpty())
-                    ", #${Utils.replaceTitleTag(it.gameName)}"
-                else ""
+                // todo: liveCmd duplicate
+                val username = Utils.escapeHtml(it.username)
+                val title = Utils.escapeHtml(it.title)
+                val htmlTitle = "<b><a href=\"https://www.twitch.tv/${it.login}\">$username</a></b> - $title\n\n"
+                val viewerCount = "\uD83D\uDC64 <b>${it.viewerCount}</b>\n" // 👤
+                val time = String.format(localizedString(Strings.stream_start_time), it.startedAt, it.uptime) + "\n\n"
+                val gameName = if (it.gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(it.gameName)}" else ""
 
-                val url = "<a href=\"https://www.twitch.tv/${it.login}\">Twitch</a>"
-                replyToMessageWithVideo(filename, "#${it.username}$gameName - $url").messageId
+                replyToMessageWithVideo(filename, "$htmlTitle$viewerCount$time#${it.username}$gameName").messageId
 
                 File(filename).delete()
             } else
