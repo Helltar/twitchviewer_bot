@@ -59,7 +59,7 @@ class Twitch {
         runYtDlp(35, channelName, ytDlpOutFilename)
 
         runProcess(
-            "timeout -k 5 -s SIGINT 60 ffmpeg -ss 00:00:16 -i $ytDlpOutFilename -c copy -loglevel quiet $ffmpegOutFilename",
+            "timeout -k 5 -s SIGINT 60 ffmpeg -ss 00:00:15 -i $ytDlpOutFilename -c copy -loglevel quiet $ffmpegOutFilename",
             DIR_TEMP
         )
 
