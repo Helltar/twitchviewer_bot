@@ -53,11 +53,11 @@ class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipComp
                 val username = Utils.escapeHtml(it.username)
                 val title = Utils.escapeHtml(it.title)
                 val htmlTitle = "<b><a href=\"https://www.twitch.tv/${it.login}\">$username</a></b> - $title\n\n"
-                val viewerCount = "\uD83D\uDC64 <b>${it.viewerCount}</b>\n" // 👤
+                val viewersCount = "\uD83D\uDC40 <b>${it.viewerCount}</b>\n" // 👀
                 val time = String.format(localizedString(Strings.stream_start_time), it.startedAt, it.uptime) + "\n\n"
                 val gameName = if (it.gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(it.gameName)}" else ""
 
-                replyToMessageWithVideo(filename, "$htmlTitle$viewerCount$time#${it.username}$gameName").messageId
+                replyToMessageWithVideo(filename, "$htmlTitle$viewersCount$time#${it.username}$gameName").messageId
 
                 File(filename).delete()
             } else

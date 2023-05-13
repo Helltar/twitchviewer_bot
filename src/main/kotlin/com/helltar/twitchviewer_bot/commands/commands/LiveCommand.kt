@@ -64,13 +64,13 @@ class LiveCommand(ctx: MessageContext,  args: List<String> = listOf()) : TwitchC
             val username = Utils.escapeHtml(it.username)
             val title = Utils.escapeHtml(it.title)
             val htmlTitle = "<b><a href=\"https://www.twitch.tv/${it.login}\">$username</a></b> - $title\n\n"
-            val viewerCount = "\uD83D\uDC64 <b>${it.viewerCount}</b>\n" // 👤
+            val viewersCount = "\uD83D\uDC40 <b>${it.viewerCount}</b>\n" // 👀
             val gameName = if (it.gameName.isNotEmpty()) "\uD83C\uDFB2 <b>${Utils.escapeHtml(it.gameName)}</b>\n" else "" // 🎲
             val time = String.format(localizedString(Strings.stream_start_time), it.startedAt, it.uptime) + "\n\n"
 
             thumbnailUrls["#$username - $title"] = it.thumbnailUrl
 
-            result += htmlTitle + viewerCount + gameName + time
+            result += htmlTitle + viewersCount + gameName + time
         }
 
         return result
