@@ -41,10 +41,18 @@ class Twitch {
                     val thumbnailUrl = it.getThumbnailUrl(1920, 1080)
                     val uptime = LocalTime.MIN.plus(it.uptime).format(formatter)
 
-                    list.add(StreamsData(it.userLogin, it.userName, it.title, it.viewerCount, it.gameName, thumbnailUrl, startedAt, uptime))
+                    list.add(
+                        StreamsData(
+                            it.userLogin,
+                            Utils.escapeHtml(it.userName), Utils.escapeHtml(it.title),
+                            it.viewerCount, it.gameName,
+                            thumbnailUrl, startedAt, uptime
+                        )
+                    )
                 }
 
             return list
+
         } catch (e: Exception) {
             log.error(e.message)
             return null

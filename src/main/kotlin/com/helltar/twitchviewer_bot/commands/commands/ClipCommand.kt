@@ -38,30 +38,30 @@ class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipComp
     }
 
     private fun sendClip(twitchStreamsData: List<Twitch.StreamsData>, compress: Boolean) {
-        twitchStreamsData.forEach {
-            val tempMessageId = replyToMessage(String.format(localizedString(Strings.start_get_clip), it.username))
-            val filename = twitch.getShortClip(it.login)
+        twitchStreamsData.forEach { streamData ->
+            val tempMessage = String.format(localizedString(Strings.start_get_clip), streamData.username)
+            val tempMessageId = replyToMessage(tempMessage)
+            val clipFilename = twitch.getShortClip(streamData.login)
 
-            if (!File(filename).exists()) {
+            if (!File(clipFilename).exists()) {
                 replyToMessage(localizedString(Strings.get_clip_fail))
                 deleteMessage(tempMessageId)
                 return
             }
 
             if (!compress) {
-                // todo: liveCmd duplicate
-                val username = Utils.escapeHtml(it.username)
-                val title = Utils.escapeHtml(it.title)
-                val htmlTitle = "<b><a href=\"https://www.twitch.tv/${it.login}\">$username</a></b> - $title\n\n"
-                val viewersCount = "\uD83D\uDC40 <b>${it.viewerCount}</b>\n" // 👀
-                val time = String.format(localizedString(Strings.stream_start_time), it.startedAt, it.uptime) + "\n\n"
-                val gameName = if (it.gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(it.gameName)}" else ""
+                streamData.run {
+                    val htmlTitle = "<b><a href=\"https://www.twitch.tv/$login\">$username</a></b> - $title\n\n"
+                    val viewers = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
+                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, uptime) + "\n\n"
+                    val gameName = if (gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(gameName)}" else ""
 
-                replyToMessageWithVideo(filename, "$htmlTitle$viewersCount$time#${it.username}$gameName").messageId
+                    replyToMessageWithVideo(clipFilename, "$htmlTitle$viewers$time#${username}$gameName")
+                }
 
-                File(filename).delete()
+                File(clipFilename).delete()
             } else
-                compressAndSendVideo(filename)
+                compressAndSendVideo(clipFilename)
 
             deleteMessage(tempMessageId)
         }
