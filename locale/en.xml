@@ -17,7 +17,7 @@
     <string name="screenshot_command_info">Enter the channel name: /screen <b>channel</b></string>
     <string name="start_get_clip">Starting to record <b>%s</b> stream, wait a minute ...</string>
     <string name="stream_offline">Stream offline 🤷‍♂️</string>
-    <string name="stream_start_time">🕔 Streaming from <b>%s</b> (GMT+3, uptime <b>%s</b>)</string>
+    <string name="stream_start_time">🕔 From <b>%s</b> (GMT+3, uptime <b>%s</b>)</string>
     <string name="twitch_exception">The channel does not exist or something is broken 🫡</string>
     <string name="user_close_list"><b>%s</b> closed /list@twitchviewer_bot</string>
     <string name="wait_check_online">Ok, I'll run through the channels to see 🏃‍♂️ ...</string>
