@@ -43,6 +43,7 @@ abstract class BotCommand(val ctx: MessageContext, val args: List<String> = list
             .setParseMode(ParseMode.HTML)
             .call(ctx.sender)
 
+    // todo: duration, height, width
     protected fun replyToMessageWithVideo(
         filename: String,
         caption: String = "",
