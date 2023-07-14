@@ -64,12 +64,8 @@ class Twitch {
         val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
         val ytDlpOutFilename = genYtDlpTempFilename(tempName)
 
-        runYtDlp(35, channelName, ytDlpOutFilename)
-
-        runProcess(
-            "timeout -k 5 -s SIGINT 60 ffmpeg -ss 00:00:16 -i $ytDlpOutFilename -c copy -loglevel quiet $ffmpegOutFilename",
-            DIR_TEMP
-        )
+        runStreamlink(35, channelName, ytDlpOutFilename)
+        runProcess("timeout -k 5 -s SIGINT 60 ffmpeg -i $ytDlpOutFilename -c copy -loglevel quiet $ffmpegOutFilename", DIR_TEMP)
 
         File(DIR_TEMP + ytDlpOutFilename).delete()
 
@@ -81,18 +77,24 @@ class Twitch {
         val ffmpegOutFilename = "ffmpeg_$tempName.png"
         val ytDlpOutFilename = genYtDlpTempFilename(tempName)
 
-        runYtDlp(25, channelName, ytDlpOutFilename)
-        runProcess("timeout -k 5 15 ffmpeg -ss 00:00:17 -i $ytDlpOutFilename -vframes 1 $ffmpegOutFilename", DIR_TEMP)
+        // todo: streamlink. screenshot timeout
+        runStreamlink(25, channelName, ytDlpOutFilename)
+        runProcess("timeout -k 5 15 ffmpeg -ss 00:00:05 -i $ytDlpOutFilename -vframes 1 $ffmpegOutFilename", DIR_TEMP)
 
         File(DIR_TEMP + ytDlpOutFilename).delete()
 
         return DIR_TEMP + ffmpegOutFilename
     }
 
-    private fun runYtDlp(timeout: Int, channelName: String, outFilename: String) =
-        runProcess("timeout -k 10 -s SIGINT $timeout yt-dlp https://www.twitch.tv/$channelName -q -o $outFilename", DIR_TEMP)
+    private fun runStreamlink(timeout: Int, channelName: String, outFilename: String) =
+        runProcess(
+            "timeout -k 10 -s SIGINT $timeout streamlink --twitch-disable-ads https://www.twitch.tv/$channelName 720p60,best -o $outFilename",
+            DIR_TEMP
+        )
 
-    private fun genYtDlpTempFilename(name: String) = "yt_dlp_$name.mp4"
+    private fun genYtDlpTempFilename(name: String) =
+        "yt_dlp_$name.mp4"
 
-    private fun genRandomName(name: String) = "${name}_${Utils.randomUUID()}"
+    private fun genRandomName(name: String) =
+        "${name}_${Utils.randomUUID()}"
 }
