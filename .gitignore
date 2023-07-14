@@ -3,7 +3,7 @@
 
 build/
 db/
-scripts/
+deploy/
 temp/
 test/
 
