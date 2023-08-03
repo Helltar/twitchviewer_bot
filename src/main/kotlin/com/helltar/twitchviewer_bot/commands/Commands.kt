@@ -1,8 +1,8 @@
 package com.helltar.twitchviewer_bot.commands
 
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonClips
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonLive
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonScreenshot
+import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_CLIPS
+import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_LIVE
+import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_SCREENSHOT
 
 object Commands {
 
@@ -13,7 +13,7 @@ object Commands {
     const val commandAbout = "cmdAbout"
     const val commandClipCompress = "cmdCompress"
 
-    const val commandClip = buttonClips
-    const val commandLive = buttonLive
-    const val commandScreenshot = buttonScreenshot
+    const val commandClip = BUTTON_CLIPS
+    const val commandLive = BUTTON_LIVE
+    const val commandScreenshot = BUTTON_SCREENSHOT
 }

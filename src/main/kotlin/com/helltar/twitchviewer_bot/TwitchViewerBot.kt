@@ -13,11 +13,11 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import java.io.File
 
-private val requestList = hashMapOf<String, Job>()
-
 class TwitchViewerBot : BotModule {
 
     companion object {
+        private val requestList = hashMapOf<String, Job>()
+
         @JvmStatic
         fun main(args: Array<String>) {
             val databaseDir = File(DIR_DB)
@@ -35,9 +35,7 @@ class TwitchViewerBot : BotModule {
         fun addRequest(requestKey: String, ctx: MessageContext, func: () -> Unit) {
             if (requestList.containsKey(requestKey))
                 if (requestList[requestKey]?.isCompleted == false) {
-                    ctx.replyToMessage()
-                        .setText(localizedString(Strings.many_request, ctx.user().id))
-                        .callAsync(ctx.sender)
+                    ctx.replyToMessage().setText(localizedString(Strings.many_request, ctx.user().id)).callAsync(ctx.sender)
                     return
                 }
 

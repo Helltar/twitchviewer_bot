@@ -31,6 +31,8 @@ class TwitchViewerBotHandler : BotHandler(BOT_TOKEN) {
     private val authority = SimpleAuthority(CREATOR_ID)
     private val commands = CommandRegistry(BOT_USERNAME, authority)
 
+    private val log = LoggerFactory.getLogger(javaClass)
+
     init {
         commands.run {
             register(SimpleCommand("/add") { runCommand(AddCommand(it, it.arguments().toList()), commandAdd) })
@@ -68,8 +70,7 @@ class TwitchViewerBotHandler : BotHandler(BOT_TOKEN) {
         val chatId = chat.id
         val commandName = botCommand.javaClass.simpleName
 
-        LoggerFactory.getLogger(javaClass)
-            .info("$commandName: $chatId $userId ${user.userName} ${user.firstName} ${chat.title} : ${botCommand.args}")
+        log.info("$commandName: $chatId $userId ${user.userName} ${user.firstName} ${chat.title} : ${botCommand.args}")
 
         Databases.dbUsers.saveUserData(user)
 

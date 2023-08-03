@@ -8,10 +8,10 @@ import com.helltar.twitchviewer_bot.commands.commands.ClipCommand
 import com.helltar.twitchviewer_bot.commands.commands.LiveCommand
 import com.helltar.twitchviewer_bot.commands.commands.ScreenCommand
 import com.helltar.twitchviewer_bot.db.Databases
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonChannel
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonClips
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonCloseList
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.buttonLive
+import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_CHANNEL
+import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_CLIPS
+import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_CLOSE_LIST
+import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_LIVE
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getChannelNameFromCbData
 import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getChannelStatusFromCbData
 import com.helltar.twitchviewer_bot.localizedString
@@ -75,7 +75,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
                 listOf(
                     createButton(
                         localizedString(Strings.btn_screenshot),
-                        setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonScreenshot, ownerId, twitchChannel))
+                        setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.BUTTON_SCREENSHOT, ownerId, twitchChannel))
                     )
                 )
             )
@@ -84,7 +84,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
                 listOf(
                     createButton(
                         localizedString(Strings.btn_short_clip),
-                        setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonClip, ownerId, twitchChannel))
+                        setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.BUTTON_CLIP, ownerId, twitchChannel))
                     )
                 )
             )
@@ -94,15 +94,15 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
             listOf(
                 createButton(
                     localizedString(Strings.btn_back),
-                    setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonBack, ownerId, twitchChannel))
+                    setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.BUTTON_BACK, ownerId, twitchChannel))
                 ),
                 createButton(
                     localizedString(Strings.btn_exit),
-                    setCallbackData(BtnCallbacks.CallbackData(buttonCloseList, ownerId, twitchChannel))
+                    setCallbackData(BtnCallbacks.CallbackData(BUTTON_CLOSE_LIST, ownerId, twitchChannel))
                 ),
                 createButton(
                     localizedString(Strings.btn_delete),
-                    setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonDeleteChannel, ownerId, twitchChannel))
+                    setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.BUTTON_DELETE_CHANNEL, ownerId, twitchChannel))
                 )
             )
         )
@@ -152,7 +152,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
     fun initWaitMenu(): InlineKeyboardMarkup =
         InlineKeyboardMarkup.builder().keyboardRow(
             createButtonAsList( // 🔄
-                "\uD83D\uDD04", setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.buttonUpdate, ownerId))
+                "\uD83D\uDD04", setCallbackData(BtnCallbacks.CallbackData(BtnCallbacks.BUTTON_UPDATE, ownerId))
             )
         ).build()
 
@@ -181,14 +181,14 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
                 firstRowButtons.add(
                     createButton(
                         "$channelStatus $channelName",
-                        BtnCallbacks.CallbackData(buttonChannel, ownerId, channelName, isLive)
+                        BtnCallbacks.CallbackData(BUTTON_CHANNEL, ownerId, channelName, isLive)
                     )
                 )
             else
                 secondRowButtons.add(
                     createButton(
                         "$channelStatus $channelName",
-                        BtnCallbacks.CallbackData(buttonChannel, ownerId, channelName, isLive)
+                        BtnCallbacks.CallbackData(BUTTON_CHANNEL, ownerId, channelName, isLive)
                     )
                 )
         }
@@ -197,8 +197,8 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         var btnClips = listOf<InlineKeyboardButton>()
 
         if (liveChannels.isNotEmpty()) {
-            btnShowLive = createButtonAsList(localizedString(Strings.btn_who_is_online), BtnCallbacks.CallbackData(buttonLive, ownerId))
-            btnClips = createButtonAsList(localizedString(Strings.btn_get_all_screens), BtnCallbacks.CallbackData(buttonClips, ownerId))
+            btnShowLive = createButtonAsList(localizedString(Strings.btn_who_is_online), BtnCallbacks.CallbackData(BUTTON_LIVE, ownerId))
+            btnClips = createButtonAsList(localizedString(Strings.btn_get_all_screens), BtnCallbacks.CallbackData(BUTTON_CLIPS, ownerId))
         }
 
         return InlineKeyboardMarkup.builder()
@@ -206,7 +206,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
             .keyboardRow(secondRowButtons)
             .keyboardRow(btnShowLive)
             .keyboardRow(btnClips)
-            .keyboardRow(createButtonAsList(localizedString(Strings.btn_close_list), BtnCallbacks.CallbackData(buttonCloseList, ownerId)))
+            .keyboardRow(createButtonAsList(localizedString(Strings.btn_close_list), BtnCallbacks.CallbackData(BUTTON_CLOSE_LIST, ownerId)))
             .build()
     }
 
