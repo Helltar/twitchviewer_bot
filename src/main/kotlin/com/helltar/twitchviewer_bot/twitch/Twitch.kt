@@ -15,7 +15,7 @@ class Twitch {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    data class StreamsData(
+    data class BroadcastData(
         val login: String,
         val username: String,
         val title: String,
@@ -26,33 +26,28 @@ class Twitch {
         val uptime: String
     )
 
-    fun getOnlineList(userLogins: List<String>): List<StreamsData>? {
+    fun getOnlineList(userLogins: List<String>): List<BroadcastData>? {
+        val broadcasts = arrayListOf<BroadcastData>()
+        val twitchClient = TwitchClientBuilder.builder().withEnableHelix(true).build()
+
         try {
-            val list = arrayListOf<StreamsData>()
+            val streams = twitchClient.helix.getStreams(TWITCH_TOKEN, null, null, 1, null, null, null, userLogins).execute().streams
 
-            TwitchClientBuilder.builder()
-                .withEnableHelix(true).build()
-                // todo: helix.getStreams (limit)
-                .helix.getStreams(TWITCH_TOKEN, null, null, 1, null, null, null, userLogins)
-                .execute().streams.forEach {
+            streams.forEach { stream ->
+                val formatter = DateTimeFormatter.ofPattern("HH:mm")
+                val startedAt = stream.startedAtInstant.atZone(ZoneId.systemDefault()).format(formatter)
+                val thumbnailUrl = stream.getThumbnailUrl(1920, 1080)
+                val uptime = LocalTime.MIN.plus(stream.uptime).format(formatter)
 
-                    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-                    val startedAt = it.startedAtInstant.atZone(ZoneId.systemDefault()).format(formatter)
-                    val thumbnailUrl = it.getThumbnailUrl(1920, 1080)
-                    val uptime = LocalTime.MIN.plus(it.uptime).format(formatter)
-
-                    list.add(
-                        StreamsData(
-                            it.userLogin,
-                            Utils.escapeHtml(it.userName), Utils.escapeHtml(it.title),
-                            it.viewerCount, it.gameName,
-                            thumbnailUrl, startedAt, uptime
-                        )
+                broadcasts.add(
+                    BroadcastData(
+                        stream.userLogin, Utils.escapeHtml(stream.userName), Utils.escapeHtml(stream.title),
+                        stream.viewerCount, stream.gameName, thumbnailUrl, startedAt, uptime
                     )
-                }
+                )
+            }
 
-            return list
-
+            return broadcasts
         } catch (e: Exception) {
             log.error(e.message)
             return null
@@ -62,12 +57,12 @@ class Twitch {
     fun getShortClip(channelName: String): String {
         val tempName = genRandomName(channelName)
         val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
-        val ytDlpOutFilename = genYtDlpTempFilename(tempName)
+        val streamlinkOutFilename = "streamlink_$tempName.mp4"
 
-        runStreamlink(35, channelName, ytDlpOutFilename)
-        runProcess("timeout -k 5 -s SIGINT 60 ffmpeg -i $ytDlpOutFilename -c copy -loglevel quiet $ffmpegOutFilename", DIR_TEMP)
+        runStreamlink(35, channelName, streamlinkOutFilename)
+        runProcess("timeout -k 5 -s SIGINT 60 ffmpeg -i $streamlinkOutFilename -c copy -loglevel quiet $ffmpegOutFilename", DIR_TEMP)
 
-        File(DIR_TEMP + ytDlpOutFilename).delete()
+        File(DIR_TEMP + streamlinkOutFilename).delete()
 
         return DIR_TEMP + ffmpegOutFilename
     }
@@ -75,13 +70,13 @@ class Twitch {
     fun getScreenshot(channelName: String): String {
         val tempName = genRandomName(channelName)
         val ffmpegOutFilename = "ffmpeg_$tempName.png"
-        val ytDlpOutFilename = genYtDlpTempFilename(tempName)
+        val streamlinkOutFilename = "streamlink_$tempName.mp4"
 
         // todo: streamlink. screenshot timeout
-        runStreamlink(25, channelName, ytDlpOutFilename)
-        runProcess("timeout -k 5 15 ffmpeg -ss 00:00:05 -i $ytDlpOutFilename -vframes 1 $ffmpegOutFilename", DIR_TEMP)
+        runStreamlink(10, channelName, streamlinkOutFilename)
+        runProcess("timeout -k 5 15 ffmpeg -ss 00:00:05 -i $streamlinkOutFilename -vframes 1 $ffmpegOutFilename", DIR_TEMP)
 
-        File(DIR_TEMP + ytDlpOutFilename).delete()
+        File(DIR_TEMP + streamlinkOutFilename).delete()
 
         return DIR_TEMP + ffmpegOutFilename
     }
@@ -91,9 +86,6 @@ class Twitch {
             "timeout -k 10 -s SIGINT $timeout streamlink --twitch-disable-ads https://www.twitch.tv/$channelName 720p60,best -o $outFilename",
             DIR_TEMP
         )
-
-    private fun genYtDlpTempFilename(name: String) =
-        "yt_dlp_$name.mp4"
 
     private fun genRandomName(name: String) =
         "${name}_${Utils.randomUUID()}"
