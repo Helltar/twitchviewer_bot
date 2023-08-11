@@ -30,7 +30,7 @@ class Twitch {
         val broadcasts = arrayListOf<BroadcastData>()
         val twitchClient = TwitchClientBuilder.builder().withEnableHelix(true).build()
 
-        try {
+        return try {
             val streams = twitchClient.helix.getStreams(TWITCH_TOKEN, null, null, 1, null, null, null, userLogins).execute().streams
 
             streams.forEach { stream ->
@@ -47,10 +47,10 @@ class Twitch {
                 )
             }
 
-            return broadcasts
+            broadcasts
         } catch (e: Exception) {
             log.error(e.message)
-            return null
+            null
         }
     }
 
