@@ -10,15 +10,15 @@ import com.helltar.twitchviewer_bot.BotConfig.BOT_USERNAME
 import com.helltar.twitchviewer_bot.BotConfig.CREATOR_ID
 import com.helltar.twitchviewer_bot.TwitchViewerBot.Companion.addRequest
 import com.helltar.twitchviewer_bot.commands.BotCommand
-import com.helltar.twitchviewer_bot.commands.Commands.commandAbout
-import com.helltar.twitchviewer_bot.commands.Commands.commandAdd
-import com.helltar.twitchviewer_bot.commands.Commands.commandClip
-import com.helltar.twitchviewer_bot.commands.Commands.commandClipCompress
-import com.helltar.twitchviewer_bot.commands.Commands.commandList
-import com.helltar.twitchviewer_bot.commands.Commands.commandLive
-import com.helltar.twitchviewer_bot.commands.Commands.commandScreenshot
-import com.helltar.twitchviewer_bot.commands.Commands.commandStart
-import com.helltar.twitchviewer_bot.commands.Commands.commandUptime
+import com.helltar.twitchviewer_bot.commands.Commands.COMMAND_ABOUT
+import com.helltar.twitchviewer_bot.commands.Commands.COMMAND_ADD
+import com.helltar.twitchviewer_bot.commands.Commands.COMMAND_CLIP
+import com.helltar.twitchviewer_bot.commands.Commands.COMMAND_CLIP_COMPRESS
+import com.helltar.twitchviewer_bot.commands.Commands.COMMAND_LIST
+import com.helltar.twitchviewer_bot.commands.Commands.COMMAND_LIVE
+import com.helltar.twitchviewer_bot.commands.Commands.COMMAND_SCREENSHOT
+import com.helltar.twitchviewer_bot.commands.Commands.COMMAND_START
+import com.helltar.twitchviewer_bot.commands.Commands.COMMAND_UPTIME
 import com.helltar.twitchviewer_bot.commands.commands.*
 import com.helltar.twitchviewer_bot.db.Databases
 import com.helltar.twitchviewer_bot.keyboard.KeyboardBundle
@@ -35,16 +35,16 @@ class TwitchViewerBotHandler : BotHandler(BOT_TOKEN) {
 
     init {
         commands.run {
-            register(SimpleCommand("/add") { runCommand(AddCommand(it, it.arguments().toList()), commandAdd) })
-            register(SimpleCommand("/clip") { runCommand(ClipCommand(it, it.arguments().toList()), commandClip) })
-            register(SimpleCommand("/live") { runCommand(LiveCommand(it, it.arguments().toList()), commandLive) })
-            register(SimpleCommand("/screen") { runCommand(ScreenCommand(it, it.arguments().toList()), commandScreenshot) })
+            register(SimpleCommand("/add") { runCommand(AddCommand(it, it.arguments().toList()), COMMAND_ADD) })
+            register(SimpleCommand("/clip") { runCommand(ClipCommand(it, it.arguments().toList()), COMMAND_CLIP) })
+            register(SimpleCommand("/live") { runCommand(LiveCommand(it, it.arguments().toList()), COMMAND_LIVE) })
+            register(SimpleCommand("/screen") { runCommand(ScreenCommand(it, it.arguments().toList()), COMMAND_SCREENSHOT) })
 
-            register(SimpleCommand("/about") { runCommand(AboutCommand(it), commandAbout) })
-            register(SimpleCommand("/help") { runCommand(HelpCommand(it), commandStart) })
-            register(SimpleCommand("/list") { runCommand(ListCommand(it), commandList) })
-            register(SimpleCommand("/start") { runCommand(StartCommand(it), commandStart) })
-            register(SimpleCommand("/uptime") { runCommand(UptimeCommand(it), commandUptime) })
+            register(SimpleCommand("/about") { runCommand(AboutCommand(it), COMMAND_ABOUT) })
+            register(SimpleCommand("/help") { runCommand(HelpCommand(it), COMMAND_START) })
+            register(SimpleCommand("/list") { runCommand(ListCommand(it), COMMAND_LIST) })
+            register(SimpleCommand("/start") { runCommand(StartCommand(it), COMMAND_START) })
+            register(SimpleCommand("/uptime") { runCommand(UptimeCommand(it), COMMAND_UPTIME) })
 
             registerBundle(KeyboardBundle())
         }
@@ -54,7 +54,7 @@ class TwitchViewerBotHandler : BotHandler(BOT_TOKEN) {
         if (update.hasMessage() && update.message.isReply) {
             if (update.message.replyToMessage.from.id == this.me.id) {
                 val ctx = MessageContext(this, update, "")
-                runCommand(ClipCompressCommand(ctx), commandClipCompress)
+                runCommand(ClipCompressCommand(ctx), COMMAND_CLIP_COMPRESS)
             }
         }
 

@@ -6,17 +6,14 @@ import com.annimon.tgbotsmodule.beans.Config
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewer_bot.BotConfig.DIR_DB
 import com.helltar.twitchviewer_bot.db.Databases
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import java.io.File
 
 class TwitchViewerBot : BotModule {
 
     companion object {
-        private val requestList = hashMapOf<String, Job>()
+        private val commandRequestsList = hashMapOf<String, Job>()
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -33,13 +30,16 @@ class TwitchViewerBot : BotModule {
         }
 
         fun addRequest(requestKey: String, ctx: MessageContext, func: () -> Unit) {
-            if (requestList.containsKey(requestKey))
-                if (requestList[requestKey]?.isCompleted == false) {
+            if (commandRequestsList.containsKey(requestKey))
+                if (commandRequestsList[requestKey]?.isCompleted == false) {
                     ctx.replyToMessage().setText(localizedString(Strings.many_request, ctx.user().id)).callAsync(ctx.sender)
                     return
-                }
+                } // todo: remove completed
 
-            requestList[requestKey] = CoroutineScope(Dispatchers.IO).launch { func() }
+            commandRequestsList[requestKey] = CoroutineScope(Dispatchers.IO)
+                .launch(CoroutineName(requestKey)) {
+                    func()
+                }
         }
     }
 
