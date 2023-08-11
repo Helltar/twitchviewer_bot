@@ -54,10 +54,10 @@
     <string name="btn_close_list">🚪 Close</string>
     <string name="btn_delete">❌ Delete</string>
     <string name="btn_exit">🚪 Quit</string>
-    <string name="btn_get_all_screens">📹 Get Clips from all</string>
+    <string name="btn_get_all_screens">📹 Get clips from everyone</string>
     <string name="btn_screenshot">📸 Screenshot</string>
     <string name="btn_short_clip">📹 Short clip</string>
-    <string name="btn_who_is_online">👀 Who streams what</string>
+    <string name="btn_who_is_online">👀 Show Live List</string>
     <string name="title_channel_is_selected">Channel %s is selected, what's next?:</string>
     <string name="title_choose_channel_or_action">Choose a channel or action:</string>
 </resources>
