@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap
 class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipCompressCommand(ctx, args) {
 
     private companion object {
-        val requestsList = ConcurrentHashMap<String, Job>()
+        val requestsList = hashMapOf<String, Job>()
     }
 
     override fun run() {
@@ -83,7 +83,7 @@ class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipComp
                 replyToMessage(localizedString(Strings.many_request))
                 return
             }
-        }
+        } // todo: remove completed
 
         requestsList[requestKey] = CoroutineScope(Dispatchers.IO)
             .launch(CoroutineName(requestKey)) {
