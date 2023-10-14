@@ -6,37 +6,39 @@ import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.utils.Utils
 import java.io.File
 
-class ScreenCommand(ctx: MessageContext, args: List<String> = listOf()) : TwitchCommand(ctx, args) {
+class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     override fun run() {
         if (args.isEmpty())
             replyToMessage(localizedString(Strings.screenshot_command_info))
         else
-            getScreenshot(args[0])
+            getScreenshot(args.first())
     }
 
     fun getScreenshot(channelName: String) {
-        if (checkIsChannelNameValid(channelName)) {
+        if (isChannelNameValid(channelName)) {
             val streamData = twitch.getOnlineList(listOf(channelName))
 
             if (!streamData.isNullOrEmpty())
-                sendScreenshot(channelName, streamData[0].username, streamData[0].gameName)
+                sendScreenshot(channelName, streamData.first().username, streamData.first().gameName)
             else
                 replyToMessage(localizedString(Strings.stream_offline))
         }
     }
 
-    private fun sendScreenshot(channelName: String, username: String, gameName: String) {
-        val tempMessageId = replyToMessage(String.format(localizedString(Strings.wait_get_screenshot), channelName))
-        val filename = twitch.getScreenshot(channelName)
+    private fun sendScreenshot(channel: String, username: String, gameName: String) {
+        val tempMessageId = replyToMessage(String.format(localizedString(Strings.wait_get_screenshot), channel))
+        val filename = twitch.getScreenshot(channel)
+
         deleteMessage(tempMessageId)
 
         if (File(filename).exists()) {
-            val url = "<a href=\"https://www.twitch.tv/$channelName\">Twitch</a>"
+            val url = "<a href=\"https://www.twitch.tv/$channel\">Twitch</a>"
+            val game = if (gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(gameName)}" else ""
 
             replyToMessageWithPhoto(
                 File(filename),
-                "#$username${if (gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(gameName)}" else ""} - $url"
+                "#$username$game - $url"
             )
 
             File(filename).delete()

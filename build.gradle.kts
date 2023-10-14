@@ -16,13 +16,16 @@ dependencies {
     implementation ("com.annimon:tgbots-module:6.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3")
     implementation("com.github.twitch4j:twitch4j:1.14.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("org.slf4j:slf4j-api:2.0.6")
     implementation("ch.qos.logback:logback-classic:1.4.6")
 
-    implementation("org.xerial:sqlite-jdbc:3.40.1.0")
-    implementation("org.jetbrains.exposed:exposed-core:0.40.1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.40.1")
+    implementation("com.h2database:h2:2.1.214")
+    implementation("org.jetbrains.exposed:exposed-java-time:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-core:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
 }
 
 application {

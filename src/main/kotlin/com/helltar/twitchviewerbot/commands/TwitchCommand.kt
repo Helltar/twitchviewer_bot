@@ -2,25 +2,23 @@ package com.helltar.twitchviewerbot.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.db.Databases.dbUserChannels
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannels
 import com.helltar.twitchviewerbot.twitch.Twitch
 
-open class TwitchCommand(ctx: MessageContext, args: List<String> = listOf()) : BotCommand(ctx, args) {
+abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
 
     protected val twitch = Twitch()
-    protected var isBot = ctx.user().isBot
 
-    override fun run() {
-        replyToMessage("Hi, <b>Anonymous</b> \uD83C\uDF1A") // 🌚
-    }
+    protected fun getUserChannelsList(userId: Long = this.userId) =
+        userChannels.getUserChannelsList(userId)
 
-    fun getUserChannelsList(userId: Long = this.userId) =
-        dbUserChannels.getList(userId)
+    protected fun isUserListEmpty(userId: Long = this.userId) =
+        userChannels.isUserListEmpty(userId)
 
-    protected fun isUserListNotEmpty() =
-        dbUserChannels.isNotEmpty(userId)
+    protected fun isUserListNotEmpty(userId: Long = this.userId) =
+        userChannels.isUserListNotEmpty(userId)
 
-    protected fun checkIsChannelNameValid(channelName: String = if (args.isNotEmpty()) args[0] else ""): Boolean {
+    protected fun isChannelNameValid(channelName: String): Boolean {
         if (channelName.length !in 2..25) {
             replyToMessage(localizedString(Strings.invalid_channel_name_length))
             return false

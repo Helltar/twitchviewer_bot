@@ -3,28 +3,28 @@ package com.helltar.twitchviewerbot.commands.commands
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
-import com.helltar.twitchviewerbot.db.Databases.dbUserChannels
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannels
 
-class AddCommand(ctx: MessageContext,  args: List<String> = listOf()) : TwitchCommand(ctx, args) {
+class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
-    override fun run() {
-        if (!isBot)
-            add(args.ifEmpty {
-                replyToMessage(localizedString(Strings.add_command_info))
-                return
-            })
-        else
-            super.run()
+    private companion object {
+        const val MAX_CHANNELS_SIZE = 5
     }
 
-    private fun add(args: List<String>) {
-        if (!checkIsChannelNameValid())
+    override fun run() {
+        if (args.isNotEmpty())
+            add(args.first())
+        else
+            replyToMessage(localizedString(Strings.add_command_info))
+    }
+
+    private fun add(channel: String) {
+        if (!isChannelNameValid(channel))
             return
 
-        val channel = args[0]
-        val listSize = dbUserChannels.getSize(userId)
+        val userChannelsListSize = getUserChannelsList().size
 
-        if (listSize <= 4) {
+        if (userChannelsListSize < MAX_CHANNELS_SIZE) {
             if (addChannelToUserList(channel))
                 replyToMessage(String.format(localizedString(Strings.channel_added_to_list), channel))
             else
@@ -34,5 +34,8 @@ class AddCommand(ctx: MessageContext,  args: List<String> = listOf()) : TwitchCo
     }
 
     private fun addChannelToUserList(channel: String) =
-        dbUserChannels.add(userId, channel.lowercase())
+        if (userChannels.isChannelNotExists(userId, channel))
+            userChannels.add(userId, channel.lowercase())
+        else
+            false
 }

@@ -5,9 +5,9 @@ import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.utils.Utils
 
-class LiveCommand(ctx: MessageContext, args: List<String> = listOf()) : TwitchCommand(ctx, args) {
+class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
-    private val thumbnailUrls = hashMapOf<String, String>()
+    private val thumbnailsUrls = hashMapOf<String, String>()
 
     override fun run() {
         if (args.isEmpty())
@@ -15,21 +15,25 @@ class LiveCommand(ctx: MessageContext, args: List<String> = listOf()) : TwitchCo
                 sendOnlineList(getUserChannelsList())
             else
                 replyToMessage(localizedString(Strings.live_command_info))
-        else
-            sendOnlineList(if (checkIsChannelNameValid()) listOf(args[0]) else return)
+        else {
+            val channel = args.first()
+
+            if (isChannelNameValid(channel))
+                sendOnlineList(channel)
+        }
     }
 
-    fun sendOnlineList(userLogins: List<String>) {
-        val isNotOneChannel = userLogins.size > 1
+    fun sendOnlineList(channels: List<String>) {
+        val isNotOneChannel = channels.size > 1
 
         val waitText =
             if (isNotOneChannel)
                 localizedString(Strings.wait_check_online)
             else
-                String.format(localizedString(Strings.wait_check_user_online), userLogins[0])
+                String.format(localizedString(Strings.wait_check_user_online), channels.first())
 
         val waitMessageId = replyToMessage(waitText)
-        var liveList = getOnlineList(userLogins)
+        var liveList = getOnlineList(channels)
         deleteMessage(waitMessageId)
 
         var isStreamsAvailable = true
@@ -47,33 +51,32 @@ class LiveCommand(ctx: MessageContext, args: List<String> = listOf()) : TwitchCo
         val liveListMessageId = replyToMessage(liveList)
 
         if (isStreamsAvailable) {
-            thumbnailUrls.forEach {
-                replyToMessageWithPhoto(it.value + "?t=${System.currentTimeMillis()}", it.key, liveListMessageId)
-            }
-
-            thumbnailUrls.clear()
+            thumbnailsUrls.forEach { replyToMessageWithPhoto(it.value + "?t=${System.currentTimeMillis()}", it.key, liveListMessageId) }
+            thumbnailsUrls.clear()
         }
     }
+
+    private fun sendOnlineList(channel: String) =
+        sendOnlineList(listOf(channel))
 
     private fun getOnlineList(userLogins: List<String>): String {
         val list =
             twitch.getOnlineList(userLogins)
                 ?: return localizedString(Strings.twitch_exception)
 
-        var result = ""
+        val result =
+            list.joinToString("\n\n") { streamData ->
+                streamData.run {
+                    val htmlTitle = "<b><a href=\"https://www.twitch.tv/$login\">$username</a></b> - $title\n\n"
+                    val viewers = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
+                    val game = if (gameName.isNotEmpty()) "\uD83C\uDFB2 <b>${Utils.escapeHtml(gameName)}</b>\n" else "" // 🎲
+                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, uptime)
 
-        list.forEach { streamData ->
-            streamData.run {
-                val htmlTitle = "<b><a href=\"https://www.twitch.tv/$login\">$username</a></b> - $title\n\n"
-                val viewers = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
-                val game = if (gameName.isNotEmpty()) "\uD83C\uDFB2 <b>${Utils.escapeHtml(gameName)}</b>\n" else "" // 🎲
-                val time = String.format(localizedString(Strings.stream_start_time), startedAt, uptime) + "\n\n"
+                    thumbnailsUrls["#$username - $title"] = thumbnailUrl
 
-                thumbnailUrls["#$username - $title"] = thumbnailUrl
-
-                result += htmlTitle + viewers + game + time
+                    htmlTitle + viewers + game + time
+                }
             }
-        }
 
         return result
     }

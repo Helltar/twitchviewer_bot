@@ -13,7 +13,8 @@ object Utils {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    fun randomUUID() = UUID.randomUUID().toString()
+    fun randomUUID() =
+        UUID.randomUUID().toString()
 
     fun runProcess(command: String, workDir: String) {
         try {
@@ -28,14 +29,6 @@ object Utils {
             log.error(e.message, e)
         }
     }
-
-    fun getLineFromFile(filename: String): String =
-        try {
-            BufferedReader(FileReader(filename)).readLine()
-        } catch (e: Exception) {
-            log.error(e.message, e)
-            ""
-        }
 
     fun getFirstRegexGroup(text: String, regex: String): String {
         val m = Pattern.compile(regex).matcher(text)

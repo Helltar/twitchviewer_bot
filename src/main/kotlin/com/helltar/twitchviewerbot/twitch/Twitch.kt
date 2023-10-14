@@ -2,7 +2,7 @@ package com.helltar.twitchviewerbot.twitch
 
 import com.github.twitch4j.TwitchClientBuilder
 import com.helltar.twitchviewerbot.BotConfig.DIR_TEMP
-import com.helltar.twitchviewerbot.BotConfig.TWITCH_TOKEN
+import com.helltar.twitchviewerbot.BotConfig.twitchToken
 import com.helltar.twitchviewerbot.utils.Utils
 import com.helltar.twitchviewerbot.utils.Utils.runProcess
 import org.slf4j.LoggerFactory
@@ -26,12 +26,12 @@ class Twitch {
         val uptime: String
     )
 
-    fun getOnlineList(userLogins: List<String>): List<BroadcastData>? {
+    fun getOnlineList(channels: List<String>): List<BroadcastData>? {
         val broadcasts = arrayListOf<BroadcastData>()
         val twitchClient = TwitchClientBuilder.builder().withEnableHelix(true).build()
 
         return try {
-            val streams = twitchClient.helix.getStreams(TWITCH_TOKEN, null, null, 1, null, null, null, userLogins).execute().streams
+            val streams = twitchClient.helix.getStreams(twitchToken, null, null, 1, null, null, null, channels).execute().streams
 
             streams.forEach { stream ->
                 val formatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -62,9 +62,9 @@ class Twitch {
         runStreamlink(35, channelName, streamlinkOutFilename)
         runProcess("timeout -k 5 -s SIGINT 60 ffmpeg -i $streamlinkOutFilename -c copy -loglevel quiet $ffmpegOutFilename", DIR_TEMP)
 
-        File(DIR_TEMP + streamlinkOutFilename).delete()
+        File("$DIR_TEMP/$streamlinkOutFilename").delete()
 
-        return DIR_TEMP + ffmpegOutFilename
+        return "$DIR_TEMP/$ffmpegOutFilename"
     }
 
     fun getScreenshot(channelName: String): String {
@@ -76,9 +76,9 @@ class Twitch {
         runStreamlink(10, channelName, streamlinkOutFilename)
         runProcess("timeout -k 5 15 ffmpeg -ss 00:00:05 -i $streamlinkOutFilename -vframes 1 $ffmpegOutFilename", DIR_TEMP)
 
-        File(DIR_TEMP + streamlinkOutFilename).delete()
+        File("$DIR_TEMP/$streamlinkOutFilename").delete()
 
-        return DIR_TEMP + ffmpegOutFilename
+        return "$DIR_TEMP/$ffmpegOutFilename"
     }
 
     private fun runStreamlink(timeout: Int, channelName: String, outFilename: String) =

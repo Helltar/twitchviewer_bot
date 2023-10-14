@@ -42,10 +42,8 @@ class KeyboardBundle : CommandBundle<For> {
         val user = ctx.user()
 
         if (user.id != ownerId) {
-            ctx.answer(
-                String.format(localizedString(Strings.dont_touch_is_not_your_list, user.id), user.firstName)
-            ).callAsync(ctx.sender)
-
+            val text = String.format(localizedString(Strings.dont_touch_is_not_your_list, user.id), user.firstName)
+            ctx.answer(text).callAsync(ctx.sender)
             return
         }
 

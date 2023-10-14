@@ -10,12 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 class ListCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     override fun run() {
-        if (isBot) {
-            super.run()
-            return
-        }
-
-        if (!isUserListNotEmpty()) {
+        if (isUserListEmpty()) {
             replyToMessage(localizedString(Strings.list_is_empty))
             return
         }

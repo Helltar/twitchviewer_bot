@@ -10,9 +10,11 @@ import java.io.File
 import java.io.Serializable
 import java.net.URL
 
-abstract class BotCommand(val ctx: MessageContext, val args: List<String> = listOf()) {
+abstract class BotCommand(val ctx: MessageContext) {
 
     protected val userId = ctx.user().id
+    protected val args: Array<String> = ctx.arguments()
+    val argsText: String = ctx.argumentsAsString()
 
     abstract fun run()
 
@@ -20,7 +22,11 @@ abstract class BotCommand(val ctx: MessageContext, val args: List<String> = list
         return localizedString(key, userId)
     }
 
-    protected fun replyToMessage(text: String, enableWebPagePreview: Boolean = false, replyMarkup: InlineKeyboardMarkup? = null): Int =
+    protected fun replyToMessage(
+        text: String,
+        enableWebPagePreview: Boolean = false,
+        replyMarkup: InlineKeyboardMarkup? = null
+    ): Int =
         ctx.replyToMessage(text)
             .setReplyMarkup(replyMarkup)
             .setParseMode(ParseMode.HTML)

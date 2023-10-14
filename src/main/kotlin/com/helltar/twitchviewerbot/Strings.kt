@@ -2,8 +2,10 @@ package com.helltar.twitchviewerbot
 
 import com.helltar.twitchviewerbot.BotConfig.DIR_LOCALE
 import com.helltar.twitchviewerbot.BotConfig.EXT_XML
-import com.helltar.twitchviewerbot.db.Databases.dbUsers
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.users
 import com.helltar.twitchviewerbot.utils.Utils.getFirstRegexGroup
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileReader
@@ -14,7 +16,6 @@ object Strings {
     const val channel_added_to_list = "channel_added_to_list"
     const val channel_already_exists_in_list = "channel_already_exists_in_list"
     const val clip_command_info = "clip_command_info"
-    const val clip_compress_fail = "clip_compress_fail"
     const val dont_touch_is_not_your_list = "dont_touch_is_not_your_list"
     const val empty_online_list = "empty_online_list"
     const val get_clip_fail = "get_clip_fail"
@@ -34,7 +35,6 @@ object Strings {
     const val wait_check_online = "wait_check_online"
     const val wait_check_online_menu = "wait_check_online_menu"
     const val wait_check_user_online = "wait_check_user_online"
-    const val wait_clip_compress = "wait_clip_compress"
     const val wait_get_screenshot = "wait_get_screenshot"
 
     const val btn_back = "btn_back"
@@ -51,11 +51,11 @@ object Strings {
 
 fun localizedString(key: String, userId: Long): String {
     return try {
-        val languageCode = dbUsers.getLanguageCode(userId)
-        var filename = DIR_LOCALE + languageCode + EXT_XML
+        val languageCode = users.getLanguageCode(userId)
+        var filename = "$DIR_LOCALE/$languageCode$EXT_XML"
 
         if (!File(filename).exists())
-            filename = DIR_LOCALE + "en" + EXT_XML
+            filename = "$DIR_LOCALE/en$EXT_XML"
 
         val regex = """<string name="$key">(\X*?)<\/string>"""
         getFirstRegexGroup(FileReader(filename).readText(), regex).trimIndent().ifEmpty { key }

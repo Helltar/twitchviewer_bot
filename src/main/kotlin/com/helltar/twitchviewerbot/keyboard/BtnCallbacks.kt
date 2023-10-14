@@ -20,7 +20,6 @@ object BtnCallbacks {
         val isChannelLive: Int = 0
     )
 
-    fun getButtonNameFromCbData(data: String) = parseCbData(data)[0]
     fun getOwnerIdFromCbData(data: String) = parseCbData(data)[1].toLongOrNull()
     fun getChannelNameFromCbData(data: String) = parseCbData(data)[2]
     fun getChannelStatusFromCbData(data: String) = (parseCbData(data)[3].toIntOrNull() ?: 0) != 0
