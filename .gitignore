@@ -2,12 +2,12 @@
 .idea/
 
 build/
-db/
+
+database/
 deploy/
 temp/
 test/
+logs/
 
 config/*
 !config/commands.txt
-
-logback.log
