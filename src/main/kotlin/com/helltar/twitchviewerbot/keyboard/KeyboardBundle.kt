@@ -1,4 +1,4 @@
-package com.helltar.twitchviewer_bot.keyboard
+package com.helltar.twitchviewerbot.keyboard
 
 import com.annimon.tgbotsmodule.commands.CommandBundle
 import com.annimon.tgbotsmodule.commands.CommandRegistry
@@ -6,19 +6,19 @@ import com.annimon.tgbotsmodule.commands.SimpleCallbackQueryCommand
 import com.annimon.tgbotsmodule.commands.authority.For
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewer_bot.Strings
-import com.helltar.twitchviewer_bot.TwitchViewerBot.Companion.addRequest
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_BACK
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_CHANNEL
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_CLIP
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_CLIPS
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_CLOSE_LIST
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_DELETE_CHANNEL
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_LIVE
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_SCREENSHOT
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_SHOW
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.getOwnerIdFromCbData
-import com.helltar.twitchviewer_bot.localizedString
+import com.helltar.twitchviewerbot.Strings
+import com.helltar.twitchviewerbot.TwitchViewerBot.Companion.addRequest
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_BACK
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CHANNEL
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLIP
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLIPS
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLOSE_LIST
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_DELETE_CHANNEL
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_LIVE
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_SCREENSHOT
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_SHOW
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.getOwnerIdFromCbData
+import com.helltar.twitchviewerbot.localizedString
 
 class KeyboardBundle : CommandBundle<For> {
 

@@ -1,9 +1,9 @@
-package com.helltar.twitchviewer_bot.commands
+package com.helltar.twitchviewerbot.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewer_bot.Strings
-import com.helltar.twitchviewer_bot.db.Databases.dbUserChannels
-import com.helltar.twitchviewer_bot.twitch.Twitch
+import com.helltar.twitchviewerbot.Strings
+import com.helltar.twitchviewerbot.db.Databases.dbUserChannels
+import com.helltar.twitchviewerbot.twitch.Twitch
 
 open class TwitchCommand(ctx: MessageContext, args: List<String> = listOf()) : BotCommand(ctx, args) {
 

@@ -1,11 +1,11 @@
-package com.helltar.twitchviewer_bot
+package com.helltar.twitchviewerbot
 
 import com.annimon.tgbotsmodule.BotModule
 import com.annimon.tgbotsmodule.Runner
 import com.annimon.tgbotsmodule.beans.Config
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewer_bot.BotConfig.DIR_DB
-import com.helltar.twitchviewer_bot.db.Databases
+import com.helltar.twitchviewerbot.BotConfig.DIR_DB
+import com.helltar.twitchviewerbot.db.Databases
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import java.io.File

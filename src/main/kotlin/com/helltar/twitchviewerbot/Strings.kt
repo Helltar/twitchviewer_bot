@@ -1,9 +1,9 @@
-package com.helltar.twitchviewer_bot
+package com.helltar.twitchviewerbot
 
-import com.helltar.twitchviewer_bot.BotConfig.DIR_LOCALE
-import com.helltar.twitchviewer_bot.BotConfig.EXT_XML
-import com.helltar.twitchviewer_bot.db.Databases.dbUsers
-import com.helltar.twitchviewer_bot.utils.Utils.getFirstRegexGroup
+import com.helltar.twitchviewerbot.BotConfig.DIR_LOCALE
+import com.helltar.twitchviewerbot.BotConfig.EXT_XML
+import com.helltar.twitchviewerbot.db.Databases.dbUsers
+import com.helltar.twitchviewerbot.utils.Utils.getFirstRegexGroup
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileReader

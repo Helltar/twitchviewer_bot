@@ -1,12 +1,12 @@
-package com.helltar.twitchviewer_bot.commands.commands
+package com.helltar.twitchviewerbot.commands.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewer_bot.Strings
-import com.helltar.twitchviewer_bot.twitch.Twitch
-import com.helltar.twitchviewer_bot.utils.Utils
+import com.helltar.twitchviewerbot.BotConfig
+import com.helltar.twitchviewerbot.Strings
+import com.helltar.twitchviewerbot.twitch.Twitch
+import com.helltar.twitchviewerbot.utils.Utils
 import kotlinx.coroutines.*
 import java.io.File
-import java.util.concurrent.ConcurrentHashMap
 
 class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipCompressCommand(ctx, args) {
 
@@ -15,16 +15,20 @@ class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipComp
     }
 
     override fun run() {
-        if (args.isEmpty())
+        if (args.isEmpty()) {
             if (isUserListNotEmpty())
                 getClipsFromAll(getUserChannelsList())
             else
                 replyToMessage(localizedString(Strings.clip_command_info))
-        else
-            if (checkIsChannelNameValid()) {
-                val compress = args.size > 1 && args[1].startsWith(".")
-                getClipsFromAll(listOf(args[0]), compress)
-            }
+        } else {
+//            if (ctx.argumentsAsString().startsWith("youtu.be"))
+//                sendYoutubeClip(ctx.argument(0))
+//            else
+                if (checkIsChannelNameValid()) {
+                    val compress = args.size > 1 && args[1].startsWith(".")
+                    getClipsFromAll(listOf(args[0]), compress)
+                }
+        }
     }
 
     fun getClipsFromAll(userLogins: List<String>, compress: Boolean = false) {
@@ -90,4 +94,41 @@ class ClipCommand(ctx: MessageContext, args: List<String> = listOf()) : ClipComp
                 func()
             }
     }
+
+    private fun sendYoutubeClip(url: String) {
+        val requestKey = "$userId@$url"
+
+        addRequest(requestKey) {
+            val tempMessage = String.format(localizedString(Strings.start_get_clip), url)
+            val tempMessageId = replyToMessage(tempMessage)
+            val clipFilename = getYoutubeClip(url)
+
+            if (!File(clipFilename).exists()) {
+                replyToMessage(localizedString(Strings.get_clip_fail))
+                deleteMessage(tempMessageId)
+                return@addRequest
+            }
+
+            replyToMessageWithVideo(clipFilename, url, 0, 360, 640)
+
+            File(clipFilename).delete()
+
+            deleteMessage(tempMessageId)
+        }
+    }
+
+    private fun getYoutubeClip(url: String): String {
+        val tempName = Utils.randomUUID()
+        val ytdlpOutFilename = "ytdlp_$tempName.mp4"
+
+        runYtDlp(10, url, ytdlpOutFilename)
+
+        return BotConfig.DIR_TEMP + ytdlpOutFilename
+    }
+
+    private fun runYtDlp(timeout: Int, url: String, outFilename: String) =
+        Utils.runProcess(
+            "timeout -k 10 -s SIGINT $timeout yt-dlp -f bv -S res:360 $url -o $outFilename",
+            BotConfig.DIR_TEMP
+        )
 }

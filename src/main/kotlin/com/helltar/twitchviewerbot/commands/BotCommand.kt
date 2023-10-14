@@ -1,8 +1,8 @@
-package com.helltar.twitchviewer_bot.commands
+package com.helltar.twitchviewerbot.commands
 
 import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewer_bot.localizedString
+import com.helltar.twitchviewerbot.localizedString
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup

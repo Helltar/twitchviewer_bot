@@ -1,10 +1,10 @@
-package com.helltar.twitchviewer_bot.commands.commands
+package com.helltar.twitchviewerbot.commands.commands
 
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewer_bot.Strings
-import com.helltar.twitchviewer_bot.commands.TwitchCommand
-import com.helltar.twitchviewer_bot.keyboard.InlineKeyboard
+import com.helltar.twitchviewerbot.Strings
+import com.helltar.twitchviewerbot.commands.TwitchCommand
+import com.helltar.twitchviewerbot.keyboard.InlineKeyboard
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 
 class ListCommand(ctx: MessageContext) : TwitchCommand(ctx) {

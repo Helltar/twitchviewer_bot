@@ -1,6 +1,6 @@
-package com.helltar.twitchviewer_bot
+package com.helltar.twitchviewerbot
 
-import com.helltar.twitchviewer_bot.utils.Utils.getLineFromFile
+import com.helltar.twitchviewerbot.utils.Utils.getLineFromFile
 import java.lang.RuntimeException
 
 object BotConfig {

@@ -1,4 +1,4 @@
-package com.helltar.twitchviewer_bot.keyboard
+package com.helltar.twitchviewerbot.keyboard
 
 object BtnCallbacks {
 

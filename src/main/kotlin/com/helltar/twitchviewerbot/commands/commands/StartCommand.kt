@@ -1,8 +1,8 @@
-package com.helltar.twitchviewer_bot.commands.commands
+package com.helltar.twitchviewerbot.commands.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewer_bot.Strings
-import com.helltar.twitchviewer_bot.commands.BotCommand
+import com.helltar.twitchviewerbot.Strings
+import com.helltar.twitchviewerbot.commands.BotCommand
 
 
 class StartCommand(ctx: MessageContext) : BotCommand(ctx) {

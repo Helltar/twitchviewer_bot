@@ -1,4 +1,4 @@
-package com.helltar.twitchviewer_bot.utils
+package com.helltar.twitchviewerbot.utils
 
 import org.slf4j.LoggerFactory
 import java.io.BufferedReader

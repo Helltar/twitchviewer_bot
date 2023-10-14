@@ -1,10 +1,10 @@
-package com.helltar.twitchviewer_bot.twitch
+package com.helltar.twitchviewerbot.twitch
 
 import com.github.twitch4j.TwitchClientBuilder
-import com.helltar.twitchviewer_bot.BotConfig.DIR_TEMP
-import com.helltar.twitchviewer_bot.BotConfig.TWITCH_TOKEN
-import com.helltar.twitchviewer_bot.utils.Utils
-import com.helltar.twitchviewer_bot.utils.Utils.runProcess
+import com.helltar.twitchviewerbot.BotConfig.DIR_TEMP
+import com.helltar.twitchviewerbot.BotConfig.TWITCH_TOKEN
+import com.helltar.twitchviewerbot.utils.Utils
+import com.helltar.twitchviewerbot.utils.Utils.runProcess
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.time.LocalTime

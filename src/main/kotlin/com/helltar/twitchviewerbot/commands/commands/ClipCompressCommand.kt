@@ -1,12 +1,12 @@
-package com.helltar.twitchviewer_bot.commands.commands
+package com.helltar.twitchviewerbot.commands.commands
 
 import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewer_bot.BotConfig.DIR_TEMP
-import com.helltar.twitchviewer_bot.Strings
-import com.helltar.twitchviewer_bot.commands.TwitchCommand
-import com.helltar.twitchviewer_bot.utils.Utils
-import com.helltar.twitchviewer_bot.utils.Utils.runProcess
+import com.helltar.twitchviewerbot.BotConfig.DIR_TEMP
+import com.helltar.twitchviewerbot.Strings
+import com.helltar.twitchviewerbot.commands.TwitchCommand
+import com.helltar.twitchviewerbot.utils.Utils
+import com.helltar.twitchviewerbot.utils.Utils.runProcess
 import java.io.File
 
 open class ClipCompressCommand(ctx: MessageContext, args: List<String> = listOf()) : TwitchCommand(ctx, args) {

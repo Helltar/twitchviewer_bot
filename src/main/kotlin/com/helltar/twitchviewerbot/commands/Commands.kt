@@ -1,8 +1,8 @@
-package com.helltar.twitchviewer_bot.commands
+package com.helltar.twitchviewerbot.commands
 
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_CLIPS
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_LIVE
-import com.helltar.twitchviewer_bot.keyboard.BtnCallbacks.BUTTON_SCREENSHOT
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLIPS
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_LIVE
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_SCREENSHOT
 
 object Commands {
 
