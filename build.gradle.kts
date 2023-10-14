@@ -15,7 +15,7 @@ repositories {
 dependencies {
     implementation ("com.annimon:tgbots-module:6.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3")
-    implementation("com.github.twitch4j:twitch4j:1.14.0")
+    implementation("com.github.twitch4j:twitch4j:1.17.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("org.slf4j:slf4j-api:2.0.6")
