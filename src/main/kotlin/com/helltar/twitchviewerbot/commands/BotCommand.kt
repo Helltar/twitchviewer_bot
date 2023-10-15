@@ -2,7 +2,7 @@ package com.helltar.twitchviewerbot.commands
 
 import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewerbot.localizedString
+import com.helltar.twitchviewerbot.Strings
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
@@ -12,14 +12,15 @@ import java.net.URL
 
 abstract class BotCommand(val ctx: MessageContext) {
 
+    val argsText: String = ctx.argumentsAsString()
+
     protected val userId = ctx.user().id
     protected val args: Array<String> = ctx.arguments()
-    val argsText: String = ctx.argumentsAsString()
 
     abstract fun run()
 
     protected fun localizedString(key: String): String {
-        return localizedString(key, userId)
+        return Strings.localizedString(key, userId)
     }
 
     protected fun replyToMessage(
@@ -49,7 +50,6 @@ abstract class BotCommand(val ctx: MessageContext) {
             .setParseMode(ParseMode.HTML)
             .call(ctx.sender)
 
-    // todo: duration, height, width
     protected fun replyToMessageWithVideo(
         filename: String,
         caption: String = "",

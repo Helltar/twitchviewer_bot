@@ -1,17 +1,16 @@
 package com.helltar.twitchviewerbot.twitch
 
 import com.github.twitch4j.TwitchClientBuilder
-import com.helltar.twitchviewerbot.BotConfig.DIR_TEMP
 import com.helltar.twitchviewerbot.BotConfig.twitchToken
-import com.helltar.twitchviewerbot.utils.Utils
-import com.helltar.twitchviewerbot.utils.Utils.runProcess
+import com.helltar.twitchviewerbot.utils.Utils.escapeHtml
 import org.slf4j.LoggerFactory
-import java.io.File
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class Twitch {
+
+    private val twitchClient = TwitchClientBuilder.builder().withEnableHelix(true).build()
 
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -26,67 +25,31 @@ class Twitch {
         val uptime: String
     )
 
-    fun getOnlineList(channels: List<String>): List<BroadcastData>? {
-        val broadcasts = arrayListOf<BroadcastData>()
-        val twitchClient = TwitchClientBuilder.builder().withEnableHelix(true).build()
+    fun getOnlineList(userLogins: List<String>) = try {
+        val streamsList =
+            twitchClient
+                .helix
+                .getStreams(twitchToken, null, null, 1, null, null, null, userLogins)
+                .execute()
+                .streams
 
-        return try {
-            val streams = twitchClient.helix.getStreams(twitchToken, null, null, 1, null, null, null, channels).execute().streams
-
-            streams.forEach { stream ->
+        arrayListOf<BroadcastData>().apply {
+            streamsList.forEach { broadcast ->
                 val formatter = DateTimeFormatter.ofPattern("HH:mm")
-                val startedAt = stream.startedAtInstant.atZone(ZoneId.systemDefault()).format(formatter)
-                val thumbnailUrl = stream.getThumbnailUrl(1920, 1080)
-                val uptime = LocalTime.MIN.plus(stream.uptime).format(formatter)
+                val startedAt = broadcast.startedAtInstant.atZone(ZoneId.systemDefault()).format(formatter)
+                val thumbnailUrl = broadcast.getThumbnailUrl(1920, 1080)
+                val uptime = LocalTime.MIN.plus(broadcast.uptime).format(formatter)
 
-                broadcasts.add(
+                add(
                     BroadcastData(
-                        stream.userLogin, Utils.escapeHtml(stream.userName), Utils.escapeHtml(stream.title),
-                        stream.viewerCount, stream.gameName, thumbnailUrl, startedAt, uptime
+                        broadcast.userLogin, broadcast.userName.escapeHtml(), broadcast.title.escapeHtml(),
+                        broadcast.viewerCount, broadcast.gameName, thumbnailUrl, startedAt, uptime
                     )
                 )
             }
-
-            broadcasts
-        } catch (e: Exception) {
-            log.error(e.message)
-            null
         }
+    } catch (e: Exception) {
+        log.error(e.message)
+        null
     }
-
-    fun getShortClip(channelName: String): String {
-        val tempName = genRandomName(channelName)
-        val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
-        val streamlinkOutFilename = "streamlink_$tempName.mp4"
-
-        runStreamlink(35, channelName, streamlinkOutFilename)
-        runProcess("timeout -k 5 -s SIGINT 60 ffmpeg -i $streamlinkOutFilename -c copy -loglevel quiet $ffmpegOutFilename", DIR_TEMP)
-
-        File("$DIR_TEMP/$streamlinkOutFilename").delete()
-
-        return "$DIR_TEMP/$ffmpegOutFilename"
-    }
-
-    fun getScreenshot(channelName: String): String {
-        val tempName = genRandomName(channelName)
-        val ffmpegOutFilename = "ffmpeg_$tempName.png"
-        val streamlinkOutFilename = "streamlink_$tempName.mp4"
-
-        // todo: streamlink. screenshot timeout
-        runStreamlink(10, channelName, streamlinkOutFilename)
-        runProcess("timeout -k 5 15 ffmpeg -ss 00:00:05 -i $streamlinkOutFilename -vframes 1 $ffmpegOutFilename", DIR_TEMP)
-
-        File("$DIR_TEMP/$streamlinkOutFilename").delete()
-
-        return "$DIR_TEMP/$ffmpegOutFilename"
-    }
-
-    private fun runStreamlink(timeout: Int, channelName: String, outFilename: String) =
-        runProcess(
-            "timeout -k 10 -s SIGINT $timeout streamlink --twitch-disable-ads https://www.twitch.tv/$channelName 720p60,best -o $outFilename",
-            DIR_TEMP
-        )
-
-    private fun genRandomName(name: String) =
-        "${name}_${Utils.randomUUID()}"
 }

@@ -11,9 +11,8 @@ import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CHANNEL
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLOSE_LIST
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_LIVE
-import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.getChannelNameFromCbData
-import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.getChannelStatusFromCbData
-import com.helltar.twitchviewerbot.localizedString
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.getChannelName
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.getChannelStatus
 import com.helltar.twitchviewerbot.twitch.Twitch
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
@@ -30,11 +29,11 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         val context = MessageContext(ctx.sender, ctx.update(), "")
         liveCommand = LiveCommand(context)
         clipCommand = ClipCommand(context)
-        twitchChannel = getChannelNameFromCbData(ctx.data())
+        twitchChannel = getChannelName(ctx.data())
     }
 
     fun btnClose(ctx: CallbackQueryContext): Serializable =
-        editMessage(ctx, String.format(localizedString(Strings.user_close_list, ownerId), ctx.user().firstName))
+        editMessage(ctx, String.format(localizedString(Strings.user_close_list), ctx.user().firstName))
 
     fun btnDeleteChannel(ctx: CallbackQueryContext) {
         removeChannelFromUserList(twitchChannel, ownerId)
@@ -57,7 +56,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         clipCommand.getClipsFromAll(userChannels.getUserChannelsList(ownerId))
 
     fun btnChannel(ctx: CallbackQueryContext) {
-        val isChannelLive = getChannelStatusFromCbData(ctx.data())
+        val isChannelLive = getChannelStatus(ctx.data())
 
         if (userChannels.isChannelNotExists(ownerId, twitchChannel)) {
             update(ctx)
@@ -210,6 +209,6 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         userChannels.delete(userId, channelName)
 
     private fun localizedString(key: String): String {
-        return localizedString(key, ownerId)
+        return Strings.localizedString(key, ownerId)
     }
 }

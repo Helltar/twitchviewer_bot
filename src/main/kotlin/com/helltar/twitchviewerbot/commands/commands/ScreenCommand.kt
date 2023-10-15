@@ -3,7 +3,9 @@ package com.helltar.twitchviewerbot.commands.commands
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
-import com.helltar.twitchviewerbot.utils.Utils
+import com.helltar.twitchviewerbot.twitch.Twitch
+import com.helltar.twitchviewerbot.twitch.TwitchUtils
+import com.helltar.twitchviewerbot.utils.Utils.replaceTitleTag
 import java.io.File
 
 class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
@@ -17,7 +19,7 @@ class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     fun getScreenshot(channelName: String) {
         if (isChannelNameValid(channelName)) {
-            val streamData = twitch.getOnlineList(listOf(channelName))
+            val streamData = Twitch().getOnlineList(listOf(channelName))
 
             if (!streamData.isNullOrEmpty())
                 sendScreenshot(channelName, streamData.first().username, streamData.first().gameName)
@@ -28,13 +30,13 @@ class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private fun sendScreenshot(channel: String, username: String, gameName: String) {
         val tempMessageId = replyToMessage(String.format(localizedString(Strings.wait_get_screenshot), channel))
-        val filename = twitch.getScreenshot(channel)
+        val filename = TwitchUtils.getScreenshot(channel)
 
         deleteMessage(tempMessageId)
 
         if (File(filename).exists()) {
             val url = "<a href=\"https://www.twitch.tv/$channel\">Twitch</a>"
-            val game = if (gameName.isNotEmpty()) ", #${Utils.replaceTitleTag(gameName)}" else ""
+            val game = if (gameName.isNotEmpty()) ", #${gameName.replaceTitleTag()}" else ""
 
             replyToMessageWithPhoto(
                 File(filename),

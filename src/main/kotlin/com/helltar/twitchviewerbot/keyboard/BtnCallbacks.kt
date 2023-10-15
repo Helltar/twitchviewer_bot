@@ -20,9 +20,9 @@ object BtnCallbacks {
         val isChannelLive: Int = 0
     )
 
-    fun getOwnerIdFromCbData(data: String) = parseCbData(data)[1].toLongOrNull()
-    fun getChannelNameFromCbData(data: String) = parseCbData(data)[2]
-    fun getChannelStatusFromCbData(data: String) = (parseCbData(data)[3].toIntOrNull() ?: 0) != 0
+    fun getOwnerId(data: String) = parseData(data)[1].toLongOrNull()
+    fun getChannelName(data: String) = parseData(data)[2]
+    fun getChannelStatus(data: String) = (parseData(data)[3].toIntOrNull() ?: 0) != 0
 
-    private fun parseCbData(data: String) = data.split("\\s+".toRegex()).toList()
+    private fun parseData(data: String) = data.split("\\s+".toRegex()).toList()
 }

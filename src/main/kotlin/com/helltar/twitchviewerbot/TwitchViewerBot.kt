@@ -5,6 +5,7 @@ import com.annimon.tgbotsmodule.Runner
 import com.annimon.tgbotsmodule.beans.Config
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.BotConfig.DIR_DB
+import com.helltar.twitchviewerbot.Strings.localizedString
 import com.helltar.twitchviewerbot.dao.DatabaseFactory
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory

@@ -4,8 +4,6 @@ import com.helltar.twitchviewerbot.BotConfig.DIR_LOCALE
 import com.helltar.twitchviewerbot.BotConfig.EXT_XML
 import com.helltar.twitchviewerbot.dao.DatabaseFactory.users
 import com.helltar.twitchviewerbot.utils.Utils.getFirstRegexGroup
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileReader
@@ -47,20 +45,20 @@ object Strings {
     const val btn_who_is_online = "btn_who_is_online"
     const val title_channel_is_selected = "title_channel_is_selected"
     const val title_choose_channel_or_action = "title_choose_channel_or_action"
-}
 
-fun localizedString(key: String, userId: Long): String {
-    return try {
-        val languageCode = users.getLanguageCode(userId)
-        var filename = "$DIR_LOCALE/$languageCode$EXT_XML"
+    fun localizedString(key: String, userId: Long): String {
+        return try {
+            val languageCode = users.getLanguageCode(userId)
+            var filename = "$DIR_LOCALE/$languageCode$EXT_XML"
 
-        if (!File(filename).exists())
-            filename = "$DIR_LOCALE/en$EXT_XML"
+            if (!File(filename).exists())
+                filename = "$DIR_LOCALE/en$EXT_XML"
 
-        val regex = """<string name="$key">(\X*?)<\/string>"""
-        getFirstRegexGroup(FileReader(filename).readText(), regex).trimIndent().ifEmpty { key }
-    } catch (e: Exception) {
-        LoggerFactory.getLogger(Strings.javaClass).error(e.message)
-        key
+            val regex = """<string name="$key">(\X*?)<\/string>"""
+            getFirstRegexGroup(FileReader(filename).readText(), regex).trimIndent().ifEmpty { key }
+        } catch (e: Exception) {
+            LoggerFactory.getLogger(Strings.javaClass).error(e.message)
+            key
+        }
     }
 }

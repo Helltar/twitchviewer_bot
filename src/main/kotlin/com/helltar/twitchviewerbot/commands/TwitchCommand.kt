@@ -3,11 +3,8 @@ package com.helltar.twitchviewerbot.commands
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannels
-import com.helltar.twitchviewerbot.twitch.Twitch
 
 abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
-
-    protected val twitch = Twitch()
 
     protected fun getUserChannelsList(userId: Long = this.userId) =
         userChannels.getUserChannelsList(userId)

@@ -7,6 +7,7 @@ import com.annimon.tgbotsmodule.commands.authority.For
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
+import com.helltar.twitchviewerbot.Strings.localizedString
 import com.helltar.twitchviewerbot.TwitchViewerBot.Companion.addRequest
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_BACK
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CHANNEL
@@ -17,8 +18,7 @@ import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_DELETE_CHANNEL
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_LIVE
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_SCREENSHOT
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_SHOW
-import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.getOwnerIdFromCbData
-import com.helltar.twitchviewerbot.localizedString
+import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.getOwnerId
 
 class KeyboardBundle : CommandBundle<For> {
 
@@ -38,7 +38,7 @@ class KeyboardBundle : CommandBundle<For> {
     }
 
     private fun click(ctx: CallbackQueryContext, buttonName: String) {
-        val ownerId = getOwnerIdFromCbData(ctx.data()) ?: return
+        val ownerId = getOwnerId(ctx.data()) ?: return
         val user = ctx.user()
 
         if (user.id != ownerId) {
