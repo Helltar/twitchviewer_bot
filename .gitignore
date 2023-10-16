@@ -4,7 +4,7 @@
 build/
 
 database/
-_deploy/
+deploy/
 temp/
 test/
 logs/
