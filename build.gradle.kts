@@ -1,12 +1,10 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.9.10"
     application
 }
 
 group = "com.helltar"
-version = "0.2.0"
+version = "0.2.1"
 
 repositories {
     mavenCentral()
@@ -19,7 +17,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("org.slf4j:slf4j-api:2.0.6")
-    implementation("ch.qos.logback:logback-classic:1.4.6")
+    implementation("ch.qos.logback:logback-classic:1.4.7")
 
     implementation("com.h2database:h2:2.1.214")
     implementation("org.jetbrains.exposed:exposed-java-time:0.41.1")
