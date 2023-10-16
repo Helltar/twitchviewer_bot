@@ -24,7 +24,7 @@ class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             if (!streamData.isNullOrEmpty())
                 sendScreenshot(channelName, streamData.first().username, streamData.first().gameName)
             else
-                replyToMessage(localizedString(Strings.stream_offline))
+                replyToMessage(String.format(localizedString(Strings.stream_offline), channelName))
         }
     }
 
