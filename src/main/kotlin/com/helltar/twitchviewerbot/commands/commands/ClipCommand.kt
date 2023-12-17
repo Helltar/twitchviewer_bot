@@ -67,7 +67,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                 broadcastData.run {
                     val htmlTitle = "<b><a href=\"https://www.twitch.tv/$login\">$username</a></b> - $title\n\n"
                     val viewers = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
-                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, getTimeZoneOffset(), uptime) + "\n\n"
+                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, uptime, getTimeZoneOffset()) + "\n\n"
                     val gameName = if (gameName.isNotEmpty()) ", #${gameName.replaceTitleTag()}" else ""
 
                     replyToMessageWithVideo(clipFilename, "$htmlTitle$viewers$time#${username}$gameName")

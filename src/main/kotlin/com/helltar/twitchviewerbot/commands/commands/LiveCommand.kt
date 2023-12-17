@@ -72,7 +72,7 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                     val htmlTitle = "<b><a href=\"https://www.twitch.tv/$login\">$username</a></b> - $title\n\n"
                     val viewers = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
                     val game = if (gameName.isNotEmpty()) "\uD83C\uDFB2 <b>${gameName.escapeHtml()}</b>\n" else "" // 🎲
-                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, getTimeZoneOffset(), uptime)
+                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, uptime, getTimeZoneOffset())
 
                     thumbnailsUrls["#$username - $title"] = thumbnailUrl
 

@@ -17,7 +17,7 @@
     <string name="screenshot_command_info">Вкажи назву каналу: /screen <b>channel</b></string>
     <string name="start_get_clip">Починаю записувати стрім <b>%s</b>, почекай хвилину ...</string>
     <string name="stream_offline"><b>%s</b> не стрімить 🤷‍♂️</string>
-    <string name="stream_start_time">🕔 Стрімить від <b>%s</b> GMT+%d (всього <b>%s</b>)</string>
+    <string name="stream_start_time">🕔 Стрімить від <b>%s</b>, всього <b>%s</b> (GMT+%d)</string>
     <string name="twitch_exception">Немає такого каналу або шось поломалось 🫡</string>
     <string name="user_close_list"><b>%s</b> закрив /list@twitchviewer_bot</string>
     <string name="wait_check_online">Зараз пробіжусь по каналах гляну ... 🏃‍♂️</string>
