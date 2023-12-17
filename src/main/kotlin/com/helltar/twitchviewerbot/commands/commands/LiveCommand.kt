@@ -5,6 +5,7 @@ import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
 import com.helltar.twitchviewerbot.utils.Utils.escapeHtml
+import com.helltar.twitchviewerbot.utils.Utils.getTimeZoneOffset
 
 class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
@@ -71,7 +72,7 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                     val htmlTitle = "<b><a href=\"https://www.twitch.tv/$login\">$username</a></b> - $title\n\n"
                     val viewers = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
                     val game = if (gameName.isNotEmpty()) "\uD83C\uDFB2 <b>${gameName.escapeHtml()}</b>\n" else "" // 🎲
-                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, uptime)
+                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, getTimeZoneOffset(), uptime)
 
                     thumbnailsUrls["#$username - $title"] = thumbnailUrl
 

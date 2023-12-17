@@ -1,6 +1,7 @@
 package com.helltar.twitchviewerbot.utils
 
 import java.lang.management.ManagementFactory
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
@@ -29,6 +30,11 @@ object Utils {
 
     fun getSysHtmlStat() =
         "<code>Threads: ${ManagementFactory.getThreadMXBean().threadCount}\n${getMemUsage()}\n${getJVMUptime()}</code>"
+
+    fun getTimeZoneOffset(): Int {
+        val systemTimeZone = TimeZone.getDefault()
+        return systemTimeZone.rawOffset / (1000 * 60 * 60)
+    }
 
     private fun getJVMUptime() =
         ManagementFactory.getRuntimeMXBean().run {
