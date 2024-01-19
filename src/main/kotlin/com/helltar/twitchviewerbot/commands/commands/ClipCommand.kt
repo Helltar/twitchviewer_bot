@@ -51,31 +51,41 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private fun sendClips(twitchBroadcastData: List<Twitch.BroadcastData>) {
         twitchBroadcastData.forEach { broadcastData ->
-            val requestKey = "$userId@${broadcastData.login}"
+            val channelLogin = broadcastData.login
+            val channelUsername = broadcastData.username
+            val channelLink = "<a href=\"https://www.twitch.tv/$channelLogin\">$channelUsername</a>"
+
+            val requestKey = "$userId@$channelLogin"
+            val tempMessage = localizedString(Strings.start_get_clip).format(channelLink)
 
             addRequest(requestKey) {
-                val tempMessage = String.format(localizedString(Strings.start_get_clip), broadcastData.username)
                 val tempMessageId = replyToMessage(tempMessage)
-                val clipFilename = TwitchUtils.getShortClip(broadcastData.login)
 
-                if (!File(clipFilename).exists()) {
-                    replyToMessage(localizedString(Strings.get_clip_fail))
+                try {
+                    val clipFilename = TwitchUtils.getShortClip(channelLogin)
+
+                    if (!File(clipFilename).exists()) {
+                        replyToMessage(localizedString(Strings.get_clip_fail))
+                        return@addRequest
+                    }
+
+                    val streamTitle = broadcastData.title
+                    val streamCategory = broadcastData.gameName
+                    val viewerCount = broadcastData.viewerCount
+                    val startedAt = broadcastData.startedAt
+                    val streamUptime = broadcastData.uptime
+
+                    val viewersHtml = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
+                    val startTimeHtml = localizedString(Strings.stream_start_time).format(startedAt, streamUptime, getTimeZoneOffset()) + "\n\n"
+                    val categoryHtml = if (streamCategory.isNotEmpty()) ", #${streamCategory.replaceTitleTag()}" else ""
+                    val titleHtml = "<b>$channelLink</b> - $streamTitle\n\n"
+
+                    replyToMessageWithVideo(clipFilename, "$titleHtml$viewersHtml$startTimeHtml#${channelUsername}$categoryHtml")
+
+                    File(clipFilename).delete()
+                } finally {
                     deleteMessage(tempMessageId)
-                    return@addRequest
                 }
-
-                broadcastData.run {
-                    val htmlTitle = "<b><a href=\"https://www.twitch.tv/$login\">$username</a></b> - $title\n\n"
-                    val viewers = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
-                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, uptime, getTimeZoneOffset()) + "\n\n"
-                    val gameName = if (gameName.isNotEmpty()) ", #${gameName.replaceTitleTag()}" else ""
-
-                    replyToMessageWithVideo(clipFilename, "$htmlTitle$viewers$time#${username}$gameName")
-                }
-
-                File(clipFilename).delete()
-
-                deleteMessage(tempMessageId)
             }
         }
     }
