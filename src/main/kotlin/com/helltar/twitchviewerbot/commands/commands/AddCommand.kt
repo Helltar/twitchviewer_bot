@@ -8,7 +8,7 @@ import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannels
 class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private companion object {
-        const val MAX_CHANNELS_SIZE = 5
+        const val MAX_CHANNELS_SIZE = 8
     }
 
     override fun run() {
