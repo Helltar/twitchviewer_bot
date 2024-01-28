@@ -12,6 +12,9 @@ class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     }
 
     override fun run() {
+        if (ctx.user().isBot)
+            return
+
         if (args.isNotEmpty())
             add(args.first())
         else
