@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     implementation ("com.annimon:tgbots-module:7.1.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0")
     implementation("com.github.twitch4j:twitch4j:1.18.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
