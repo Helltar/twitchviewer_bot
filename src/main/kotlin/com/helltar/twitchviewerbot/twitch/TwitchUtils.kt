@@ -16,7 +16,7 @@ object TwitchUtils {
 
         executeStreamlink(35, channel, streamlinkOutFilename)
 
-        "timeout -k 5 -s SIGINT 60 ffmpeg -i $streamlinkOutFilename -c copy -loglevel quiet $ffmpegOutFilename".startProcess()
+        "timeout -k 5 -s SIGINT 60 ffmpeg -i $streamlinkOutFilename -t 25 -c copy -loglevel quiet $ffmpegOutFilename".startProcess()
 
         File("$DIR_TEMP/$streamlinkOutFilename").delete()
 
@@ -38,7 +38,7 @@ object TwitchUtils {
     }
 
     private fun executeStreamlink(stopTimeout: Int, channel: String, outFilename: String) =
-        "timeout -k 10 -s SIGINT $stopTimeout streamlink --twitch-disable-ads https://www.twitch.tv/$channel 720p60,best -o $outFilename".startProcess()
+        "timeout -k 10 -s SIGINT $stopTimeout streamlink --twitch-disable-ads https://www.twitch.tv/$channel 720p,720p60,best -o $outFilename".startProcess()
 
     private fun genRandomName(name: String) =
         "${name}_${UUID.randomUUID()}"
