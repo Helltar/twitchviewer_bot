@@ -3,11 +3,11 @@
 
 build/
 
+config/
 database/
 deploy/
 temp/
 test/
 logs/
 
-config/*
-!config/commands.txt
+.env
