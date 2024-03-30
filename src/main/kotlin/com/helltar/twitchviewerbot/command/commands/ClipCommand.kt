@@ -7,7 +7,6 @@ import com.helltar.twitchviewerbot.command.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
 import com.helltar.twitchviewerbot.twitch.TwitchUtils
 import kotlinx.coroutines.*
-import java.awt.SystemColor.text
 import java.io.File
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
@@ -53,7 +52,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         twitchBroadcastData.forEach { broadcastData ->
             val channelLogin = broadcastData.login
             val channelUsername = broadcastData.username
-            val channelLink = "<a href=\"https://www.twitch.tv/$channelLogin\">$channelUsername</a>"
+            val channelLink = """<a href="https://www.twitch.tv/$channelLogin">$channelUsername</a>"""
 
             val requestKey = "$userId@$channelLogin"
             val tempMessage = localizedString(Strings.START_GET_CLIP).format(channelLink)
@@ -98,6 +97,10 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             }
         }
 
-        requestsList[requestKey] = CoroutineScope(Dispatchers.IO).launch(CoroutineName(requestKey)) { block() }
+        requestsList[requestKey] =
+            CoroutineScope(Dispatchers.IO)
+                .launch(CoroutineName(requestKey)) {
+                    block()
+                }
     }
 }

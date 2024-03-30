@@ -7,7 +7,7 @@ import com.annimon.tgbotsmodule.commands.authority.SimpleAuthority
 import com.helltar.twitchviewerbot.Config
 import com.helltar.twitchviewerbot.Config.botToken
 import com.helltar.twitchviewerbot.Config.creatorId
-import com.helltar.twitchviewerbot.bot.TwitchViewerBot.Companion.addRequest
+import com.helltar.twitchviewerbot.RequestExecutor.addRequest
 import com.helltar.twitchviewerbot.command.BotCommand
 import com.helltar.twitchviewerbot.command.Commands.COMMAND_ABOUT
 import com.helltar.twitchviewerbot.command.Commands.COMMAND_ADD

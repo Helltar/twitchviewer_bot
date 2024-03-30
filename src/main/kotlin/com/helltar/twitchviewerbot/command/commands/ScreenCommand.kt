@@ -33,7 +33,7 @@ class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         deleteMessage(tempMessageId)
 
         if (File(filename).exists()) {
-            val url = "<a href=\"https://www.twitch.tv/$channel\">Twitch</a>"
+            val url = """<a href="https://www.twitch.tv/$channel">Twitch</a>"""
             val game = if (gameName.isNotEmpty()) ", #${gameName.toHashTag()}" else ""
 
             replyToMessageWithPhoto(

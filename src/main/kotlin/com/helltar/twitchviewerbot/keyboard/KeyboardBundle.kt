@@ -6,9 +6,9 @@ import com.annimon.tgbotsmodule.commands.SimpleCallbackQueryCommand
 import com.annimon.tgbotsmodule.commands.authority.For
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.annimon.tgbotsmodule.commands.context.MessageContext
+import com.helltar.twitchviewerbot.RequestExecutor.addRequest
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.Strings.localizedString
-import com.helltar.twitchviewerbot.bot.TwitchViewerBot.Companion.addRequest
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_BACK
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CHANNEL
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLIP

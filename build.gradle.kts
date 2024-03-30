@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.helltar"
-version = "0.2.1"
+version = "0.2.5"
 
 repositories {
     mavenCentral()
@@ -28,5 +28,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.helltar.twitchviewerbot.TwitchViewerBot")
+    mainClass.set("com.helltar.twitchviewerbot.bot.TwitchViewerBot")
 }

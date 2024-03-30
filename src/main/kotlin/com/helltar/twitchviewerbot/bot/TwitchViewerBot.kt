@@ -3,20 +3,13 @@ package com.helltar.twitchviewerbot.bot
 import com.annimon.tgbotsmodule.BotModule
 import com.annimon.tgbotsmodule.Runner
 import com.annimon.tgbotsmodule.beans.Config
-import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Config.DIR_DB
-import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.Strings.localizedString
 import com.helltar.twitchviewerbot.dao.DatabaseFactory
-import kotlinx.coroutines.*
-import org.slf4j.LoggerFactory
 import java.io.File
 
 class TwitchViewerBot : BotModule {
 
     companion object {
-        private val requestsList = hashMapOf<String, Job>()
-
         @JvmStatic
         fun main(args: Array<String>) {
             val databaseDir = File(DIR_DB)
@@ -26,19 +19,7 @@ class TwitchViewerBot : BotModule {
 
             DatabaseFactory.init()
 
-            LoggerFactory.getLogger(TwitchViewerBot::class.java).info("start ...")
-
             Runner.run("", listOf(TwitchViewerBot()))
-        }
-
-        fun addRequest(requestKey: String, ctx: MessageContext, block: () -> Unit) {
-            if (requestsList.containsKey(requestKey))
-                if (requestsList[requestKey]?.isCompleted == false) {
-                    ctx.replyToMessage().setText(localizedString(Strings.MANY_REQUEST, ctx.user().id)).callAsync(ctx.sender)
-                    return
-                }
-
-            requestsList[requestKey] = CoroutineScope(Dispatchers.IO).launch(CoroutineName(requestKey)) { block() }
         }
     }
 

@@ -51,7 +51,11 @@ object TwitchUtils {
                 if (!file.mkdir()) return
             } else if (!file.isDirectory) return
 
-            ProcessBuilder(this.split(" ")).directory(file).start().waitFor()
+            ProcessBuilder(this.split(" "))
+                .directory(file)
+                .start()
+                .waitFor()
+
         } catch (e: Exception) {
             log.error(e.message, e)
         }
