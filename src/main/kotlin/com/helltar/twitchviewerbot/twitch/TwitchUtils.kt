@@ -16,7 +16,8 @@ object TwitchUtils {
 
         executeStreamlink(35, channel, streamlinkOutFilename)
 
-        "timeout -k 5 -s SIGINT 60 ffmpeg -i $streamlinkOutFilename -t 25 -c copy -loglevel quiet $ffmpegOutFilename"
+        // if -fs > 10M --> black video preview (thumbnail) (telegram)
+        "ffmpeg -i $streamlinkOutFilename -fs 9.9M -t 45 -c copy -loglevel quiet $ffmpegOutFilename"
             .startProcess()
 
         File("$DIR_TEMP/$streamlinkOutFilename").delete()
@@ -31,7 +32,7 @@ object TwitchUtils {
 
         executeStreamlink(30, channel, streamlinkOutFilename)
 
-        "timeout -k 5 15 ffmpeg -ss 00:00:05 -i $streamlinkOutFilename -vframes 1 $ffmpegOutFilename"
+        "ffmpeg -ss 00:00:05 -i $streamlinkOutFilename -vframes 1 $ffmpegOutFilename"
             .startProcess()
 
         File("$DIR_TEMP/$streamlinkOutFilename").delete()
