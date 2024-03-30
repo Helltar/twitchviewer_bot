@@ -1,64 +1,73 @@
 package com.helltar.twitchviewerbot
 
-import com.helltar.twitchviewerbot.BotConfig.DIR_LOCALE
-import com.helltar.twitchviewerbot.BotConfig.EXT_XML
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.users
-import com.helltar.twitchviewerbot.utils.Utils.getFirstRegexGroup
+import com.helltar.twitchviewerbot.Config.DIR_LOCALE
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.usersTable
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileReader
+import java.util.regex.Pattern
 
 object Strings {
 
-    const val add_command_info = "add_command_info"
-    const val channel_added_to_list = "channel_added_to_list"
-    const val channel_already_exists_in_list = "channel_already_exists_in_list"
-    const val clip_command_info = "clip_command_info"
-    const val dont_touch_is_not_your_list = "dont_touch_is_not_your_list"
-    const val empty_online_list = "empty_online_list"
-    const val get_clip_fail = "get_clip_fail"
-    const val invalid_channel_name = "invalid_channel_name"
-    const val invalid_channel_name_length = "invalid_channel_name_length"
-    const val list_full = "list_full"
-    const val list_is_empty = "list_is_empty"
-    const val live_command_info = "live_command_info"
-    const val many_request = "many_request"
-    const val screenshot_command_info = "screenshot_command_info"
-    const val start_command_info = "start_command_info"
-    const val start_get_clip = "start_get_clip"
-    const val stream_offline = "stream_offline"
-    const val stream_start_time = "stream_start_time"
-    const val twitch_exception = "twitch_exception"
-    const val user_close_list = "user_close_list"
-    const val wait_check_online = "wait_check_online"
-    const val wait_check_online_menu = "wait_check_online_menu"
-    const val wait_check_user_online = "wait_check_user_online"
-    const val wait_get_screenshot = "wait_get_screenshot"
+    const val ADD_COMMAND_INFO = "add_command_info"
+    const val CHANNEL_ADDED_TO_LIST = "channel_added_to_list"
+    const val CHANNEL_ALREADY_EXISTS_IN_LIST = "channel_already_exists_in_list"
+    const val CLIP_COMMAND_INFO = "clip_command_info"
+    const val DONT_TOUCH_IS_NOT_YOUR_LIST = "dont_touch_is_not_your_list"
+    const val EMPTY_ONLINE_LIST = "empty_online_list"
+    const val GET_CLIP_FAIL = "get_clip_fail"
+    const val INVALID_CHANNEL_NAME = "invalid_channel_name"
+    const val INVALID_CHANNEL_NAME_LENGTH = "invalid_channel_name_length"
+    const val LIST_FULL = "list_full"
+    const val LIST_IS_EMPTY = "list_is_empty"
+    const val LIVE_COMMAND_INFO = "live_command_info"
+    const val MANY_REQUEST = "many_request"
+    const val SCREENSHOT_COMMAND_INFO = "screenshot_command_info"
+    const val START_COMMAND_INFO = "start_command_info"
+    const val START_GET_CLIP = "start_get_clip"
+    const val STREAM_OFFLINE = "stream_offline"
+    const val STREAM_START_TIME = "stream_start_time"
+    const val TWITCH_EXCEPTION = "twitch_exception"
+    const val USER_CLOSE_LIST = "user_close_list"
+    const val WAIT_CHECK_ONLINE = "wait_check_online"
+    const val WAIT_CHECK_ONLINE_MENU = "wait_check_online_menu"
+    const val WAIT_CHECK_USER_ONLINE = "wait_check_user_online"
+    const val WAIT_GET_SCREENSHOT = "wait_get_screenshot"
 
-    const val btn_back = "btn_back"
-    const val btn_close_list = "btn_close_list"
-    const val btn_delete = "btn_delete"
-    const val btn_exit = "btn_exit"
-    const val btn_get_all_screens = "btn_get_all_screens"
-    const val btn_screenshot = "btn_screenshot"
-    const val btn_short_clip = "btn_short_clip"
-    const val btn_who_is_online = "btn_who_is_online"
-    const val title_channel_is_selected = "title_channel_is_selected"
-    const val title_choose_channel_or_action = "title_choose_channel_or_action"
+    const val BTN_BACK = "btn_back"
+    const val BTN_CLOSE_LIST = "btn_close_list"
+    const val BTN_DELETE = "btn_delete"
+    const val BTN_EXIT = "btn_exit"
+    const val BTN_GET_ALL_SCREENS = "btn_get_all_screens"
+    const val BTN_SCREENSHOT = "btn_screenshot"
+    const val BTN_SHORT_CLIP = "btn_short_clip"
+    const val BTN_WHO_IS_ONLINE = "btn_who_is_online"
+    const val TITLE_CHANNEL_IS_SELECTED = "title_channel_is_selected"
+    const val TITLE_CHOOSE_CHANNEL_OR_ACTION = "title_choose_channel_or_action"
+
+    private val log = LoggerFactory.getLogger(javaClass)
 
     fun localizedString(key: String, userId: Long): String {
         return try {
-            val languageCode = users.getLanguageCode(userId)
-            var filename = "$DIR_LOCALE/$languageCode$EXT_XML"
+            val languageCode = usersTable.getLanguageCode(userId)
+            var filename = "$DIR_LOCALE/$languageCode.xml"
 
             if (!File(filename).exists())
-                filename = "$DIR_LOCALE/en$EXT_XML"
+                filename = "$DIR_LOCALE/en.xml"
 
             val regex = """<string name="$key">(\X*?)<\/string>"""
             getFirstRegexGroup(FileReader(filename).readText(), regex).trimIndent().ifEmpty { key }
         } catch (e: Exception) {
-            LoggerFactory.getLogger(Strings.javaClass).error(e.message)
+            log.error(e.message, e)
             key
         }
+    }
+
+    private fun getFirstRegexGroup(text: String, regex: String): String {
+        val m = Pattern.compile(regex).matcher(text)
+
+        return if (m.find()) {
+            if (m.groupCount() >= 1) m.group(1) else ""
+        } else ""
     }
 }

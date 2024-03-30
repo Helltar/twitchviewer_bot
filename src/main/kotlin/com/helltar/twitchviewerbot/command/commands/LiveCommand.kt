@@ -1,24 +1,22 @@
-package com.helltar.twitchviewerbot.commands.commands
+package com.helltar.twitchviewerbot.command.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
+import com.helltar.twitchviewerbot.Extensions.escapeHtml
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.commands.TwitchCommand
-import com.helltar.twitchviewerbot.twitch.Twitch
-import com.helltar.twitchviewerbot.utils.Utils.escapeHtml
-import com.helltar.twitchviewerbot.utils.Utils.getTimeZoneOffset
+import com.helltar.twitchviewerbot.command.TwitchCommand
 
 class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private val thumbnailsUrls = hashMapOf<String, String>()
 
     override fun run() {
-        if (args.isEmpty())
+        if (arguments.isEmpty()) {
             if (isUserListNotEmpty())
                 sendOnlineList(getUserChannelsList())
             else
-                replyToMessage(localizedString(Strings.live_command_info))
-        else {
-            val channel = args.first()
+                replyToMessage(localizedString(Strings.LIVE_COMMAND_INFO))
+        } else {
+            val channel = arguments.first()
 
             if (isChannelNameValid(channel))
                 sendOnlineList(channel)
@@ -30,9 +28,9 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
         val waitText =
             if (isNotOneChannel)
-                localizedString(Strings.wait_check_online)
+                localizedString(Strings.WAIT_CHECK_ONLINE)
             else
-                String.format(localizedString(Strings.wait_check_user_online), channels.first())
+                localizedString(Strings.WAIT_CHECK_USER_ONLINE.format(channels.first()))
 
         val waitMessageId = replyToMessage(waitText)
         var liveList = getOnlineList(channels)
@@ -43,9 +41,9 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         if (liveList.isEmpty()) {
             liveList =
                 if (isNotOneChannel)
-                    localizedString(Strings.empty_online_list)
+                    localizedString(Strings.EMPTY_ONLINE_LIST)
                 else
-                    localizedString(Strings.stream_offline)
+                    localizedString(Strings.STREAM_OFFLINE)
 
             isStreamsAvailable = false
         }
@@ -53,7 +51,10 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         val liveListMessageId = replyToMessage(liveList)
 
         if (isStreamsAvailable) {
-            thumbnailsUrls.forEach { replyToMessageWithPhoto(it.value + "?t=${System.currentTimeMillis()}", it.key, liveListMessageId) }
+            thumbnailsUrls.forEach {
+                replyToMessageWithPhoto(it.value + "?t=${System.currentTimeMillis()}", it.key, liveListMessageId)
+            }
+
             thumbnailsUrls.clear()
         }
     }
@@ -63,8 +64,8 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private fun getOnlineList(userLogins: List<String>): String {
         val list =
-            Twitch().getOnlineList(userLogins)
-                ?: return localizedString(Strings.twitch_exception)
+            twitch.getOnlineList(userLogins)
+                ?: return localizedString(Strings.TWITCH_EXCEPTION)
 
         val result =
             list.joinToString("\n\n") { streamData ->
@@ -72,7 +73,7 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                     val htmlTitle = "<b><a href=\"https://www.twitch.tv/$login\">$username</a></b> - $title\n\n"
                     val viewers = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
                     val game = if (gameName.isNotEmpty()) "\uD83C\uDFB2 <b>${gameName.escapeHtml()}</b>\n" else "" // 🎲
-                    val time = String.format(localizedString(Strings.stream_start_time), startedAt, uptime, getTimeZoneOffset())
+                    val time = localizedString(Strings.STREAM_START_TIME.format(startedAt, uptime, getTimeZoneOffset()))
 
                     thumbnailsUrls["#$username - $title"] = thumbnailUrl
 

@@ -1,7 +1,7 @@
-package com.helltar.twitchviewerbot.commands.commands
+package com.helltar.twitchviewerbot.command.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewerbot.commands.BotCommand
+import com.helltar.twitchviewerbot.command.BotCommand
 
 class AboutCommand(ctx: MessageContext) : BotCommand(ctx) {
 

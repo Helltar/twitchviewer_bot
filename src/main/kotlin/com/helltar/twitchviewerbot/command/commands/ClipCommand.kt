@@ -1,13 +1,13 @@
-package com.helltar.twitchviewerbot.commands.commands
+package com.helltar.twitchviewerbot.command.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
+import com.helltar.twitchviewerbot.Extensions.toHashTag
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.commands.TwitchCommand
+import com.helltar.twitchviewerbot.command.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
 import com.helltar.twitchviewerbot.twitch.TwitchUtils
-import com.helltar.twitchviewerbot.utils.Utils.getTimeZoneOffset
-import com.helltar.twitchviewerbot.utils.Utils.replaceTitleTag
 import kotlinx.coroutines.*
+import java.awt.SystemColor.text
 import java.io.File
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
@@ -17,13 +17,13 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     }
 
     override fun run() {
-        if (args.isEmpty()) {
+        if (arguments.isEmpty()) {
             if (isUserListNotEmpty())
                 getClipsFromAll(getUserChannelsList())
             else
-                replyToMessage(localizedString(Strings.clip_command_info))
+                replyToMessage(localizedString(Strings.CLIP_COMMAND_INFO))
         } else {
-            val channel = args.first()
+            val channel = arguments.first()
 
             if (isChannelNameValid(channel))
                 getClip(channel)
@@ -31,19 +31,19 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     }
 
     fun getClipsFromAll(userLogins: List<String>) {
-        Twitch().getOnlineList(userLogins)?.let {
+        twitch.getOnlineList(userLogins)?.let {
             if (it.isNotEmpty())
                 sendClips(it)
             else {
                 val text = if (userLogins.size > 1)
-                    localizedString(Strings.empty_online_list)
+                    localizedString(Strings.EMPTY_ONLINE_LIST)
                 else
-                    String.format(localizedString(Strings.stream_offline), userLogins.first())
+                    localizedString(Strings.STREAM_OFFLINE.format(userLogins.first()))
 
                 replyToMessage(text)
             }
         }
-            ?: replyToMessage(localizedString(Strings.twitch_exception))
+            ?: replyToMessage(localizedString(Strings.TWITCH_EXCEPTION))
     }
 
     private fun getClip(channel: String) =
@@ -56,7 +56,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             val channelLink = "<a href=\"https://www.twitch.tv/$channelLogin\">$channelUsername</a>"
 
             val requestKey = "$userId@$channelLogin"
-            val tempMessage = localizedString(Strings.start_get_clip).format(channelLink)
+            val tempMessage = localizedString(Strings.START_GET_CLIP).format(channelLink)
 
             addRequest(requestKey) {
                 val tempMessageId = replyToMessage(tempMessage)
@@ -65,7 +65,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                     val clipFilename = TwitchUtils.getShortClip(channelLogin)
 
                     if (!File(clipFilename).exists()) {
-                        replyToMessage(localizedString(Strings.get_clip_fail))
+                        replyToMessage(localizedString(Strings.GET_CLIP_FAIL))
                         return@addRequest
                     }
 
@@ -76,8 +76,8 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                     val streamUptime = broadcastData.uptime
 
                     val viewersHtml = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
-                    val startTimeHtml = localizedString(Strings.stream_start_time).format(startedAt, streamUptime, getTimeZoneOffset()) + "\n\n"
-                    val categoryHtml = if (streamCategory.isNotEmpty()) ", #${streamCategory.replaceTitleTag()}" else ""
+                    val startTimeHtml = localizedString(Strings.STREAM_START_TIME).format(startedAt, streamUptime, getTimeZoneOffset()) + "\n\n"
+                    val categoryHtml = if (streamCategory.isNotEmpty()) ", #${streamCategory.toHashTag()}" else ""
                     val titleHtml = "<b>$channelLink</b> - $streamTitle\n\n"
 
                     replyToMessageWithVideo(clipFilename, "$titleHtml$viewersHtml$startTimeHtml#${channelUsername}$categoryHtml")
@@ -93,7 +93,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     private fun addRequest(requestKey: String, block: () -> Unit) {
         if (requestsList.containsKey(requestKey)) {
             if (requestsList[requestKey]?.isCompleted == false) {
-                replyToMessage(localizedString(Strings.many_request))
+                replyToMessage(localizedString(Strings.MANY_REQUEST))
                 return
             }
         }

@@ -1,12 +1,12 @@
-package com.helltar.twitchviewerbot.commands.commands
+package com.helltar.twitchviewerbot.command.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.commands.BotCommand
+import com.helltar.twitchviewerbot.command.BotCommand
 
 class StartCommand(ctx: MessageContext) : BotCommand(ctx) {
 
     override fun run() {
-        replyToMessage(localizedString(Strings.start_command_info))
+        replyToMessage(localizedString(Strings.START_COMMAND_INFO))
     }
 }

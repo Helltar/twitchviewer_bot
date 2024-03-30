@@ -1,8 +1,8 @@
 package com.helltar.twitchviewerbot.twitch
 
 import com.github.twitch4j.TwitchClientBuilder
-import com.helltar.twitchviewerbot.BotConfig.twitchToken
-import com.helltar.twitchviewerbot.utils.Utils.escapeHtml
+import com.helltar.twitchviewerbot.Config.twitchToken
+import com.helltar.twitchviewerbot.Extensions.escapeHtml
 import org.slf4j.LoggerFactory
 import java.time.LocalTime
 import java.time.ZoneId
@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter
 class Twitch {
 
     private val twitchClient = TwitchClientBuilder.builder().withEnableHelix(true).build()
-
     private val log = LoggerFactory.getLogger(javaClass)
 
     data class BroadcastData(

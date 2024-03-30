@@ -3,10 +3,10 @@ package com.helltar.twitchviewerbot.keyboard
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.commands.commands.ClipCommand
-import com.helltar.twitchviewerbot.commands.commands.LiveCommand
-import com.helltar.twitchviewerbot.commands.commands.ScreenCommand
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannels
+import com.helltar.twitchviewerbot.command.commands.ClipCommand
+import com.helltar.twitchviewerbot.command.commands.LiveCommand
+import com.helltar.twitchviewerbot.command.commands.ScreenCommand
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelsTable
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CHANNEL
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLOSE_LIST
@@ -36,7 +36,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
     }
 
     fun btnClose(ctx: CallbackQueryContext): Serializable =
-        editMessage(ctx, String.format(localizedString(Strings.user_close_list), ctx.user().firstName))
+        editMessage(ctx, String.format(localizedString(Strings.USER_CLOSE_LIST), ctx.user().firstName))
 
     fun btnDeleteChannel(ctx: CallbackQueryContext) {
         removeChannelFromUserList(twitchChannel, ownerId)
@@ -47,7 +47,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         ScreenCommand(MessageContext(ctx.sender, ctx.update(), "")).getScreenshot(twitchChannel)
 
     fun btnLive() =
-        liveCommand.run { sendOnlineList(userChannels.getUserChannelsList(ownerId)) }
+        liveCommand.run { sendOnlineList(userChannelsTable.getUserChannelsList(ownerId)) }
 
     fun btnShow() =
         liveCommand.sendOnlineList(listOf(twitchChannel))
@@ -56,12 +56,12 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         clipCommand.getClipsFromAll(listOf(twitchChannel))
 
     fun btnClips() =
-        clipCommand.getClipsFromAll(userChannels.getUserChannelsList(ownerId))
+        clipCommand.getClipsFromAll(userChannelsTable.getUserChannelsList(ownerId))
 
     fun btnChannel(ctx: CallbackQueryContext) {
         val isChannelLive = getChannelStatus(ctx.data())
 
-        if (userChannels.isChannelNotExists(ownerId, twitchChannel)) {
+        if (userChannelsTable.isChannelNotExists(ownerId, twitchChannel)) {
             update(ctx)
             return
         }
@@ -72,7 +72,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
             inlineKeyboardMarkup.keyboardRow(
                 listOf(
                     createButton(
-                        localizedString(Strings.btn_screenshot),
+                        localizedString(Strings.BTN_SCREENSHOT),
                         BtnCallbacks.CallbackData(BtnCallbacks.BUTTON_SCREENSHOT, ownerId, twitchChannel)
                     )
                 )
@@ -81,7 +81,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
             inlineKeyboardMarkup.keyboardRow(
                 listOf(
                     createButton(
-                        localizedString(Strings.btn_short_clip),
+                        localizedString(Strings.BTN_SHORT_CLIP),
                         BtnCallbacks.CallbackData(BtnCallbacks.BUTTON_CLIP, ownerId, twitchChannel)
                     )
                 )
@@ -91,15 +91,15 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         inlineKeyboardMarkup.keyboardRow(
             listOf(
                 createButton(
-                    localizedString(Strings.btn_back),
+                    localizedString(Strings.BTN_BACK),
                     BtnCallbacks.CallbackData(BtnCallbacks.BUTTON_BACK, ownerId, twitchChannel)
                 ),
                 createButton(
-                    localizedString(Strings.btn_exit),
+                    localizedString(Strings.BTN_EXIT),
                     BtnCallbacks.CallbackData(BUTTON_CLOSE_LIST, ownerId, twitchChannel)
                 ),
                 createButton(
-                    localizedString(Strings.btn_delete),
+                    localizedString(Strings.BTN_DELETE),
                     BtnCallbacks.CallbackData(BtnCallbacks.BUTTON_DELETE_CHANNEL, ownerId, twitchChannel)
                 )
             )
@@ -107,7 +107,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
 
         editMessage(
             ctx,
-            localizedString(Strings.title_channel_is_selected).format("<b><a href=\"https://www.twitch.tv/$twitchChannel\">$twitchChannel</a></b>"),
+            localizedString(Strings.TITLE_CHANNEL_IS_SELECTED).format("<b><a href=\"https://www.twitch.tv/$twitchChannel\">$twitchChannel</a></b>"),
             inlineKeyboardMarkup.build()
         )
     }
@@ -119,11 +119,11 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
             .call(ctx.sender)
 
     fun update(ctx: CallbackQueryContext) {
-        if (userChannels.getUserChannelsList(ownerId).isNotEmpty()) {
-            editMessage(ctx, localizedString(Strings.wait_check_online_menu), initWaitMenu())
-            editMessage(ctx, localizedString(Strings.title_choose_channel_or_action), init())
+        if (userChannelsTable.getUserChannelsList(ownerId).isNotEmpty()) {
+            editMessage(ctx, localizedString(Strings.WAIT_CHECK_ONLINE_MENU), initWaitMenu())
+            editMessage(ctx, localizedString(Strings.TITLE_CHOOSE_CHANNEL_OR_ACTION), init())
         } else
-            editMessage(ctx, localizedString(Strings.list_is_empty))
+            editMessage(ctx, localizedString(Strings.LIST_IS_EMPTY))
     }
 
     private fun createButton(text: String, callbackData: BtnCallbacks.CallbackData) =
@@ -144,7 +144,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
 
     fun init(): InlineKeyboardMarkup {
         val keyboardRow = arrayListOf<InlineKeyboardButton>()
-        val userChannels = userChannels.getUserChannelsList(ownerId)
+        val userChannels = userChannelsTable.getUserChannelsList(ownerId)
         val twitchOnlineList = Twitch().getOnlineList(userChannels) ?: listOf()
         val liveChannels = twitchOnlineList.map { it.login.lowercase() }
 
@@ -169,8 +169,8 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         var btnClips = listOf<InlineKeyboardButton>()
 
         if (liveChannels.isNotEmpty()) {
-            btnShowLive = createButtonAsList(localizedString(Strings.btn_who_is_online), BUTTON_LIVE, ownerId)
-            btnClips = createButtonAsList(localizedString(Strings.btn_get_all_screens), BUTTON_CLIPS, ownerId)
+            btnShowLive = createButtonAsList(localizedString(Strings.BTN_WHO_IS_ONLINE), BUTTON_LIVE, ownerId)
+            btnClips = createButtonAsList(localizedString(Strings.BTN_GET_ALL_SCREENS), BUTTON_CLIPS, ownerId)
         }
 
         val keyboardMarkupBuilder = InlineKeyboardMarkup.builder()
@@ -182,7 +182,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         return keyboardMarkupBuilder
             .keyboardRow(btnShowLive)
             .keyboardRow(btnClips)
-            .keyboardRow(createButtonAsList(localizedString(Strings.btn_close_list), BUTTON_CLOSE_LIST, ownerId))
+            .keyboardRow(createButtonAsList(localizedString(Strings.BTN_CLOSE_LIST), BUTTON_CLOSE_LIST, ownerId))
             .build()
     }
 
@@ -190,7 +190,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         listOf(createButton(text, BtnCallbacks.CallbackData(btnName, ownerId)))
 
     private fun removeChannelFromUserList(channelName: String, userId: Long) =
-        userChannels.delete(userId, channelName)
+        userChannelsTable.delete(userId, channelName)
 
     private fun localizedString(key: String) =
         Strings.localizedString(key, ownerId)

@@ -1,6 +1,7 @@
 package com.helltar.twitchviewerbot.dao
 
 import com.helltar.twitchviewerbot.dao.DatabaseFactory.dbQuery
+import com.helltar.twitchviewerbot.dao.tables.UsersChannelsTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere

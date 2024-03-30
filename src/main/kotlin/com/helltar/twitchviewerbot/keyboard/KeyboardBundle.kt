@@ -8,7 +8,7 @@ import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.Strings.localizedString
-import com.helltar.twitchviewerbot.TwitchViewerBot.Companion.addRequest
+import com.helltar.twitchviewerbot.bot.TwitchViewerBot.Companion.addRequest
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_BACK
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CHANNEL
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLIP
@@ -42,7 +42,7 @@ class KeyboardBundle : CommandBundle<For> {
         val user = ctx.user()
 
         if (user.id != ownerId) {
-            val text = String.format(localizedString(Strings.dont_touch_is_not_your_list, user.id), user.firstName)
+            val text = String.format(localizedString(Strings.DONT_TOUCH_IS_NOT_YOUR_LIST, user.id), user.firstName)
             ctx.answer(text).callAsync(ctx.sender)
             return
         }

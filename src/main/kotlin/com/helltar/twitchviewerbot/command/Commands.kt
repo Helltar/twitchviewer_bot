@@ -1,4 +1,4 @@
-package com.helltar.twitchviewerbot.commands
+package com.helltar.twitchviewerbot.command
 
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_LIVE

@@ -1,8 +1,11 @@
 package com.helltar.twitchviewerbot.dao
 
 import com.helltar.twitchviewerbot.dao.DatabaseFactory.dbQuery
-import com.helltar.twitchviewerbot.dao.UsersTable.languageCode
-import org.jetbrains.exposed.sql.*
+import com.helltar.twitchviewerbot.dao.tables.UsersTable
+import com.helltar.twitchviewerbot.dao.tables.UsersTable.languageCode
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.update
 import org.telegram.telegrambots.meta.api.objects.User
 import java.time.LocalDateTime
 

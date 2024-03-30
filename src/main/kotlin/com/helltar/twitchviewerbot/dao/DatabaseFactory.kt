@@ -1,6 +1,8 @@
 package com.helltar.twitchviewerbot.dao
 
-import com.helltar.twitchviewerbot.BotConfig.DATABASE_FILE
+import com.helltar.twitchviewerbot.Config.DATABASE_FILE
+import com.helltar.twitchviewerbot.dao.tables.UsersChannelsTable
+import com.helltar.twitchviewerbot.dao.tables.UsersTable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
@@ -12,8 +14,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
 
-    val users = Users()
-    val userChannels = UserChannels()
+    val usersTable = Users()
+    val userChannelsTable = UserChannels()
 
     fun init() {
         val driver = "org.h2.Driver"
@@ -21,7 +23,9 @@ object DatabaseFactory {
 
         val database = Database.connect(url, driver)
 
-        transaction(database) { SchemaUtils.create(UsersTable, UsersChannelsTable) }
+        transaction(database) {
+            SchemaUtils.create(UsersTable, UsersChannelsTable)
+        }
     }
 
     fun <T> dbQuery(block: () -> T): T =

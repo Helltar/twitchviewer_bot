@@ -1,23 +1,23 @@
-package com.helltar.twitchviewerbot
+package com.helltar.twitchviewerbot.bot
 
 import com.annimon.tgbotsmodule.BotHandler
 import com.annimon.tgbotsmodule.commands.CommandRegistry
 import com.annimon.tgbotsmodule.commands.SimpleCommand
 import com.annimon.tgbotsmodule.commands.authority.SimpleAuthority
-import com.helltar.twitchviewerbot.BotConfig.botToken
-import com.helltar.twitchviewerbot.BotConfig.botUsername
-import com.helltar.twitchviewerbot.BotConfig.creatorId
-import com.helltar.twitchviewerbot.TwitchViewerBot.Companion.addRequest
-import com.helltar.twitchviewerbot.commands.BotCommand
-import com.helltar.twitchviewerbot.commands.Commands.COMMAND_ABOUT
-import com.helltar.twitchviewerbot.commands.Commands.COMMAND_ADD
-import com.helltar.twitchviewerbot.commands.Commands.COMMAND_CLIP
-import com.helltar.twitchviewerbot.commands.Commands.COMMAND_LIST
-import com.helltar.twitchviewerbot.commands.Commands.COMMAND_LIVE
-import com.helltar.twitchviewerbot.commands.Commands.COMMAND_SCREENSHOT
-import com.helltar.twitchviewerbot.commands.Commands.COMMAND_START
-import com.helltar.twitchviewerbot.commands.Commands.COMMAND_UPTIME
-import com.helltar.twitchviewerbot.commands.commands.*
+import com.helltar.twitchviewerbot.Config
+import com.helltar.twitchviewerbot.Config.botToken
+import com.helltar.twitchviewerbot.Config.creatorId
+import com.helltar.twitchviewerbot.bot.TwitchViewerBot.Companion.addRequest
+import com.helltar.twitchviewerbot.command.BotCommand
+import com.helltar.twitchviewerbot.command.Commands.COMMAND_ABOUT
+import com.helltar.twitchviewerbot.command.Commands.COMMAND_ADD
+import com.helltar.twitchviewerbot.command.Commands.COMMAND_CLIP
+import com.helltar.twitchviewerbot.command.Commands.COMMAND_LIST
+import com.helltar.twitchviewerbot.command.Commands.COMMAND_LIVE
+import com.helltar.twitchviewerbot.command.Commands.COMMAND_SCREENSHOT
+import com.helltar.twitchviewerbot.command.Commands.COMMAND_START
+import com.helltar.twitchviewerbot.command.Commands.COMMAND_UPTIME
+import com.helltar.twitchviewerbot.command.commands.*
 import com.helltar.twitchviewerbot.dao.DatabaseFactory
 import com.helltar.twitchviewerbot.keyboard.KeyboardBundle
 import org.slf4j.LoggerFactory
@@ -60,18 +60,18 @@ class TwitchViewerBotHandler : BotHandler(botToken) {
         val chatId = chat.id
         val commandName = botCommand.javaClass.simpleName
 
-        log.info("$commandName: $chatId $userId ${user.userName} ${user.firstName} ${chat.title} : ${botCommand.argsText}")
+        log.info("$commandName: $chatId $userId ${user.userName} ${user.firstName} ${chat.title} : ${botCommand.argumentsAsString}")
 
         addRequest("$requestKey@$userId", botCommand.ctx) {
-            if (!DatabaseFactory.users.isUserExists(userId))
-                DatabaseFactory.users.addUser(user)
+            if (!DatabaseFactory.usersTable.isUserExists(userId))
+                DatabaseFactory.usersTable.addUser(user)
             else
-                DatabaseFactory.users.updateUserData(user)
+                DatabaseFactory.usersTable.updateUserData(user)
 
             botCommand.run()
         }
     }
 
     override fun getBotUsername() =
-        BotConfig.botUsername
+        Config.botUsername
 }
