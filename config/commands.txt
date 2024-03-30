@@ -1,5 +1,0 @@
-list - show your favorite channels
-live - who online from your list
-clip - get short clips from all on your list
-screen - get screenshot from channel
-add - add channel to list
