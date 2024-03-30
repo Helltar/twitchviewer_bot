@@ -15,6 +15,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0")
     implementation("com.github.twitch4j:twitch4j:1.18.0")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
 
     implementation("org.slf4j:slf4j-api:2.0.6")
     implementation("ch.qos.logback:logback-classic:1.4.14")
