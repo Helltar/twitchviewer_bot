@@ -1,6 +1,6 @@
 <resources>
     <string name="add_command_info">Write the name of the channel, for example: /add <b>channel</b></string>
-    <string name="channel_added_to_list">Channel <b>%s</b> has been added to the list, to view use: /list@twitchviewer_bot</string>
+    <string name="channel_added_to_list">Channel <b>%s</b> has been added to the list, to view use: /list</string>
     <string name="channel_already_exists_in_list"><b>%s</b> already exists</string>
     <string name="channel_index_not_found">Number <b>%s</b> is not on the list</string>
     <string name="channel_not_exist_in_list">Not in the list</string>
@@ -11,7 +11,7 @@
     <string name="get_clip_fail">Success is not final; failure is not fatal: it is the courage to continue that counts (с)</string>
     <string name="invalid_channel_name">Some kind of crooked name 🌚</string>
     <string name="invalid_channel_name_length">Oops, min. <b>2</b> max. <b>25</b> characters</string>
-    <string name="list_full">List is full, delete some channels: /list@twitchviewer_bot</string>
+    <string name="list_full">List is full, delete some channels: /list</string>
     <string name="list_is_empty">List is empty, use: /add <b>channel</b></string>
     <string name="many_request">Wait, let me deal with the last request 🤖</string>
     <string name="screenshot_command_info">Enter the channel name: /screen <b>channel</b></string>
@@ -19,7 +19,7 @@
     <string name="stream_offline"><b>%s</b> offline 🤷‍♂️</string>
     <string name="stream_start_time">🕔 From <b>%s</b>, uptime <b>%s</b> (GMT+%d)</string>
     <string name="twitch_exception">The channel does not exist or something is broken 🫡</string>
-    <string name="user_close_list"><b>%s</b> closed /list@twitchviewer_bot</string>
+    <string name="user_close_list"><b>%s</b> closed /list</string>
     <string name="wait_check_online">Ok, I'll run through the channels to see 🏃‍♂️ ...</string>
     <string name="wait_check_online_menu">One seconds, I update your list ... 🙏</string>
     <string name="wait_check_user_online">I'll see if <b>%s</b> is streaming ...</string>

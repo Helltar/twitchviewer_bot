@@ -1,6 +1,6 @@
 <resources>
     <string name="add_command_info">Напиши назву каналу, наприклад: /add <b>канал</b></string>
-    <string name="channel_added_to_list">Канал <b>%s</b> додано до списку, для перегляду використовуй: /list@twitchviewer_bot</string>
+    <string name="channel_added_to_list">Канал <b>%s</b> додано до списку, для перегляду використовуй: /list</string>
     <string name="channel_already_exists_in_list"><b>%s</b> уже доданий</string>
     <string name="channel_index_not_found">Номеру <b>%s</b> немає в списку</string>
     <string name="channel_not_exist_in_list">Немає такого в списку</string>
@@ -11,7 +11,7 @@
     <string name="get_clip_fail">Успіх - це ще не крапка, невдача - це ще не кінець: єдине, що має значення - це мужність продовжувати боротьбу (с)</string>
     <string name="invalid_channel_name">Якась крива назва 🌚</string>
     <string name="invalid_channel_name_length">От халепа, мін. <b>2</b> макс. <b>25</b> символів</string>
-    <string name="list_full">Список повний, видали якийсь канал: /list@twitchviewer_bot</string>
+    <string name="list_full">Список повний, видали якийсь канал: /list</string>
     <string name="list_is_empty">Список пустий, використовуй: /add <b>канал</b></string>
     <string name="many_request">Воу воу, дай з минулим запитом розібратись 🤖</string>
     <string name="screenshot_command_info">Вкажи назву каналу: /screen <b>channel</b></string>
@@ -19,7 +19,7 @@
     <string name="stream_offline"><b>%s</b> не стрімить 🤷‍♂️</string>
     <string name="stream_start_time">🕔 Стрімить від <b>%s</b>, всього <b>%s</b> (GMT+%d)</string>
     <string name="twitch_exception">Немає такого каналу або шось поломалось 🫡</string>
-    <string name="user_close_list"><b>%s</b> закрив /list@twitchviewer_bot</string>
+    <string name="user_close_list"><b>%s</b> закрив /list</string>
     <string name="wait_check_online">Зараз пробіжусь по каналах гляну ... 🏃‍♂️</string>
     <string name="wait_check_online_menu">Секунду, оновлю список ... 🙏</string>
     <string name="wait_check_user_online">Зараз гляну чи <b>%s</b> стрімить ...</string>
