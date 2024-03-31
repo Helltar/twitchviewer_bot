@@ -23,12 +23,12 @@ class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             if (!streamData.isNullOrEmpty())
                 sendScreenshot(channelName, streamData.first().username, streamData.first().gameName)
             else
-                replyToMessage(localizedString(Strings.STREAM_OFFLINE.format(channelName)))
+                replyToMessage(localizedString(Strings.STREAM_OFFLINE).format(channelName))
         }
     }
 
     private fun sendScreenshot(channel: String, username: String, gameName: String) {
-        val tempMessageId = replyToMessage(localizedString(Strings.WAIT_GET_SCREENSHOT.format(channel)))
+        val tempMessageId = replyToMessage(localizedString(Strings.WAIT_GET_SCREENSHOT).format(channel))
         val filename = TwitchUtils.getScreenshot(channel)
         deleteMessage(tempMessageId)
 

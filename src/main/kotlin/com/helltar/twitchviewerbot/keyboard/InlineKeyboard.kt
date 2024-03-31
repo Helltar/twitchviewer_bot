@@ -2,6 +2,7 @@ package com.helltar.twitchviewerbot.keyboard
 
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.annimon.tgbotsmodule.commands.context.MessageContext
+import com.helltar.twitchviewerbot.Config
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.command.commands.ClipCommand
 import com.helltar.twitchviewerbot.command.commands.LiveCommand
@@ -36,7 +37,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
     }
 
     fun btnClose(ctx: CallbackQueryContext): Serializable =
-        editMessage(ctx, String.format(localizedString(Strings.USER_CLOSE_LIST), ctx.user().firstName))
+        editMessage(ctx, localizedString(Strings.USER_CLOSE_LIST).format(ctx.user().firstName, Config.botUsername))
 
     fun btnDeleteChannel(ctx: CallbackQueryContext) {
         removeChannelFromUserList(twitchChannel, ownerId)

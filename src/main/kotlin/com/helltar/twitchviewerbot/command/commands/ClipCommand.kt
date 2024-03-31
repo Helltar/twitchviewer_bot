@@ -37,7 +37,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                 val text = if (userLogins.size > 1)
                     localizedString(Strings.EMPTY_ONLINE_LIST)
                 else
-                    localizedString(Strings.STREAM_OFFLINE.format(userLogins.first()))
+                    localizedString(Strings.STREAM_OFFLINE).format(userLogins.first())
 
                 replyToMessage(text)
             }

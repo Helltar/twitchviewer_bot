@@ -30,7 +30,7 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             if (isNotOneChannel)
                 localizedString(Strings.WAIT_CHECK_ONLINE)
             else
-                localizedString(Strings.WAIT_CHECK_USER_ONLINE.format(channels.first()))
+                localizedString(Strings.WAIT_CHECK_USER_ONLINE).format(channels.first())
 
         val waitMessageId = replyToMessage(waitText)
         var liveList = getOnlineList(channels)
@@ -73,7 +73,7 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                     val htmlTitle = """<b><a href="https://www.twitch.tv/$login">$username</a></b> - $title\n\n"""
                     val viewers = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
                     val game = if (gameName.isNotEmpty()) "\uD83C\uDFB2 <b>${gameName.escapeHtml()}</b>\n" else "" // 🎲
-                    val time = localizedString(Strings.STREAM_START_TIME.format(startedAt, uptime, getTimeZoneOffset()))
+                    val time = localizedString(Strings.STREAM_START_TIME).format(startedAt, uptime, getTimeZoneOffset())
 
                     thumbnailsUrls["#$username - $title"] = thumbnailUrl
 
