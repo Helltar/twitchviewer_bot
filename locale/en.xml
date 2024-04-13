@@ -24,7 +24,7 @@
     <string name="wait_check_online_menu">One second, I update your list ... 🙏</string>
     <string name="wait_check_user_online">I'll see if <b>%s</b> is streaming ...</string>
     <string name="wait_clip_compress">Wait, video compress ... 🦾</string>
-    <string name="wait_get_screenshot">Okay, 20 sec ...</string>
+    <string name="wait_get_screenshot">Ok, 20 sec ...</string>
 
     <string name="start_command_info">
         👋 Hi, here is a quick help on the commands:
