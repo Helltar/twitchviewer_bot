@@ -1,7 +1,7 @@
 package com.helltar.twitchviewerbot.twitch
 
 import com.github.twitch4j.TwitchClientBuilder
-import com.helltar.twitchviewerbot.Config.twitchToken
+import com.helltar.twitchviewerbot.EnvConfig.twitchToken
 import com.helltar.twitchviewerbot.Extensions.escapeHtml
 import org.slf4j.LoggerFactory
 import java.time.LocalTime

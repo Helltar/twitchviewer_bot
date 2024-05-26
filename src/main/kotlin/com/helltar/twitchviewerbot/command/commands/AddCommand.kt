@@ -1,11 +1,11 @@
 package com.helltar.twitchviewerbot.command.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewerbot.Config.botUsername
-import com.helltar.twitchviewerbot.Config.creatorId
+import com.helltar.twitchviewerbot.EnvConfig.botUsername
+import com.helltar.twitchviewerbot.EnvConfig.creatorId
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.command.TwitchCommand
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelsTable
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelDAO
 
 class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
@@ -37,8 +37,8 @@ class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     }
 
     private fun addChannelToUserList(channel: String) =
-        if (userChannelsTable.isChannelNotExists(userId, channel))
-            userChannelsTable.add(userId, channel.lowercase())
+        if (userChannelDAO.isChannelNotExists(userId, channel))
+            userChannelDAO.add(userId, channel.lowercase())
         else
             false
 }

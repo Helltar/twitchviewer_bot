@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.update
 import org.telegram.telegrambots.meta.api.objects.User
 import java.time.LocalDateTime
 
-class Users {
+class UsersDAO {
 
     fun addUser(user: User) = dbQuery {
         UsersTable.insert {

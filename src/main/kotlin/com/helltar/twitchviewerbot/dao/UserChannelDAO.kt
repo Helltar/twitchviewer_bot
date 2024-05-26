@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import java.time.LocalDateTime
 
-class UserChannels {
+class UserChannelDAO {
 
     fun add(userId: Long, channel: String) = dbQuery {
         UsersChannelsTable.insert {

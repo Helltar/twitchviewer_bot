@@ -2,7 +2,7 @@ package com.helltar.twitchviewerbot.command
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelsTable
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelDAO
 import com.helltar.twitchviewerbot.twitch.Twitch
 import java.util.*
 
@@ -11,13 +11,13 @@ abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
     protected val twitch = Twitch()
 
     protected fun getUserChannelsList(userId: Long = this.userId) =
-        userChannelsTable.getUserChannelsList(userId)
+        userChannelDAO.getUserChannelsList(userId)
 
     protected fun isUserListEmpty(userId: Long = this.userId) =
-        userChannelsTable.isUserListEmpty(userId)
+        userChannelDAO.isUserListEmpty(userId)
 
     protected fun isUserListNotEmpty(userId: Long = this.userId) =
-        userChannelsTable.isUserListNotEmpty(userId)
+        userChannelDAO.isUserListNotEmpty(userId)
 
     protected fun isChannelNameValid(channelName: String): Boolean {
         if (channelName.length !in 2..25) {
@@ -35,6 +35,6 @@ abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
 
     protected fun getTimeZoneOffset(): Int {
         val systemTimeZone = TimeZone.getDefault()
-        return systemTimeZone.rawOffset / (1000 * 60 * 60)
+        return (systemTimeZone.rawOffset / (1000 * 60 * 60)) + 1 // todo: TimeZoneOffset
     }
 }

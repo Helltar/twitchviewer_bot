@@ -4,9 +4,9 @@ import com.annimon.tgbotsmodule.BotHandler
 import com.annimon.tgbotsmodule.commands.CommandRegistry
 import com.annimon.tgbotsmodule.commands.SimpleCommand
 import com.annimon.tgbotsmodule.commands.authority.SimpleAuthority
-import com.helltar.twitchviewerbot.Config
-import com.helltar.twitchviewerbot.Config.botToken
-import com.helltar.twitchviewerbot.Config.creatorId
+import com.helltar.twitchviewerbot.EnvConfig
+import com.helltar.twitchviewerbot.EnvConfig.botToken
+import com.helltar.twitchviewerbot.EnvConfig.creatorId
 import com.helltar.twitchviewerbot.RequestExecutor.addRequest
 import com.helltar.twitchviewerbot.command.BotCommand
 import com.helltar.twitchviewerbot.command.Commands.COMMAND_ABOUT
@@ -63,15 +63,15 @@ class TwitchViewerBotHandler : BotHandler(botToken) {
         log.info("$commandName: $chatId $userId ${user.userName} ${user.firstName} ${chat.title} : ${botCommand.argumentsAsString}")
 
         addRequest("$requestKey@$userId", botCommand.ctx) {
-            if (!DatabaseFactory.usersTable.isUserExists(userId))
-                DatabaseFactory.usersTable.addUser(user)
+            if (!DatabaseFactory.usersDAO.isUserExists(userId))
+                DatabaseFactory.usersDAO.addUser(user)
             else
-                DatabaseFactory.usersTable.updateUserData(user)
+                DatabaseFactory.usersDAO.updateUserData(user)
 
             botCommand.run()
         }
     }
 
     override fun getBotUsername() =
-        Config.botUsername
+        EnvConfig.botUsername
 }

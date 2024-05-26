@@ -1,12 +1,12 @@
 package com.helltar.twitchviewerbot.twitch
 
-import com.helltar.twitchviewerbot.Config.DIR_TEMP
 import com.helltar.twitchviewerbot.Extensions.randomizeByName
 import org.slf4j.LoggerFactory
 import java.io.File
 
 object TwitchUtils {
 
+    private val tempDir = System.getProperty("java.io.tmpdir")
     private val log = LoggerFactory.getLogger(javaClass)
 
     fun getShortClip(channel: String): String {
@@ -20,9 +20,9 @@ object TwitchUtils {
         "ffmpeg -i $streamlinkOutFilename -fs 9.9M -t 45 -c copy -loglevel quiet $ffmpegOutFilename"
             .startProcess()
 
-        File("$DIR_TEMP/$streamlinkOutFilename").delete()
+        File("$tempDir/$streamlinkOutFilename").delete()
 
-        return "$DIR_TEMP/$ffmpegOutFilename"
+        return "$tempDir/$ffmpegOutFilename"
     }
 
     fun getScreenshot(channel: String): String {
@@ -35,9 +35,9 @@ object TwitchUtils {
         "ffmpeg -ss 00:00:05 -i $streamlinkOutFilename -vframes 1 $ffmpegOutFilename"
             .startProcess()
 
-        File("$DIR_TEMP/$streamlinkOutFilename").delete()
+        File("$tempDir/$streamlinkOutFilename").delete()
 
-        return "$DIR_TEMP/$ffmpegOutFilename"
+        return "$tempDir/$ffmpegOutFilename"
     }
 
     private fun executeStreamlink(sigintTimeout: Int, channel: String, outFilename: String) =
@@ -46,17 +46,10 @@ object TwitchUtils {
 
     private fun String.startProcess() {
         try {
-            val file = File(DIR_TEMP)
-
-            if (!file.exists()) {
-                if (!file.mkdir()) return
-            } else if (!file.isDirectory) return
-
             ProcessBuilder(this.split(" "))
-                .directory(file)
+                .directory(File(tempDir))
                 .start()
                 .waitFor()
-
         } catch (e: Exception) {
             log.error(e.message, e)
         }

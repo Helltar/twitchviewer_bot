@@ -2,12 +2,12 @@ package com.helltar.twitchviewerbot.keyboard
 
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewerbot.Config
+import com.helltar.twitchviewerbot.EnvConfig
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.command.commands.ClipCommand
 import com.helltar.twitchviewerbot.command.commands.LiveCommand
 import com.helltar.twitchviewerbot.command.commands.ScreenCommand
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelsTable
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelDAO
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CHANNEL
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.keyboard.BtnCallbacks.BUTTON_CLOSE_LIST
@@ -37,7 +37,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
     }
 
     fun btnClose(ctx: CallbackQueryContext): Serializable =
-        editMessage(ctx, localizedString(Strings.USER_CLOSE_LIST).format(ctx.user().firstName, Config.botUsername))
+        editMessage(ctx, localizedString(Strings.USER_CLOSE_LIST).format(ctx.user().firstName, EnvConfig.botUsername))
 
     fun btnDeleteChannel(ctx: CallbackQueryContext) {
         removeChannelFromUserList(twitchChannel, ownerId)
@@ -48,7 +48,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         ScreenCommand(MessageContext(ctx.sender, ctx.update(), "")).getScreenshot(twitchChannel)
 
     fun btnLive() =
-        liveCommand.run { sendOnlineList(userChannelsTable.getUserChannelsList(ownerId)) }
+        liveCommand.run { sendOnlineList(userChannelDAO.getUserChannelsList(ownerId)) }
 
     fun btnShow() =
         liveCommand.sendOnlineList(listOf(twitchChannel))
@@ -57,12 +57,12 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         clipCommand.getClipsFromAll(listOf(twitchChannel))
 
     fun btnClips() =
-        clipCommand.getClipsFromAll(userChannelsTable.getUserChannelsList(ownerId))
+        clipCommand.getClipsFromAll(userChannelDAO.getUserChannelsList(ownerId))
 
     fun btnChannel(ctx: CallbackQueryContext) {
         val isChannelLive = getChannelStatus(ctx.data())
 
-        if (userChannelsTable.isChannelNotExists(ownerId, twitchChannel)) {
+        if (userChannelDAO.isChannelNotExists(ownerId, twitchChannel)) {
             update(ctx)
             return
         }
@@ -120,7 +120,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
             .call(ctx.sender)
 
     fun update(ctx: CallbackQueryContext) {
-        if (userChannelsTable.getUserChannelsList(ownerId).isNotEmpty()) {
+        if (userChannelDAO.getUserChannelsList(ownerId).isNotEmpty()) {
             editMessage(ctx, localizedString(Strings.WAIT_CHECK_ONLINE_MENU), initWaitMenu())
             editMessage(ctx, localizedString(Strings.TITLE_CHOOSE_CHANNEL_OR_ACTION), init())
         } else
@@ -145,7 +145,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
 
     fun init(): InlineKeyboardMarkup {
         val keyboardRow = arrayListOf<InlineKeyboardButton>()
-        val userChannels = userChannelsTable.getUserChannelsList(ownerId)
+        val userChannels = userChannelDAO.getUserChannelsList(ownerId)
         val twitchOnlineList = Twitch().getOnlineList(userChannels) ?: listOf()
         val liveChannels = twitchOnlineList.map { it.login.lowercase() }
 
@@ -191,7 +191,7 @@ class InlineKeyboard(val ctx: CallbackQueryContext, private val ownerId: Long) {
         listOf(createButton(text, BtnCallbacks.CallbackData(btnName, ownerId)))
 
     private fun removeChannelFromUserList(channelName: String, userId: Long) =
-        userChannelsTable.delete(userId, channelName)
+        userChannelDAO.delete(userId, channelName)
 
     private fun localizedString(key: String) =
         Strings.localizedString(key, ownerId)
