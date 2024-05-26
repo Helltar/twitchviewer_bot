@@ -10,4 +10,4 @@ temp/
 test/
 logs/
 
-.env
+Dockerfile
