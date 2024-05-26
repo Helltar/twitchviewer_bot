@@ -3,18 +3,18 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>UTF-8</charset>
-            <pattern>%highlight(%-5level) %gray(%logger{36}) %cyan([%thread]) %magenta(%M)-%gray([%line]) --> %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %gray(%logger{36}) %cyan([%thread]) %magenta(%M)-%gray([%line]) --> %msg%n</pattern>
         </encoder>
     </appender>
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/log.log</file>
+        <file>data/logs/log.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/%d{dd.MM.YYYY}/log_%d{dd.MM.YYYY}.%i.log</fileNamePattern>
+            <fileNamePattern>data/logs/%d{dd.MM.YYYY}/log_%d{dd.MM.YYYY}.%i.log</fileNamePattern>
             <maxFileSize>25MB</maxFileSize>
             <maxHistory>60</maxHistory>
-            <totalSizeCap>50GB</totalSizeCap>
+            <totalSizeCap>25GB</totalSizeCap>
         </rollingPolicy>
 
         <encoder>
