@@ -1,49 +1,49 @@
 <resources>
-    <string name="add_command_info">Write the name of the channel, for example: /add <b>channel</b></string>
-    <string name="channel_added_to_list">Channel <b>%s</b> has been added to the list, to view use: /list@%s</string>
-    <string name="channel_already_exists_in_list"><b>%s</b> already exists</string>
-    <string name="channel_index_not_found">Number <b>%s</b> is not on the list</string>
-    <string name="channel_not_exist_in_list">Not in the list</string>
-    <string name="channel_removed_from_list">Channel <b>%s</b> removed from the list</string>
-    <string name="clip_compress_fail">Oops, fail 😐</string>
-    <string name="dont_touch_is_not_your_list">%s, don't touch it, it's not your list</string>
-    <string name="empty_online_list">No one in live 🤷‍♂️</string>
+    <string name="add_command_info">Enter the name of the channel, for example: /add <b>channel</b></string>
+    <string name="channel_added_to_list">Channel <b>%s</b> has been added to the list. To view it, use: /list@%s</string>
+    <string name="channel_already_exists_in_list"><b>%s</b> already exists in the list</string>
+    <string name="channel_index_not_found">Number <b>%s</b> is not in the list</string>
+    <string name="channel_not_exist_in_list">Channel is not in the list</string>
+    <string name="channel_removed_from_list">Channel <b>%s</b> has been removed from the list</string>
+    <string name="clip_compress_fail">Oops, compression failed 😐</string>
+    <string name="dont_touch_is_not_your_list">%s, don't touch this, it's not your list</string>
+    <string name="empty_online_list">No one is live 🤷‍♂️</string>
     <string name="get_clip_fail">Success is not final; failure is not fatal: it is the courage to continue that counts (с)</string>
-    <string name="invalid_channel_name">Some kind of crooked name 🌚</string>
-    <string name="invalid_channel_name_length">Oops, min. <b>2</b> max. <b>25</b> characters</string>
-    <string name="list_full">List is full, delete some channels: /list@%s</string>
-    <string name="list_is_empty">List is empty, use: /add <b>channel</b></string>
-    <string name="many_request">Wait, let me deal with the last request 🤖</string>
+    <string name="invalid_channel_name">Invalid channel name 🌚</string>
+    <string name="invalid_channel_name_length">Oops, min. <b>2</b> characters and max. <b>25</b> characters allowed</string>
+    <string name="list_full">The list is full. Delete some channels using: /list@%s</string>
+    <string name="list_is_empty">The list is empty. Use: /add <b>channel</b></string>
+    <string name="many_request">Please wait, processing the previous request 🤖</string>
     <string name="screenshot_command_info">Enter the channel name: /screen <b>channel</b></string>
-    <string name="start_get_clip">Starting to record <b>%s</b> stream, wait a minute ...</string>
-    <string name="stream_offline"><b>%s</b> offline 🤷‍♂️</string>
-    <string name="stream_start_time">🕔 From <b>%s</b>, uptime <b>%s</b> (GMT+%d)</string>
-    <string name="twitch_exception">The channel does not exist or something is broken 🫡</string>
+    <string name="start_get_clip">Starting to record stream from <b>%s</b>, please wait ...</string>
+    <string name="stream_offline"><b>%s</b> is currently offline 🤷‍♂️</string>
+    <string name="stream_start_time">🕔 Started streaming from <b>%s</b>, uptime is <b>%s</b> (GMT+%d)</string>
+    <string name="twitch_exception">The channel does not exist or there is an error 🫡</string>
     <string name="user_close_list"><b>%s</b> closed /list@%s</string>
-    <string name="wait_check_online">Ok, I'll run through the channels to see 🏃‍♂️ ...</string>
-    <string name="wait_check_online_menu">One second, I update your list ... 🙏</string>
-    <string name="wait_check_user_online">I'll see if <b>%s</b> is streaming ...</string>
-    <string name="wait_clip_compress">Wait, video compress ... 🦾</string>
-    <string name="wait_get_screenshot">Ok, 20 sec ...</string>
+    <string name="wait_check_online">Ok, I will check the channels for you 🏃‍♂️ ...</string>
+    <string name="wait_check_online_menu">One moment, I am updating your list ... 🙏</string>
+    <string name="wait_check_user_online">I will check if <b>%s</b> is streaming ...</string>
+    <string name="wait_clip_compress">Please wait, compressing the video ... 🦾</string>
+    <string name="wait_get_screenshot">Ok, please wait for 20 seconds ...</string>
 
     <string name="start_command_info">
-        👋 Hi, here is a quick help on the commands:
+        👋 Hi, here is a quick guide on the commands:
 
-        /list - show your favorite channels
-        /live - who online from your list
-        /clip - get short clips from all on your list
-        /screen - get screenshot from channel
-        /add - add channel to list
+        /list - Show your favorite channels
+        /live - Check who is online from your list
+        /clip - Get short clips from all channels on your list
+        /screen - Get a screenshot from a channel
+        /add - Add a channel to your list
     </string>
 
     <string name="clip_command_info">
-        List is empty, use: /add <b>channel</b>
+        The list is empty. Use: /add <b>channel</b>
         or
         Enter the channel name: /clip <b>channel</b>
     </string>
 
     <string name="live_command_info">
-        List is empty, use: /add <b>channel</b>
+        The list is empty. Use: /add <b>channel</b>
         or
         Enter the channel name: /live <b>channel</b>
     </string>
@@ -58,6 +58,6 @@
     <string name="btn_screenshot">📸 Screenshot</string>
     <string name="btn_short_clip">📹 Short clip</string>
     <string name="btn_who_is_online">👀 Show Live List</string>
-    <string name="title_channel_is_selected">Channel %s is selected, what's next?:</string>
-    <string name="title_choose_channel_or_action">Choose a channel or action:</string>
+    <string name="title_channel_is_selected">Channel %s is selected. What's next?</string>
+    <string name="title_choose_channel_or_action">Choose a channel or an action:</string>
 </resources>
