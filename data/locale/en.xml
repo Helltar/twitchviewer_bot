@@ -17,6 +17,7 @@
     <string name="screenshot_command_info">Enter the channel name: /screen <b>channel</b></string>
     <string name="start_get_clip">Starting to record stream from <b>%s</b>, please wait ...</string>
     <string name="stream_offline"><b>%s</b> is currently offline 🤷‍♂️</string>
+    <string name="stream_viewers">👀 Viewers <b>%d</b></string>
     <string name="stream_start_time">🕔 Started streaming from <b>%s</b>, uptime is <b>%s</b> (GMT+%d)</string>
     <string name="twitch_exception">The channel does not exist or there is an error 🫡</string>
     <string name="user_close_list"><b>%s</b> closed /list@%s</string>

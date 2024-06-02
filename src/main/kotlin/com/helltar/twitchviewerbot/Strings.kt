@@ -26,6 +26,7 @@ object Strings {
     const val START_GET_CLIP = "start_get_clip"
     const val STREAM_OFFLINE = "stream_offline"
     const val STREAM_START_TIME = "stream_start_time"
+    const val STREAM_VIEWERS = "stream_viewers"
     const val TWITCH_EXCEPTION = "twitch_exception"
     const val USER_CLOSE_LIST = "user_close_list"
     const val WAIT_CHECK_ONLINE = "wait_check_online"

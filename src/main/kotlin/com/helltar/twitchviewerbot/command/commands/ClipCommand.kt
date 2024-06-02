@@ -74,7 +74,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                     val startedAt = broadcastData.startedAt
                     val streamUptime = broadcastData.uptime
 
-                    val viewersHtml = "\uD83D\uDC40 <b>$viewerCount</b>\n" // 👀
+                    val viewersHtml = localizedString(Strings.STREAM_VIEWERS).format(viewerCount) + "\n"
                     val startTimeHtml = localizedString(Strings.STREAM_START_TIME).format(startedAt, streamUptime, getTimeZoneOffset()) + "\n\n"
                     val categoryHtml = if (streamCategory.isNotEmpty()) ", #${streamCategory.toHashTag()}" else ""
                     val titleHtml = "<b>$channelLink</b> - $streamTitle\n\n"
