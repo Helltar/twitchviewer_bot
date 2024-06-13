@@ -16,7 +16,6 @@ import com.helltar.twitchviewerbot.command.Commands.COMMAND_LIST
 import com.helltar.twitchviewerbot.command.Commands.COMMAND_LIVE
 import com.helltar.twitchviewerbot.command.Commands.COMMAND_SCREENSHOT
 import com.helltar.twitchviewerbot.command.Commands.COMMAND_START
-import com.helltar.twitchviewerbot.command.Commands.COMMAND_UPTIME
 import com.helltar.twitchviewerbot.command.commands.*
 import com.helltar.twitchviewerbot.dao.DatabaseFactory
 import com.helltar.twitchviewerbot.keyboard.KeyboardBundle
@@ -41,7 +40,6 @@ class TwitchViewerBotHandler : BotHandler(botToken) {
 
             register(SimpleCommand("/start") { runCommand(StartCommand(it), COMMAND_START) })
             register(SimpleCommand("/help") { runCommand(HelpCommand(it), COMMAND_START) })
-            register(SimpleCommand("/uptime") { runCommand(UptimeCommand(it), COMMAND_UPTIME) })
             register(SimpleCommand("/about") { runCommand(AboutCommand(it), COMMAND_ABOUT) })
 
             registerBundle(KeyboardBundle())
