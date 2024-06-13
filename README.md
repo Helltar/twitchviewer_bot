@@ -11,6 +11,6 @@ docker run --rm -d \
   -e BOT_TOKEN=123:xxx \
   -e BOT_USERNAME=name_bot \
   -e TWITCH_TOKEN=qwerty \
-  -v twitchviewerbot_data:/app/data \
-  ghcr.io/helltar/twitchviewerbot:latest
+  -v twitchbot_data:/app/data \
+  ghcr.io/helltar/twitchbot:latest
 ```
