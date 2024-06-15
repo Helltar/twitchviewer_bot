@@ -4,11 +4,12 @@ import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import org.telegram.telegrambots.meta.api.methods.ParseMode
-import org.telegram.telegrambots.meta.api.objects.Message
+import org.telegram.telegrambots.meta.api.objects.message.Message
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import java.io.File
 import java.io.Serializable
-import java.net.URL
+import java.net.URI
+import java.util.concurrent.CompletableFuture
 
 abstract class BotCommand(val ctx: MessageContext) {
 
@@ -43,7 +44,7 @@ abstract class BotCommand(val ctx: MessageContext) {
 
     protected fun replyToMessageWithPhoto(url: String, caption: String, messageId: Int = ctx.messageId()): Message =
         ctx.replyToMessageWithPhoto()
-            .setFile(url, URL(url).openStream())
+            .setFile(url, URI.create(url).toURL().openStream())
             .setCaption(caption)
             .setReplyToMessageId(messageId)
             .setParseMode(ParseMode.HTML)
@@ -72,6 +73,6 @@ abstract class BotCommand(val ctx: MessageContext) {
             .disableWebPagePreview()
             .call(ctx.sender)
 
-    protected fun deleteMessage(messageId: Int) =
+    protected fun deleteMessage(messageId: Int): CompletableFuture<Boolean> =
         ctx.deleteMessage().setMessageId(messageId).callAsync(ctx.sender)
 }

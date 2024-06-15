@@ -1,11 +1,11 @@
 package com.helltar.twitchviewerbot.bot
 
 import com.annimon.tgbotsmodule.BotHandler
+import com.annimon.tgbotsmodule.BotModuleOptions
 import com.annimon.tgbotsmodule.commands.CommandRegistry
 import com.annimon.tgbotsmodule.commands.SimpleCommand
 import com.annimon.tgbotsmodule.commands.authority.SimpleAuthority
-import com.helltar.twitchviewerbot.EnvConfig
-import com.helltar.twitchviewerbot.EnvConfig.botToken
+import com.helltar.twitchviewerbot.EnvConfig.botUsername
 import com.helltar.twitchviewerbot.EnvConfig.creatorId
 import com.helltar.twitchviewerbot.RequestExecutor.addRequest
 import com.helltar.twitchviewerbot.command.BotCommand
@@ -20,10 +20,10 @@ import com.helltar.twitchviewerbot.command.commands.*
 import com.helltar.twitchviewerbot.dao.DatabaseFactory
 import com.helltar.twitchviewerbot.keyboard.KeyboardBundle
 import org.slf4j.LoggerFactory
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Update
 
-class TwitchViewerBotHandler : BotHandler(botToken) {
+class TwitchViewerBotHandler(botModuleOptions: BotModuleOptions) : BotHandler(botModuleOptions) {
 
     private val authority = SimpleAuthority(creatorId)
     private val commands = CommandRegistry(botUsername, authority)
@@ -69,7 +69,4 @@ class TwitchViewerBotHandler : BotHandler(botToken) {
             botCommand.run()
         }
     }
-
-    override fun getBotUsername() =
-        EnvConfig.botUsername
 }

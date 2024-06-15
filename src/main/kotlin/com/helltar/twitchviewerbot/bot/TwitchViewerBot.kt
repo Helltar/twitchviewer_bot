@@ -1,8 +1,10 @@
 package com.helltar.twitchviewerbot.bot
 
 import com.annimon.tgbotsmodule.BotModule
+import com.annimon.tgbotsmodule.BotModuleOptions
 import com.annimon.tgbotsmodule.Runner
 import com.annimon.tgbotsmodule.beans.Config
+import com.helltar.twitchviewerbot.EnvConfig.botToken
 import com.helltar.twitchviewerbot.dao.DatabaseFactory
 
 class TwitchViewerBot : BotModule {
@@ -16,5 +18,5 @@ class TwitchViewerBot : BotModule {
     }
 
     override fun botHandler(config: Config) =
-        TwitchViewerBotHandler()
+        TwitchViewerBotHandler(BotModuleOptions.createDefault(botToken))
 }
