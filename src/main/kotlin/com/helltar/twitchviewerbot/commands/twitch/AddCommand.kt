@@ -1,17 +1,17 @@
-package com.helltar.twitchviewerbot.command.commands
+package com.helltar.twitchviewerbot.commands.twitch
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.EnvConfig.botUsername
 import com.helltar.twitchviewerbot.EnvConfig.creatorId
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.command.TwitchCommand
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelDAO
+import com.helltar.twitchviewerbot.commands.TwitchCommand
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelsDAO
 
 class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private val maxChannelsSize = if (userId != creatorId) 8 else 12
 
-    override fun run() {
+    override suspend fun run() {
         if (ctx.user().isBot)
             return
 
@@ -21,7 +21,7 @@ class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             replyToMessage(localizedString(Strings.ADD_COMMAND_INFO).format(botUsername))
     }
 
-    private fun add(channel: String) {
+    private suspend fun add(channel: String) {
         if (!isChannelNameValid(channel))
             return
 
@@ -36,9 +36,6 @@ class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             replyToMessage(localizedString(Strings.LIST_FULL).format(botUsername))
     }
 
-    private fun addChannelToUserList(channel: String) =
-        if (userChannelDAO.isChannelNotExists(userId, channel))
-            userChannelDAO.add(userId, channel.lowercase())
-        else
-            false
+    private suspend fun addChannelToUserList(channel: String) =
+        userChannelsDAO.add(userId, channel.lowercase())
 }

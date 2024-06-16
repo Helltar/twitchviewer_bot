@@ -7,66 +7,46 @@ import com.annimon.tgbotsmodule.commands.SimpleCommand
 import com.annimon.tgbotsmodule.commands.authority.SimpleAuthority
 import com.helltar.twitchviewerbot.EnvConfig.botUsername
 import com.helltar.twitchviewerbot.EnvConfig.creatorId
-import com.helltar.twitchviewerbot.RequestExecutor.addRequest
-import com.helltar.twitchviewerbot.command.BotCommand
-import com.helltar.twitchviewerbot.command.Commands.COMMAND_ABOUT
-import com.helltar.twitchviewerbot.command.Commands.COMMAND_ADD
-import com.helltar.twitchviewerbot.command.Commands.COMMAND_CLIP
-import com.helltar.twitchviewerbot.command.Commands.COMMAND_LIST
-import com.helltar.twitchviewerbot.command.Commands.COMMAND_LIVE
-import com.helltar.twitchviewerbot.command.Commands.COMMAND_SCREENSHOT
-import com.helltar.twitchviewerbot.command.Commands.COMMAND_START
-import com.helltar.twitchviewerbot.command.commands.*
-import com.helltar.twitchviewerbot.dao.DatabaseFactory
-import com.helltar.twitchviewerbot.keyboard.KeyboardBundle
-import org.slf4j.LoggerFactory
+import com.helltar.twitchviewerbot.commands.CommandExecutor
+import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_ABOUT
+import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_ADD
+import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_CLIP
+import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_LIST
+import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_LIVE
+import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_SCREENSHOT
+import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_START
+import com.helltar.twitchviewerbot.commands.simple.AboutCommand
+import com.helltar.twitchviewerbot.commands.simple.HelpCommand
+import com.helltar.twitchviewerbot.commands.simple.StartCommand
+import com.helltar.twitchviewerbot.commands.twitch.*
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.KeyboardBundle
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Update
 
 class TwitchViewerBotHandler(botModuleOptions: BotModuleOptions) : BotHandler(botModuleOptions) {
 
     private val authority = SimpleAuthority(creatorId)
-    private val commands = CommandRegistry(botUsername, authority)
-
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val commandRegistry = CommandRegistry(botUsername, authority)
+    private val commandExecutor = CommandExecutor()
 
     init {
-        commands.run {
-            register(SimpleCommand("/add") { runCommand(AddCommand(it), COMMAND_ADD) })
-            register(SimpleCommand("/clip") { runCommand(ClipCommand(it), COMMAND_CLIP) })
-            register(SimpleCommand("/live") { runCommand(LiveCommand(it), COMMAND_LIVE) })
-            register(SimpleCommand("/screen") { runCommand(ScreenCommand(it), COMMAND_SCREENSHOT) })
-            register(SimpleCommand("/list") { runCommand(ListCommand(it), COMMAND_LIST) })
+        commandRegistry.run {
+            register(SimpleCommand("/add") { commandExecutor.execute(AddCommand(it), COMMAND_ADD) })
+            register(SimpleCommand("/clip") { commandExecutor.execute(ClipCommand(it), COMMAND_CLIP) })
+            register(SimpleCommand("/live") { commandExecutor.execute(LiveCommand(it), COMMAND_LIVE) })
+            register(SimpleCommand("/screen") { commandExecutor.execute(ScreenCommand(it), COMMAND_SCREENSHOT) })
+            register(SimpleCommand("/list") { commandExecutor.execute(ListCommand(it), COMMAND_LIST) })
 
-            register(SimpleCommand("/start") { runCommand(StartCommand(it), COMMAND_START) })
-            register(SimpleCommand("/help") { runCommand(HelpCommand(it), COMMAND_START) })
-            register(SimpleCommand("/about") { runCommand(AboutCommand(it), COMMAND_ABOUT) })
+            register(SimpleCommand("/start") { commandExecutor.execute(StartCommand(it), COMMAND_START) })
+            register(SimpleCommand("/help") { commandExecutor.execute(HelpCommand(it), COMMAND_START) })
+            register(SimpleCommand("/about") { commandExecutor.execute(AboutCommand(it), COMMAND_ABOUT) })
 
             registerBundle(KeyboardBundle())
         }
     }
 
     override fun onUpdate(update: Update): BotApiMethod<*>? {
-        commands.handleUpdate(this, update)
+        commandRegistry.handleUpdate(this, update)
         return null
-    }
-
-    private fun runCommand(botCommand: BotCommand, requestKey: String) {
-        val user = botCommand.ctx.user()
-        val userId = user.id
-        val chat = botCommand.ctx.message().chat
-        val chatId = chat.id
-        val commandName = botCommand.javaClass.simpleName
-
-        log.info("$commandName: $chatId $userId ${user.userName} ${user.firstName} ${chat.title} : ${botCommand.argumentsAsString}")
-
-        addRequest("$requestKey@$userId", botCommand.ctx) {
-            if (!DatabaseFactory.usersDAO.isUserExists(userId))
-                DatabaseFactory.usersDAO.addUser(user)
-            else
-                DatabaseFactory.usersDAO.updateUserData(user)
-
-            botCommand.run()
-        }
     }
 }

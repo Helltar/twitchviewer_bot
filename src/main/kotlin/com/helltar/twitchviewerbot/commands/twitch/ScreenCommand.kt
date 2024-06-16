@@ -1,15 +1,15 @@
-package com.helltar.twitchviewerbot.command.commands
+package com.helltar.twitchviewerbot.commands.twitch
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Extensions.toHashTag
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.command.TwitchCommand
-import com.helltar.twitchviewerbot.twitch.TwitchUtils
+import com.helltar.twitchviewerbot.commands.TwitchCommand
+import com.helltar.twitchviewerbot.twitch.Utils
 import java.io.File
 
 class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
-    override fun run() {
+    override suspend fun run() {
         if (arguments.isEmpty())
             replyToMessage(localizedString(Strings.SCREENSHOT_COMMAND_INFO))
         else
@@ -29,7 +29,7 @@ class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private fun sendScreenshot(channel: String, username: String, gameName: String) {
         val tempMessageId = replyToMessage(localizedString(Strings.WAIT_GET_SCREENSHOT).format(channel))
-        val filename = TwitchUtils.getScreenshot(channel)
+        val filename = Utils.getScreenshot(channel)
         deleteMessage(tempMessageId)
 
         if (File(filename).exists()) {

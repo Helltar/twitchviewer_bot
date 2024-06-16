@@ -1,6 +1,5 @@
 package com.helltar.twitchviewerbot
 
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.usersDAO
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileReader
@@ -48,10 +47,9 @@ object Strings {
     private const val DIR_LOCALE = "data/locale"
     private val log = LoggerFactory.getLogger(javaClass)
 
-    fun localizedString(key: String, userId: Long): String {
+    fun localizedString(key: String, languageCode: String?): String {
         return try {
-            val languageCode = usersDAO.getLanguageCode(userId)
-            var filename = "$DIR_LOCALE/$languageCode.xml"
+            var filename = "$DIR_LOCALE/${languageCode?.lowercase()}.xml"
 
             if (!File(filename).exists())
                 filename = "$DIR_LOCALE/en.xml"

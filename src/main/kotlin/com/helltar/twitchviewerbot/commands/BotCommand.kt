@@ -1,4 +1,4 @@
-package com.helltar.twitchviewerbot.command
+package com.helltar.twitchviewerbot.commands
 
 import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.commands.context.MessageContext
@@ -18,12 +18,12 @@ abstract class BotCommand(val ctx: MessageContext) {
     protected val userId = ctx.user().id
     protected val arguments: Array<String> = ctx.arguments()
 
-    abstract fun run()
+    abstract suspend fun run()
 
     protected fun localizedString(key: String) =
-        Strings.localizedString(key, userId)
+        Strings.localizedString(key, ctx.message().from.languageCode)
 
-    protected fun replyToMessage(
+    fun replyToMessage(
         text: String,
         enableWebPagePreview: Boolean = false,
         replyMarkup: InlineKeyboardMarkup? = null

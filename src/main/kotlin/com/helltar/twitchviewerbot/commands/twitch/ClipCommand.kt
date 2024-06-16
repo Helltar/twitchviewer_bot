@@ -1,21 +1,18 @@
-package com.helltar.twitchviewerbot.command.commands
+package com.helltar.twitchviewerbot.commands.twitch
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Extensions.toHashTag
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.command.TwitchCommand
+import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
-import com.helltar.twitchviewerbot.twitch.TwitchUtils
-import kotlinx.coroutines.*
+import com.helltar.twitchviewerbot.twitch.Utils
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
-    private companion object {
-        val requestsList = hashMapOf<String, Job>()
-    }
-
-    override fun run() {
+    override suspend fun run() {
         if (arguments.isEmpty()) {
             if (isUserListNotEmpty())
                 getClipsFromAll(getUserChannelsList())
@@ -29,7 +26,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         }
     }
 
-    fun getClipsFromAll(userLogins: List<String>) {
+    suspend fun getClipsFromAll(userLogins: List<String>) {
         twitch.getOnlineList(userLogins)?.let {
             if (it.isNotEmpty())
                 sendClips(it)
@@ -45,27 +42,26 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             ?: replyToMessage(localizedString(Strings.TWITCH_EXCEPTION))
     }
 
-    private fun getClip(channel: String) =
+    suspend fun getClip(channel: String) =
         getClipsFromAll(listOf(channel))
 
-    private fun sendClips(twitchBroadcastData: List<Twitch.BroadcastData>) {
+    private suspend fun sendClips(twitchBroadcastData: List<Twitch.BroadcastData>) = coroutineScope {
         twitchBroadcastData.forEach { broadcastData ->
             val channelLogin = broadcastData.login
             val channelUsername = broadcastData.username
             val channelLink = """<a href="https://www.twitch.tv/$channelLogin">$channelUsername</a>"""
 
-            val requestKey = "$userId@$channelLogin"
             val tempMessage = localizedString(Strings.START_GET_CLIP).format(channelLink)
 
-            addRequest(requestKey) {
+            launch {
                 val tempMessageId = replyToMessage(tempMessage)
 
                 try {
-                    val clipFilename = TwitchUtils.getShortClip(channelLogin)
+                    val clipFilename = Utils.getShortClip(channelLogin)
 
                     if (!File(clipFilename).exists()) {
                         replyToMessage(localizedString(Strings.GET_CLIP_FAIL))
-                        return@addRequest
+                        return@launch
                     }
 
                     val streamTitle = broadcastData.title
@@ -87,20 +83,5 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                 }
             }
         }
-    }
-
-    private fun addRequest(requestKey: String, block: () -> Unit) {
-        if (requestsList.containsKey(requestKey)) {
-            if (requestsList[requestKey]?.isCompleted == false) {
-                replyToMessage(localizedString(Strings.MANY_REQUEST))
-                return
-            }
-        }
-
-        requestsList[requestKey] =
-            CoroutineScope(Dispatchers.IO)
-                .launch(CoroutineName(requestKey)) {
-                    block()
-                }
     }
 }

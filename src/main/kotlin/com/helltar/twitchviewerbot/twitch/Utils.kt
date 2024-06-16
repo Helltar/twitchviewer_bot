@@ -1,10 +1,10 @@
 package com.helltar.twitchviewerbot.twitch
 
-import com.helltar.twitchviewerbot.Extensions.randomizeByName
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.util.*
 
-object TwitchUtils {
+object Utils {
 
     private val tempDir = System.getProperty("java.io.tmpdir")
     private val log = LoggerFactory.getLogger(javaClass)
@@ -54,4 +54,7 @@ object TwitchUtils {
             log.error(e.message, e)
         }
     }
+
+    private fun String.randomizeByName() =
+        "${this}_${UUID.randomUUID()}"
 }

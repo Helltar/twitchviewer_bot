@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter
 
 class Twitch {
 
-    private val twitchClient = TwitchClientBuilder.builder().withEnableHelix(true).build()
+    private val client = TwitchClientBuilder.builder().withEnableHelix(true).build()
     private val log = LoggerFactory.getLogger(javaClass)
 
     data class BroadcastData(
@@ -26,7 +26,7 @@ class Twitch {
 
     fun getOnlineList(userLogins: List<String>) = try {
         val streamsList =
-            twitchClient
+            client
                 .helix
                 .getStreams(twitchToken, null, null, 1, null, null, null, userLogins)
                 .execute()

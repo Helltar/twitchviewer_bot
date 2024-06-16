@@ -9,6 +9,11 @@ object EnvConfig {
     val botUsername = readEnv("BOT_USERNAME")
     val twitchToken = readEnv("TWITCH_TOKEN")
 
+    val postgresqlHost = readEnv("POSTGRESQL_HOST")
+    val databaseName = readEnv("DATABASE_NAME")
+    val databaseUser = readEnv("DATABASE_USER")
+    val databasePassword = readEnv("DATABASE_PASSWORD")
+
     private fun readEnv(env: String) =
         dotenv { ignoreIfMissing = true }[env] ?: throw RuntimeException("error when read $env env")
 }

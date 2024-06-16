@@ -1,15 +1,15 @@
-package com.helltar.twitchviewerbot.command.commands
+package com.helltar.twitchviewerbot.commands.twitch
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Extensions.escapeHtml
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.command.TwitchCommand
+import com.helltar.twitchviewerbot.commands.TwitchCommand
 
 class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private val thumbnailsUrls = hashMapOf<String, String>()
 
-    override fun run() {
+    override suspend fun run() {
         if (arguments.isEmpty()) {
             if (isUserListNotEmpty())
                 sendOnlineList(getUserChannelsList())
