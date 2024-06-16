@@ -2,7 +2,9 @@ package com.helltar.twitchviewerbot.dao
 
 import com.helltar.twitchviewerbot.dao.DatabaseFactory.dbQuery
 import com.helltar.twitchviewerbot.dao.tables.UsersTable
+import com.helltar.twitchviewerbot.dao.tables.UsersTable.languageCode
 import org.jetbrains.exposed.sql.insertIgnore
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import org.telegram.telegrambots.meta.api.objects.User
 import java.time.Clock
@@ -28,5 +30,9 @@ class UsersDAO {
             it[languageCode] = user.languageCode
             it[lastUsage] = Instant.now(Clock.systemUTC())
         }
+    }
+
+    suspend fun getLanguageCode(userId: Long): String? = dbQuery {
+        UsersTable.selectAll().where { UsersTable.userId eq userId }.singleOrNull()?.get(languageCode)
     }
 }

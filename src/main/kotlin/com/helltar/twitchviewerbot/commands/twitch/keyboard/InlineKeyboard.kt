@@ -26,6 +26,7 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.getC
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.isStreamLive
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.string
 import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelsDAO
+import com.helltar.twitchviewerbot.dao.DatabaseFactory.usersDAO
 import com.helltar.twitchviewerbot.twitch.Twitch
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
@@ -37,7 +38,7 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     private val messageContext = MessageContext(ctx.sender, ctx.update(), String())
     private val channelName = getChannelName(ctx.data())
 
-    fun channel() {
+    suspend fun channel() {
         val keyboard = InlineKeyboardMarkup.builder()
         val isStreamLive = isStreamLive(ctx.data())
 
@@ -60,7 +61,7 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
         editMessage(text, keyboard.build())
     }
 
-    fun close() {
+    suspend fun close() {
         val text = localizedString(Strings.USER_CLOSE_LIST).format(ctx.user().firstName, EnvConfig.botUsername)
         editMessage(text)
     }
@@ -153,6 +154,6 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
         return InlineKeyboardButton.builder().text(text).callbackData(callbackData.string()).build()
     }
 
-    private fun localizedString(key: String) =
-        localizedString(key, ctx.message().from.languageCode)
+    private suspend fun localizedString(key: String) =
+        localizedString(key, usersDAO.getLanguageCode(ownerId))
 }
