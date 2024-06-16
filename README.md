@@ -9,3 +9,11 @@ Edit the **.env** file by specifying the **tokens** for the bot, etc., and also 
 ```bash
 docker run --rm -d --name twitchviewerbot --env-file .env ghcr.io/helltar/twitchbot:latest
 ```
+
+### Commands:
+
+- **/list** - Show your favorite channels
+- **/live** - Check who is online from your list
+- **/clip** - Get short clips from all channels on your list
+- **/screen** - Get a screenshot from a channel
+- **/add** - Add a channel to your list
