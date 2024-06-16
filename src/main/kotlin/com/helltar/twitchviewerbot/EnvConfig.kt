@@ -10,6 +10,7 @@ object EnvConfig {
     val twitchToken = readEnv("TWITCH_TOKEN")
 
     val postgresqlHost = readEnv("POSTGRESQL_HOST")
+    val postgresqlPort = readEnv("POSTGRESQL_PORT")
     val databaseName = readEnv("DATABASE_NAME")
     val databaseUser = readEnv("DATABASE_USER")
     val databasePassword = readEnv("DATABASE_PASSWORD")

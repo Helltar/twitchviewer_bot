@@ -4,6 +4,7 @@ import com.helltar.twitchviewerbot.EnvConfig.databaseName
 import com.helltar.twitchviewerbot.EnvConfig.databasePassword
 import com.helltar.twitchviewerbot.EnvConfig.databaseUser
 import com.helltar.twitchviewerbot.EnvConfig.postgresqlHost
+import com.helltar.twitchviewerbot.EnvConfig.postgresqlPort
 import com.helltar.twitchviewerbot.dao.tables.UserChannelsTable
 import com.helltar.twitchviewerbot.dao.tables.UsersTable
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,7 @@ object DatabaseFactory {
 
     fun init() {
         val driverClassName = "org.postgresql.Driver"
-        val jdbcURL = "jdbc:postgresql://$postgresqlHost:5432/$databaseName"
+        val jdbcURL = "jdbc:postgresql://$postgresqlHost:$postgresqlPort/$databaseName"
         val database = Database.connect(jdbcURL, driverClassName, databaseUser, databasePassword)
 
         transaction(database) {
