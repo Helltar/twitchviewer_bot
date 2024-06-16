@@ -4,13 +4,8 @@
     <a href="https://t.me/twitchviewer_bot"><img src="https://helltar.com/projects/twitchviewer_bot/img/qr.png" alt="qr_code" width="50%"/></a>
 </p>
 
+Edit the **.env** file by specifying the **tokens** for the bot, etc., and also provide the address and auth. data for **PostgreSQL**.
+
 ```bash
-docker run --rm -d \
-  --name twitchviewerbot \
-  -e CREATOR_ID=12345 \
-  -e BOT_TOKEN=123:xxx \
-  -e BOT_USERNAME=name_bot \
-  -e TWITCH_TOKEN=qwerty \
-  -v twitchbot_data:/app/data \
-  ghcr.io/helltar/twitchbot:latest
+docker run --rm -d --name twitchviewerbot --env-file .env ghcr.io/helltar/twitchbot:latest
 ```
