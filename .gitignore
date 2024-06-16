@@ -3,12 +3,8 @@
 .kotlin/
 
 build/
-
-config/
-database/
+data/
 deploy/
-temp/
 test/
-logs/
 
 Dockerfile
