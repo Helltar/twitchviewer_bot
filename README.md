@@ -7,7 +7,7 @@
 Edit the **.env** file by specifying the **tokens** for the bot, etc., and also provide the address and auth. data for **PostgreSQL**.
 
 ```bash
-docker run --rm -d --name twitchviewerbot --env-file .env ghcr.io/helltar/twitchbot:latest
+docker run --rm -d --name twitchviewerbot --env-file .env ghcr.io/helltar/twitchbot:0.7.0
 ```
 
 ### Commands:
