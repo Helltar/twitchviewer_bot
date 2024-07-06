@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.annimon:tgbots-module:7.3.9")
+    implementation("com.annimon:tgbots-module:7.6.0")
 
     implementation("com.github.twitch4j:twitch4j:1.20.0")
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
