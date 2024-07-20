@@ -23,6 +23,7 @@ class CommandExecutor {
         const val COMMAND_LIST = "cmdList"
         const val COMMAND_START = "cmdStart"
         const val COMMAND_ABOUT = "cmdAbout"
+        const val COMMAND_PRIVACY = "cmdPrivacy"
         const val COMMAND_CLIP = BUTTON_CLIPS
         const val COMMAND_LIVE = BUTTON_LIVE
         const val COMMAND_SCREENSHOT = BUTTON_SCREENSHOT

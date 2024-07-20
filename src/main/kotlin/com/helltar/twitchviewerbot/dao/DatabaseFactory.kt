@@ -5,6 +5,7 @@ import com.helltar.twitchviewerbot.EnvConfig.databasePassword
 import com.helltar.twitchviewerbot.EnvConfig.databaseUser
 import com.helltar.twitchviewerbot.EnvConfig.postgresqlHost
 import com.helltar.twitchviewerbot.EnvConfig.postgresqlPort
+import com.helltar.twitchviewerbot.dao.tables.PrivacyPoliciesTable
 import com.helltar.twitchviewerbot.dao.tables.UserChannelsTable
 import com.helltar.twitchviewerbot.dao.tables.UsersTable
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,7 @@ object DatabaseFactory {
         val database = Database.connect(jdbcURL, driverClassName, databaseUser, databasePassword)
 
         transaction(database) {
-            SchemaUtils.create(UsersTable, UserChannelsTable)
+            SchemaUtils.create(UsersTable, UserChannelsTable, PrivacyPoliciesTable)
         }
     }
 

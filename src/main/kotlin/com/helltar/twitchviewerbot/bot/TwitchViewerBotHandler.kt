@@ -13,11 +13,14 @@ import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_AD
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_CLIP
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_LIST
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_LIVE
+import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_PRIVACY
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_SCREENSHOT
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_START
 import com.helltar.twitchviewerbot.commands.simple.AboutCommand
 import com.helltar.twitchviewerbot.commands.simple.HelpCommand
+import com.helltar.twitchviewerbot.commands.simple.PrivacyCommand
 import com.helltar.twitchviewerbot.commands.simple.StartCommand
+import com.helltar.twitchviewerbot.commands.system.UpdatePrivacyPolicy
 import com.helltar.twitchviewerbot.commands.twitch.*
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.KeyboardBundle
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod
@@ -40,6 +43,9 @@ class TwitchViewerBotHandler(botModuleOptions: BotModuleOptions) : BotHandler(bo
             register(SimpleCommand("/start") { commandExecutor.execute(StartCommand(it), COMMAND_START) })
             register(SimpleCommand("/help") { commandExecutor.execute(HelpCommand(it), COMMAND_START) })
             register(SimpleCommand("/about") { commandExecutor.execute(AboutCommand(it), COMMAND_ABOUT) })
+
+            register(SimpleCommand("/updateprivacy") { commandExecutor.execute(UpdatePrivacyPolicy(it), COMMAND_PRIVACY) })
+            register(SimpleCommand("/privacy") { commandExecutor.execute(PrivacyCommand(it), COMMAND_PRIVACY) })
 
             registerBundle(KeyboardBundle())
         }
