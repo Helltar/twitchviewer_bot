@@ -21,6 +21,4 @@ docker run --rm -d --name twitchviewerbot --env-file .env ghcr.io/helltar/twitch
 - **/clip** - Get short clips from all channels on your list
 - **/screen** - Get a screenshot from a channel
 - **/add** - Add a channel to your list
-<br>
-
 - **/updateprivacy** - Update bot privacy policy (_/privacy_)
