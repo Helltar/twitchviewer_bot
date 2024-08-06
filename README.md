@@ -11,7 +11,7 @@ Edit the **.env** file by specifying the tokens for the bot, and also provide th
 - TWITCH_TOKEN: [Twitch API](https://dev.twitch.tv/docs/api/get-started/#get-an-oauth-token) (or https://twitchapps.com/tmi/)
 
 ```bash
-docker run --rm -d --name twitchviewerbot --env-file .env ghcr.io/helltar/twitchbot:0.7.1
+docker run --rm -d --name twitchviewerbot --env-file .env ghcr.io/helltar/twitchbot:latest
 ```
 
 ### Commands
