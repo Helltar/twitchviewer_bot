@@ -30,6 +30,7 @@ class TwitchViewerBotHandler(botModuleOptions: BotModuleOptions) : BotHandler(bo
 
     private val authority = SimpleAuthority(creatorId)
     private val commandRegistry = CommandRegistry(botUsername, authority)
+
     private val commandExecutor = CommandExecutor()
 
     init {

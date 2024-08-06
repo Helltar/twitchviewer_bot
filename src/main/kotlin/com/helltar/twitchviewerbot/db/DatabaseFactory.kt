@@ -1,13 +1,13 @@
-package com.helltar.twitchviewerbot.dao
+package com.helltar.twitchviewerbot.db
 
 import com.helltar.twitchviewerbot.EnvConfig.databaseName
 import com.helltar.twitchviewerbot.EnvConfig.databasePassword
 import com.helltar.twitchviewerbot.EnvConfig.databaseUser
 import com.helltar.twitchviewerbot.EnvConfig.postgresqlHost
 import com.helltar.twitchviewerbot.EnvConfig.postgresqlPort
-import com.helltar.twitchviewerbot.dao.tables.PrivacyPoliciesTable
-import com.helltar.twitchviewerbot.dao.tables.UserChannelsTable
-import com.helltar.twitchviewerbot.dao.tables.UsersTable
+import com.helltar.twitchviewerbot.db.tables.PrivacyPoliciesTable
+import com.helltar.twitchviewerbot.db.tables.UserChannelsTable
+import com.helltar.twitchviewerbot.db.tables.UsersTable
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -15,9 +15,6 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
-
-    val usersDAO = UsersDAO()
-    val userChannelsDAO = UserChannelsDAO()
 
     fun init() {
         val driverClassName = "org.postgresql.Driver"

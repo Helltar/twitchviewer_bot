@@ -29,17 +29,13 @@ class ScreenCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private fun sendScreenshot(channel: String, username: String, gameName: String) {
         val tempMessageId = replyToMessage(localizedString(Strings.WAIT_GET_SCREENSHOT).format(channel))
-        val filename = Utils.getScreenshot(channel)
-        deleteMessage(tempMessageId)
+        val filename = Utils.getScreenshot(channel).also { deleteMessage(tempMessageId) }
 
         if (File(filename).exists()) {
             val url = """<a href="https://www.twitch.tv/$channel">Twitch</a>"""
             val game = if (gameName.isNotEmpty()) ", #${gameName.toHashTag()}" else ""
 
-            replyToMessageWithPhoto(
-                File(filename),
-                "#$username$game - $url"
-            )
+            replyToMessageWithPhoto(File(filename), "#$username$game - $url")
 
             File(filename).delete()
         } else

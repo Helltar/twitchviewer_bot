@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture
 
 abstract class BotCommand(val ctx: MessageContext) {
 
-    val argumentsAsString: String = ctx.argumentsAsString()
+    val argumentsString: String = ctx.argumentsAsString()
 
     protected val userId = ctx.user().id
     protected val arguments: Array<String> = ctx.arguments()

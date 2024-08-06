@@ -1,16 +1,15 @@
-package com.helltar.twitchviewerbot.dao
+package com.helltar.twitchviewerbot.db.dao
 
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.dbQuery
-import com.helltar.twitchviewerbot.dao.tables.UsersTable
-import com.helltar.twitchviewerbot.dao.tables.UsersTable.languageCode
+import com.helltar.twitchviewerbot.db.DatabaseFactory.dbQuery
+import com.helltar.twitchviewerbot.db.tables.UsersTable
+import com.helltar.twitchviewerbot.db.tables.UsersTable.languageCode
 import org.jetbrains.exposed.sql.insertIgnore
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import org.telegram.telegrambots.meta.api.objects.User
 import java.time.Clock
 import java.time.Instant
 
-class UsersDAO {
+class UsersDao {
 
     suspend fun add(user: User) = dbQuery {
         UsersTable.insertIgnore {
@@ -33,6 +32,11 @@ class UsersDAO {
     }
 
     suspend fun getLanguageCode(userId: Long): String? = dbQuery {
-        UsersTable.selectAll().where { UsersTable.userId eq userId }.singleOrNull()?.get(languageCode)
+        UsersTable
+            .select(languageCode)
+            .where { UsersTable.userId eq userId }
+            .singleOrNull()?.get(languageCode)
     }
 }
+
+val usersDao = UsersDao()

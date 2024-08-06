@@ -4,17 +4,15 @@ import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_SCREENSHOT
-import com.helltar.twitchviewerbot.dao.DatabaseFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import com.helltar.twitchviewerbot.db.dao.usersDao
+import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
+import java.util.concurrent.ConcurrentHashMap
 
 class CommandExecutor {
 
     private val scope = CoroutineScope(Dispatchers.IO)
-    private val requestsMap = hashMapOf<String, Job>()
+    private val requestsMap = ConcurrentHashMap<String, Job>()
 
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -39,8 +37,8 @@ class CommandExecutor {
 
         val launch =
             launch("$requestKey@$userId") {
-                if (!DatabaseFactory.usersDAO.add(user))
-                    DatabaseFactory.usersDAO.update(user)
+                if (!usersDao.add(user))
+                    usersDao.update(user)
 
                 botCommand.run()
             }
@@ -53,6 +51,8 @@ class CommandExecutor {
         if (requestsMap.containsKey(key))
             if (requestsMap[key]?.isCompleted == false)
                 return false
+
+        log.debug("launch --> $key")
 
         requestsMap[key] = scope.launch { block() }
 

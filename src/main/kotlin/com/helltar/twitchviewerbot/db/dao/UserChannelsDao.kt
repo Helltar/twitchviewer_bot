@@ -1,13 +1,13 @@
-package com.helltar.twitchviewerbot.dao
+package com.helltar.twitchviewerbot.db.dao
 
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.dbQuery
-import com.helltar.twitchviewerbot.dao.tables.UserChannelsTable
+import com.helltar.twitchviewerbot.db.DatabaseFactory.dbQuery
+import com.helltar.twitchviewerbot.db.tables.UserChannelsTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.time.Clock
 import java.time.Instant
 
-class UserChannelsDAO {
+class UserChannelsDao {
 
     suspend fun add(userId: Long, channel: String) = dbQuery {
         UserChannelsTable.insertIgnore {
@@ -18,17 +18,26 @@ class UserChannelsDAO {
     }
 
     suspend fun delete(userId: Long, channel: String) = dbQuery {
-        UserChannelsTable.deleteWhere { UserChannelsTable.userId eq userId and (UserChannelsTable.channel eq channel) } > 0
+        UserChannelsTable
+            .deleteWhere { UserChannelsTable.userId eq userId and (UserChannelsTable.channel eq channel) } > 0
     }
 
     suspend fun getChannels(userId: Long) = dbQuery {
-        UserChannelsTable.selectAll().where { UserChannelsTable.userId eq userId }.map { it[UserChannelsTable.channel] }
+        UserChannelsTable
+            .select(UserChannelsTable.channel)
+            .where { UserChannelsTable.userId eq userId }
+            .map { it[UserChannelsTable.channel] }
     }
 
     suspend fun isChannelsListNotEmpty(userId: Long) = dbQuery {
-        UserChannelsTable.selectAll().where { UserChannelsTable.userId eq userId }.count() > 0
+        UserChannelsTable
+            .select(UserChannelsTable.userId)
+            .where { UserChannelsTable.userId eq userId }
+            .count() > 0
     }
 
     suspend fun isChannelsListEmpty(userId: Long) =
         !isChannelsListNotEmpty(userId)
 }
+
+val userChannelsDao = UserChannelsDao()

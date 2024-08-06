@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory
 class KeyboardBundle : CommandBundle<For> {
 
     private val commandExecutor = CommandExecutor()
+
     private val log = LoggerFactory.getLogger(javaClass)
 
     override fun register(registry: CommandRegistry<For>) {

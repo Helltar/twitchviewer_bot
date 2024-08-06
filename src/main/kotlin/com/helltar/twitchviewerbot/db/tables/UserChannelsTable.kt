@@ -1,4 +1,4 @@
-package com.helltar.twitchviewerbot.dao.tables
+package com.helltar.twitchviewerbot.db.tables
 
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table

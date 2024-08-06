@@ -4,7 +4,7 @@ import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.EnvConfig
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.BotCommand
-import com.helltar.twitchviewerbot.dao.PrivacyPoliciesDAO
+import com.helltar.twitchviewerbot.db.dao.privacyPoliciesDao
 
 class UpdatePrivacyPolicy(ctx: MessageContext) : BotCommand(ctx) {
 
@@ -12,12 +12,12 @@ class UpdatePrivacyPolicy(ctx: MessageContext) : BotCommand(ctx) {
         if (userId != EnvConfig.creatorId)
             return
 
-        if (argumentsAsString.isBlank()) {
+        if (argumentsString.isBlank()) {
             replyToMessage(localizedString(Strings.UPDATE_PRIVACY_POLICY_EXAMPLE))
             return
         }
 
-        PrivacyPoliciesDAO().update(argumentsAsString)
+        privacyPoliciesDao.update(argumentsString)
 
         replyToMessage(localizedString(Strings.PRIVACY_POLICY_SUCCESFULLY_UPDATED))
     }

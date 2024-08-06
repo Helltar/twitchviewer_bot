@@ -5,7 +5,7 @@ import com.helltar.twitchviewerbot.EnvConfig.botUsername
 import com.helltar.twitchviewerbot.EnvConfig.creatorId
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelsDAO
+import com.helltar.twitchviewerbot.db.dao.userChannelsDao
 
 class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
@@ -37,5 +37,5 @@ class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     }
 
     private suspend fun addChannelToUserList(channel: String) =
-        userChannelsDAO.add(userId, channel.lowercase())
+        userChannelsDao.add(userId, channel.lowercase())
 }

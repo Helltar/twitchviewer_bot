@@ -1,14 +1,14 @@
-package com.helltar.twitchviewerbot.dao
+package com.helltar.twitchviewerbot.db.dao
 
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.dbQuery
-import com.helltar.twitchviewerbot.dao.tables.PrivacyPoliciesTable
+import com.helltar.twitchviewerbot.db.DatabaseFactory.dbQuery
+import com.helltar.twitchviewerbot.db.tables.PrivacyPoliciesTable
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import java.time.Clock
 import java.time.Instant
 
-class PrivacyPoliciesDAO {
+class PrivacyPoliciesDao {
 
     suspend fun update(text: String) = dbQuery {
         val existingPolicy = PrivacyPoliciesTable.selectAll().singleOrNull()
@@ -26,6 +26,10 @@ class PrivacyPoliciesDAO {
     }
 
     suspend fun getPolicyText() = dbQuery {
-        PrivacyPoliciesTable.selectAll().singleOrNull()?.get(PrivacyPoliciesTable.policyText) ?: "Privacy Policy"
+        PrivacyPoliciesTable
+            .select(PrivacyPoliciesTable.policyText)
+            .singleOrNull()?.get(PrivacyPoliciesTable.policyText) ?: "Privacy Policy"
     }
 }
+
+val privacyPoliciesDao = PrivacyPoliciesDao()

@@ -25,8 +25,8 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTT
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.getChannelName
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.isStreamLive
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.string
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.userChannelsDAO
-import com.helltar.twitchviewerbot.dao.DatabaseFactory.usersDAO
+import com.helltar.twitchviewerbot.db.dao.userChannelsDao
+import com.helltar.twitchviewerbot.db.dao.usersDao
 import com.helltar.twitchviewerbot.twitch.Twitch
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
@@ -35,8 +35,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId: Long) {
 
-    private val messageContext = MessageContext(ctx.sender, ctx.update(), String())
+    private val context = MessageContext(ctx.sender, ctx.update(), String())
     private val channelName = getChannelName(ctx.data())
+    private var userLanguageCode: String? = null
 
     suspend fun channel() {
         val keyboard = InlineKeyboardMarkup.builder()
@@ -67,34 +68,34 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     suspend fun clip() {
-        ClipCommand(messageContext).getClip(channelName)
+        ClipCommand(context).getClip(channelName)
     }
 
     suspend fun clips() {
-        val channels = userChannelsDAO.getChannels(ownerId)
+        val channels = userChannelsDao.getChannels(ownerId)
 
         if (channels.isNotEmpty())
-            ClipCommand(messageContext).getClipsFromAll(channels)
+            ClipCommand(context).getClipsFromAll(channels)
     }
 
     fun screenshot() {
-        ScreenCommand(messageContext).getScreenshot(channelName)
+        ScreenCommand(context).getScreenshot(channelName)
     }
 
     suspend fun live() {
-        val channels = userChannelsDAO.getChannels(ownerId)
+        val channels = userChannelsDao.getChannels(ownerId)
 
         if (channels.isNotEmpty())
-            LiveCommand(messageContext).sendOnlineList(channels)
+            LiveCommand(context).sendOnlineList(channels)
     }
 
     suspend fun deleteChannel() {
-        userChannelsDAO.delete(ownerId, channelName)
+        userChannelsDao.delete(ownerId, channelName)
         update()
     }
 
     suspend fun update() {
-        if (userChannelsDAO.getChannels(ownerId).isNotEmpty()) {
+        if (userChannelsDao.isChannelsListNotEmpty(ownerId)) {
             editMessage(localizedString(Strings.WAIT_CHECK_ONLINE_MENU), waitingMenu())
             editMessage(localizedString(Strings.TITLE_CHOOSE_CHANNEL_OR_ACTION), mainMenu())
         } else
@@ -103,7 +104,7 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
 
     suspend fun mainMenu(): InlineKeyboardMarkup {
         val buttons = mutableListOf<InlineKeyboardButton>()
-        val channels = userChannelsDAO.getChannels(ownerId)
+        val channels = userChannelsDao.getChannels(ownerId)
         val onlineList = Twitch().getOnlineList(channels) ?: listOf()
         val liveStreams = onlineList.map { it.login.lowercase() }
 
@@ -155,5 +156,5 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     private suspend fun localizedString(key: String) =
-        localizedString(key, usersDAO.getLanguageCode(ownerId))
+        localizedString(key, userLanguageCode ?: usersDao.getLanguageCode(ownerId).also { userLanguageCode = it })
 }
