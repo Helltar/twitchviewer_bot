@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.helltar"
-version = "0.8.1"
+version = "0.8.2"
 
 repositories {
     mavenCentral()
@@ -20,7 +20,7 @@ dependencies {
         exclude("org.telegram", "telegrambots-webhook")
     }
 
-    implementation("com.github.twitch4j:twitch4j:1.21.0")
+    implementation("com.github.twitch4j:twitch4j:1.22.0")
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1")
 
