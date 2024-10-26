@@ -2,7 +2,8 @@ package com.helltar.twitchviewerbot.twitch
 
 import com.github.twitch4j.TwitchClient
 import com.github.twitch4j.TwitchClientBuilder
-import com.helltar.twitchviewerbot.EnvConfig.twitchToken
+import com.helltar.twitchviewerbot.EnvConfig.twitchClientId
+import com.helltar.twitchviewerbot.EnvConfig.twitchClientSecret
 import com.helltar.twitchviewerbot.Extensions.escapeHtml
 import org.slf4j.LoggerFactory
 import java.time.LocalTime
@@ -12,7 +13,12 @@ import java.time.format.DateTimeFormatter
 class Twitch {
 
     private companion object {
-        val twitchClient: TwitchClient = TwitchClientBuilder.builder().withEnableHelix(true).build()
+        val twitchClient: TwitchClient =
+            TwitchClientBuilder.builder()
+                .withClientId(twitchClientId)
+                .withClientSecret(twitchClientSecret)
+                .withEnableHelix(true)
+                .build()
     }
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -31,7 +37,7 @@ class Twitch {
     fun getOnlineList(userLogins: List<String>) = try {
         twitchClient
             .helix
-            .getStreams(twitchToken, null, null, 1, null, null, null, userLogins)
+            .getStreams(null, null, null, 1, null, null, null, userLogins)
             .execute()
             .streams
             .map {

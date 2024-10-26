@@ -7,7 +7,9 @@ object EnvConfig {
     val creatorId = readEnv("CREATOR_ID").toLongOrNull() ?: throw IllegalArgumentException("bad CREATOR_ID env")
     val botToken = readEnv("BOT_TOKEN")
     val botUsername = readEnv("BOT_USERNAME")
-    val twitchToken = readEnv("TWITCH_TOKEN")
+
+    val twitchClientId = readEnv("TWITCH_CLIENT_ID")
+    val twitchClientSecret = readEnv("TWITCH_CLIENT_SECRET")
 
     val postgresqlHost = readEnv("POSTGRESQL_HOST")
     val postgresqlPort = readEnv("POSTGRESQL_PORT")
