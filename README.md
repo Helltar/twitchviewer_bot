@@ -8,7 +8,7 @@ Edit the **.env** file by specifying the tokens for the bot, and also provide th
 
 - CREATOR_ID: your Telegram user-ID
 - BOT_TOKEN & BOT_USERNAME: [BotFather](https://t.me/BotFather)
-- TWITCH_TOKEN: [Twitch API](https://dev.twitch.tv/docs/api/get-started/#get-an-oauth-token) (or https://twitchapps.com/tmi/)
+- TWITCH_CLIENT_ID & TWITCH_CLIENT_SECRET: [Twitch Developer Console](https://dev.twitch.tv/console/apps/create)
 
 ```bash
 docker run --rm -d --name twitchviewerbot --env-file .env ghcr.io/helltar/twitchbot:latest
