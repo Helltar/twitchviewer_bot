@@ -6,10 +6,7 @@ import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
 import com.helltar.twitchviewerbot.twitch.Utils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
@@ -70,11 +67,10 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                         val streamTitle = broadcastData.title
                         val streamCategory = broadcastData.gameName
                         val viewerCount = broadcastData.viewerCount
-                        val startedAt = broadcastData.startedAt
                         val streamUptime = broadcastData.uptime
 
                         val viewersHtml = localizedString(Strings.STREAM_VIEWERS).format(viewerCount) + "\n"
-                        val startTimeHtml = localizedString(Strings.STREAM_START_TIME).format(startedAt, streamUptime, getTimeZoneOffset()) + "\n\n"
+                        val startTimeHtml = localizedString(Strings.STREAM_START_TIME).format(streamUptime) + "\n\n"
                         val categoryHtml = if (streamCategory.isNotEmpty()) ", #${streamCategory.toHashTag()}" else ""
                         val titleHtml = "<b>$channelLink</b> - $streamTitle\n\n"
 

@@ -4,7 +4,6 @@ import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.db.dao.userChannelsDao
 import com.helltar.twitchviewerbot.twitch.Twitch
-import java.util.*
 
 abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
 
@@ -31,10 +30,5 @@ abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
         }
 
         return true
-    }
-
-    protected fun getTimeZoneOffset(): Int {
-        val systemTimeZone = TimeZone.getDefault()
-        return (systemTimeZone.rawOffset / (1000 * 60 * 60))
     }
 }
