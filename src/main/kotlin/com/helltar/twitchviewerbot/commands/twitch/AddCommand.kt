@@ -9,7 +9,7 @@ import com.helltar.twitchviewerbot.db.dao.userChannelsDao
 
 class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
-    private val maxChannelsSize = if (userId != creatorId) 8 else 12
+    private val maxChannelsSize = if (userId != creatorId) 10 else 12
 
     override suspend fun run() {
         if (ctx.user().isBot)
