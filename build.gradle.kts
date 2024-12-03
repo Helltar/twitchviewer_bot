@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.helltar"
-version = "0.8.4"
+version = "0.8.5"
 
 repositories {
     mavenCentral()
@@ -16,7 +16,7 @@ object Versions {
 }
 
 dependencies {
-    implementation("com.annimon:tgbots-module:7.10.0") {
+    implementation("com.annimon:tgbots-module:8.0.0") {
         exclude("org.telegram", "telegrambots-webhook")
     }
 
