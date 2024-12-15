@@ -24,7 +24,7 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1")
 
-    implementation("org.postgresql:postgresql:42.6.0")
+    implementation("org.postgresql:postgresql:42.7.3")
     implementation("org.jetbrains.exposed:exposed-core:${Versions.EXPOSED}")
     implementation("org.jetbrains.exposed:exposed-dao:${Versions.EXPOSED}")
     implementation("org.jetbrains.exposed:exposed-java-time:${Versions.EXPOSED}")
