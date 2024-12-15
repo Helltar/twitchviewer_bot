@@ -2,8 +2,8 @@ package com.helltar.twitchviewerbot.twitch
 
 import com.github.twitch4j.TwitchClient
 import com.github.twitch4j.TwitchClientBuilder
-import com.helltar.twitchviewerbot.EnvConfig.twitchClientId
-import com.helltar.twitchviewerbot.EnvConfig.twitchClientSecret
+import com.helltar.twitchviewerbot.Config.twitchClientId
+import com.helltar.twitchviewerbot.Config.twitchClientSecret
 import com.helltar.twitchviewerbot.Extensions.escapeHtml
 import org.slf4j.LoggerFactory
 import java.time.LocalTime

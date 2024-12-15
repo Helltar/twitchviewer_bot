@@ -1,8 +1,8 @@
 package com.helltar.twitchviewerbot.commands.twitch
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewerbot.EnvConfig.botUsername
-import com.helltar.twitchviewerbot.EnvConfig.creatorId
+import com.helltar.twitchviewerbot.Config.botUsername
+import com.helltar.twitchviewerbot.Config.creatorId
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.db.dao.userChannelsDao

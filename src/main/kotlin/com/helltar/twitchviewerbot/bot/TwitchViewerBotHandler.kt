@@ -5,8 +5,8 @@ import com.annimon.tgbotsmodule.BotModuleOptions
 import com.annimon.tgbotsmodule.commands.CommandRegistry
 import com.annimon.tgbotsmodule.commands.SimpleCommand
 import com.annimon.tgbotsmodule.commands.authority.SimpleAuthority
-import com.helltar.twitchviewerbot.EnvConfig.botUsername
-import com.helltar.twitchviewerbot.EnvConfig.creatorId
+import com.helltar.twitchviewerbot.Config.botUsername
+import com.helltar.twitchviewerbot.Config.creatorId
 import com.helltar.twitchviewerbot.commands.CommandExecutor
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_ABOUT
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_ADD

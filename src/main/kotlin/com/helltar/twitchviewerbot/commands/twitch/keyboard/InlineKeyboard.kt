@@ -2,7 +2,7 @@ package com.helltar.twitchviewerbot.commands.twitch.keyboard
 
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewerbot.EnvConfig
+import com.helltar.twitchviewerbot.Config
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.Strings.BTN_BACK
 import com.helltar.twitchviewerbot.Strings.BTN_DELETE
@@ -63,7 +63,7 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     suspend fun close() {
-        val text = localizedString(Strings.USER_CLOSE_LIST).format(ctx.user().firstName, EnvConfig.botUsername)
+        val text = localizedString(Strings.USER_CLOSE_LIST).format(ctx.user().firstName, Config.botUsername)
         editMessage(text)
     }
 

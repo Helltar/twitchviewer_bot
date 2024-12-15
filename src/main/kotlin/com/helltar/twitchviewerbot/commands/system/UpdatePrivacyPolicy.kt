@@ -1,7 +1,7 @@
 package com.helltar.twitchviewerbot.commands.system
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
-import com.helltar.twitchviewerbot.EnvConfig
+import com.helltar.twitchviewerbot.Config
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.BotCommand
 import com.helltar.twitchviewerbot.db.dao.privacyPoliciesDao
@@ -9,7 +9,7 @@ import com.helltar.twitchviewerbot.db.dao.privacyPoliciesDao
 class UpdatePrivacyPolicy(ctx: MessageContext) : BotCommand(ctx) {
 
     override suspend fun run() {
-        if (userId != EnvConfig.creatorId)
+        if (userId != Config.creatorId)
             return
 
         if (argumentsString.isBlank()) {

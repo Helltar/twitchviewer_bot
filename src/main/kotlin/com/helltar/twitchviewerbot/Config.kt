@@ -2,7 +2,7 @@ package com.helltar.twitchviewerbot
 
 import io.github.cdimascio.dotenv.dotenv
 
-object EnvConfig {
+object Config {
 
     val creatorId = readEnv("CREATOR_ID").toLongOrNull() ?: throw IllegalArgumentException("bad CREATOR_ID env")
     val botToken = readEnv("BOT_TOKEN")
