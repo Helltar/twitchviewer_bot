@@ -11,6 +11,10 @@ import java.io.File
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
+    companion object {
+        private const val MAX_SIMULTANEOUS_CLIP_DOWNLOADS = 3
+    }
+
     override suspend fun run() {
         if (arguments.isEmpty()) {
             if (isUserListNotEmpty())
@@ -45,7 +49,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         getClipsFromAll(listOf(channel))
 
     private suspend fun sendClips(twitchBroadcastData: List<Twitch.BroadcastData>) = coroutineScope {
-        twitchBroadcastData.chunked(3).forEach {
+        twitchBroadcastData.chunked(MAX_SIMULTANEOUS_CLIP_DOWNLOADS).forEach {
             it.map { broadcastData ->
                 val channelLogin = broadcastData.login
                 val channelUsername = broadcastData.username
