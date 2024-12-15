@@ -12,7 +12,7 @@ repositories {
 }
 
 object Versions {
-    const val EXPOSED = "0.52.0"
+    const val EXPOSED = "0.57.0"
 }
 
 dependencies {
