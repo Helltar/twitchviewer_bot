@@ -54,7 +54,14 @@ class CommandExecutor {
 
         log.debug("launch --> $key")
 
-        requestsMap[key] = scope.launch { block() }
+        requestsMap[key] =
+            scope.launch {
+                try {
+                    block()
+                } catch (e: Exception) {
+                    log.error(e.message, e)
+                }
+            }
 
         return true
     }
