@@ -7,6 +7,7 @@ import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
 import com.helltar.twitchviewerbot.twitch.Utils
 import kotlinx.coroutines.*
+import org.slf4j.LoggerFactory
 import java.io.File
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
@@ -14,6 +15,8 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     companion object {
         private const val MAX_SIMULTANEOUS_CLIP_DOWNLOADS = 3
     }
+
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override suspend fun run() {
         if (arguments.isEmpty()) {
@@ -49,44 +52,42 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         getClipsFromAll(listOf(channel))
 
     private suspend fun sendClips(twitchBroadcastData: List<Twitch.BroadcastData>) = coroutineScope {
-        twitchBroadcastData.chunked(MAX_SIMULTANEOUS_CLIP_DOWNLOADS).forEach {
-            it.map { broadcastData ->
-                val channelLogin = broadcastData.login
-                val channelUsername = broadcastData.username
-                val channelLink = """<a href="https://www.twitch.tv/$channelLogin">$channelUsername</a>"""
+        twitchBroadcastData.chunked(MAX_SIMULTANEOUS_CLIP_DOWNLOADS).forEach { chunk ->
+            val tempMessage = localizedString(Strings.START_GET_CLIP).format(chunk.joinToString { """<a href="https://www.twitch.tv/${it.login}">${it.username}</a>""" })
+            val tempMessageId = replyToMessage(tempMessage)
 
-                val tempMessage = localizedString(Strings.START_GET_CLIP).format(channelLink)
+            try {
+                chunk.map { broadcastData ->
+                    launch {
+                        val channelLogin = broadcastData.login
 
-                launch(Dispatchers.IO) {
-                    val tempMessageId = replyToMessage(tempMessage)
+                        try {
+                            val clipFilename = Utils.getShortClip(channelLogin)
 
-                    try {
-                        val clipFilename = Utils.getShortClip(channelLogin)
+                            if (!File(clipFilename).exists()) {
+                                replyToMessage(localizedString(Strings.GET_CLIP_FAIL))
+                                return@launch
+                            }
 
-                        if (!File(clipFilename).exists()) {
-                            replyToMessage(localizedString(Strings.GET_CLIP_FAIL))
-                            return@launch
+                            val channelUsername = broadcastData.username
+                            val streamCategory = broadcastData.gameName
+
+                            val titleHtml = """<b><a href="https://www.twitch.tv/$channelLogin">$channelUsername</a></b> - ${broadcastData.title}\n\n"""
+                            val categoryHtml = if (streamCategory.isNotEmpty()) ", #${streamCategory.toHashTag()}" else ""
+                            val startTimeHtml = localizedString(Strings.STREAM_START_TIME).format(broadcastData.uptime) + "\n\n"
+                            val viewersHtml = localizedString(Strings.STREAM_VIEWERS).format(broadcastData.viewerCount) + "\n"
+
+                            replyToMessageWithVideo(clipFilename, "$titleHtml$viewersHtml$startTimeHtml#${channelUsername}$categoryHtml")
+
+                            File(clipFilename).delete() // todo: File(clipFilename).delete()
+                        } catch (e: Exception) {
+                            log.error("error processing clip for $channelLogin: ${e.message}")
                         }
-
-                        val streamTitle = broadcastData.title
-                        val streamCategory = broadcastData.gameName
-                        val viewerCount = broadcastData.viewerCount
-                        val streamUptime = broadcastData.uptime
-
-                        val viewersHtml = localizedString(Strings.STREAM_VIEWERS).format(viewerCount) + "\n"
-                        val startTimeHtml = localizedString(Strings.STREAM_START_TIME).format(streamUptime) + "\n\n"
-                        val categoryHtml = if (streamCategory.isNotEmpty()) ", #${streamCategory.toHashTag()}" else ""
-                        val titleHtml = "<b>$channelLink</b> - $streamTitle\n\n"
-
-                        replyToMessageWithVideo(clipFilename, "$titleHtml$viewersHtml$startTimeHtml#${channelUsername}$categoryHtml")
-
-                        File(clipFilename).delete()
-                    } finally {
-                        deleteMessage(tempMessageId)
                     }
-                }
+                }.joinAll()
+            } finally {
+                deleteMessage(tempMessageId)
             }
-                .joinAll()
         }
     }
 }
