@@ -12,8 +12,6 @@ import java.util.concurrent.ConcurrentHashMap
 class CommandExecutor {
 
     private val scope = CoroutineScope(Dispatchers.IO)
-    private val requestsMap = ConcurrentHashMap<String, Job>()
-
     private val log = LoggerFactory.getLogger(javaClass)
 
     companion object {
@@ -25,6 +23,7 @@ class CommandExecutor {
         const val COMMAND_CLIP = BUTTON_CLIPS
         const val COMMAND_LIVE = BUTTON_LIVE
         const val COMMAND_SCREENSHOT = BUTTON_SCREENSHOT
+        private val requestsMap = ConcurrentHashMap<String, Job>()
     }
 
     fun execute(botCommand: BotCommand, requestKey: String) {

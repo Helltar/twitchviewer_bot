@@ -1,8 +1,6 @@
 package com.helltar.twitchviewerbot.commands.twitch.keyboard
 
-import com.annimon.tgbotsmodule.commands.CommandBundle
-import com.annimon.tgbotsmodule.commands.CommandRegistry
-import com.annimon.tgbotsmodule.commands.SimpleCallbackQueryCommand
+import com.annimon.tgbotsmodule.commands.*
 import com.annimon.tgbotsmodule.commands.authority.For
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.helltar.twitchviewerbot.Strings
@@ -52,7 +50,7 @@ class KeyboardBundle : CommandBundle<For> {
         }
 
         val launch =
-            commandExecutor.launch("$ownerId@$buttonName") {
+            commandExecutor.launch("$buttonName@$ownerId") {
                 val inlineKeyboard = InlineKeyboard(ctx.apply { update().message = ctx.message() }, ownerId)
 
                 when (buttonName) {
