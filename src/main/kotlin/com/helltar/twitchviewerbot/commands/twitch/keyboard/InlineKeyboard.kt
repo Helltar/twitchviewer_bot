@@ -10,9 +10,7 @@ import com.helltar.twitchviewerbot.Strings.BTN_EXIT
 import com.helltar.twitchviewerbot.Strings.BTN_SCREENSHOT
 import com.helltar.twitchviewerbot.Strings.BTN_SHORT_CLIP
 import com.helltar.twitchviewerbot.Strings.localizedString
-import com.helltar.twitchviewerbot.commands.twitch.ClipCommand
-import com.helltar.twitchviewerbot.commands.twitch.LiveCommand
-import com.helltar.twitchviewerbot.commands.twitch.ScreenCommand
+import com.helltar.twitchviewerbot.commands.twitch.*
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_BACK
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CHANNEL
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIP
@@ -108,7 +106,7 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
         val onlineList = Twitch().getOnlineList(channels) ?: listOf()
         val liveStreams = onlineList.map { it.login.lowercase() }
 
-        channels.forEach { channel ->
+        channels.sortedByDescending { it in liveStreams }.forEach { channel ->
             var channelStatus = "⚪️"
             var streamLive = false
 
