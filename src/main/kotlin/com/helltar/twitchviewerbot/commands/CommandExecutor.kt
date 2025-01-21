@@ -4,7 +4,6 @@ import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
-import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_SCREENSHOT
 import com.helltar.twitchviewerbot.db.dao.usersDao
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
@@ -24,7 +23,6 @@ class CommandExecutor {
         const val COMMAND_PRIVACY = "cmdPrivacy"
         const val COMMAND_CLIP = BUTTON_CLIPS
         const val COMMAND_LIVE = BUTTON_LIVE
-        const val COMMAND_SCREENSHOT = BUTTON_SCREENSHOT
         private val requestsMap = ConcurrentHashMap<String, Job>()
     }
 

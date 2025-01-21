@@ -7,10 +7,10 @@ import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.Strings.BTN_BACK
 import com.helltar.twitchviewerbot.Strings.BTN_DELETE
 import com.helltar.twitchviewerbot.Strings.BTN_EXIT
-import com.helltar.twitchviewerbot.Strings.BTN_SCREENSHOT
 import com.helltar.twitchviewerbot.Strings.BTN_SHORT_CLIP
 import com.helltar.twitchviewerbot.Strings.localizedString
-import com.helltar.twitchviewerbot.commands.twitch.*
+import com.helltar.twitchviewerbot.commands.twitch.ClipCommand
+import com.helltar.twitchviewerbot.commands.twitch.LiveCommand
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_BACK
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CHANNEL
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIP
@@ -20,7 +20,6 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTT
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_NEXT_PAGE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_PREV_PAGE
-import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_SCREENSHOT
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_UPDATE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseChannelName
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseNavigationPage
@@ -51,9 +50,8 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
         val isStreamLive = parseStreamLiveState(ctx.data())
 
         if (isStreamLive) {
-            val buttonScreenshot = keyboardButton(localizedString(BTN_SCREENSHOT), BUTTON_SCREENSHOT, channelName)
             val buttonClip = keyboardButton(localizedString(BTN_SHORT_CLIP), BUTTON_CLIP, channelName)
-            keyboard.keyboardRow(InlineKeyboardRow(listOf(buttonScreenshot, buttonClip)))
+            keyboard.keyboardRow(InlineKeyboardRow(buttonClip))
         }
 
         val buttonBack = keyboardButton(localizedString(BTN_BACK), BUTTON_BACK)
@@ -82,10 +80,6 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
 
         if (channels.isNotEmpty())
             ClipCommand(context).getClipsFromAll(channels)
-    }
-
-    fun screenshot() {
-        ScreenCommand(context).getScreenshot(channelName)
     }
 
     suspend fun live() {

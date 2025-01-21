@@ -14,7 +14,6 @@ import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_CL
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_LIST
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_LIVE
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_PRIVACY
-import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_SCREENSHOT
 import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_START
 import com.helltar.twitchviewerbot.commands.simple.*
 import com.helltar.twitchviewerbot.commands.system.UpdatePrivacyPolicy
@@ -35,7 +34,6 @@ class TwitchViewerBotHandler(botModuleOptions: BotModuleOptions) : BotHandler(bo
             register(SimpleCommand("/add") { commandExecutor.executeCommand(AddCommand(it), COMMAND_ADD) })
             register(SimpleCommand("/clip") { commandExecutor.executeCommand(ClipCommand(it), COMMAND_CLIP) })
             register(SimpleCommand("/live") { commandExecutor.executeCommand(LiveCommand(it), COMMAND_LIVE) })
-            register(SimpleCommand("/screen") { commandExecutor.executeCommand(ScreenCommand(it), COMMAND_SCREENSHOT) })
             register(SimpleCommand("/list") { commandExecutor.executeCommand(ListCommand(it), COMMAND_LIST) })
             register(SimpleCommand("/cancel") { commandExecutor.cancelJobs(it) })
 

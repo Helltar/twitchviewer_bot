@@ -35,13 +35,6 @@ abstract class BotCommand(val ctx: MessageContext) {
             .call(ctx.sender)
             .messageId
 
-    protected fun replyToMessageWithPhoto(file: File, caption: String): Message =
-        ctx.replyToMessageWithPhoto()
-            .setFile(file)
-            .setCaption(caption)
-            .setParseMode(ParseMode.HTML)
-            .call(ctx.sender)
-
     protected fun replyToMessageWithPhoto(url: String, caption: String, messageId: Int = ctx.messageId()): Message =
         ctx.replyToMessageWithPhoto()
             .setFile(url, URI.create(url).toURL().openStream())
