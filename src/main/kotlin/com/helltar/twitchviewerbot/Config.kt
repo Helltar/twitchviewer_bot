@@ -17,6 +17,8 @@ object Config {
     val databaseUser = readEnv("DATABASE_USER")
     val databasePassword = readEnv("DATABASE_PASSWORD")
 
+    val javaTempDir = System.getProperty("java.io.tmpdir") ?: "/tmp"
+
     private fun readEnv(env: String) =
         dotenv { ignoreIfMissing = true }[env] ?: throw IllegalArgumentException("error when read $env env")
 }
