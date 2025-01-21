@@ -9,7 +9,7 @@ class AboutCommand(ctx: MessageContext) : BotCommand(ctx) {
         replyToMessage(
             """
             <a href="https://github.com/Helltar/twitchviewer_bot">Twitch Viewer Bot</a>
-            Contact: @Helltar https://helltar.com
+            Contact: https://helltar.com
             Source Code:
         """.trimIndent(), true
         )
