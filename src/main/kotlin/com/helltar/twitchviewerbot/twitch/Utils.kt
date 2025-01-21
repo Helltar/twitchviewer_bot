@@ -1,65 +1,44 @@
 package com.helltar.twitchviewerbot.twitch
 
+import com.helltar.twitchviewerbot.Config.javaTempDir
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 object Utils {
 
-    private val tempDir = System.getProperty("java.io.tmpdir")
     private val log = LoggerFactory.getLogger(javaClass)
 
-    fun getShortClip(channel: String): String {
-        val tempName = channel.plusUUID()
-        val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
-        val streamlinkOutFilename = "streamlink_$tempName.mp4"
-
-        executeStreamlink(35, channel, streamlinkOutFilename)
-
+    fun ffmpegGenerateClip(inputFilename: String, outFilename: String): Process {
         // if -fs > 10M --> black video preview (thumbnail) (telegram)
-        val command = listOf("ffmpeg", "-i", streamlinkOutFilename, "-fs", "9.9M", "-t", "45", "-c", "copy", "-loglevel", "quiet", ffmpegOutFilename)
-        startProcess(command)
-
-        File("$tempDir/$streamlinkOutFilename").delete()
-
-        return "$tempDir/$ffmpegOutFilename"
+        val command = listOf("ffmpeg", "-i", inputFilename, "-fs", "9.9M", "-t", "45", "-c", "copy", "-loglevel", "quiet", outFilename)
+        return executeFFmpeg(command)
     }
 
-    fun getScreenshot(channel: String): String {
-        val tempName = channel.plusUUID()
-        val ffmpegOutFilename = "ffmpeg_$tempName.png"
-        val streamlinkOutFilename = "streamlink_$tempName.mp4"
-
-        executeStreamlink(30, channel, streamlinkOutFilename)
-
-        val command = listOf("ffmpeg", "-ss", "00:00:05", "-i", streamlinkOutFilename, "-vframes", "1", ffmpegOutFilename)
-        startProcess(command)
-
-        File("$tempDir/$streamlinkOutFilename").delete()
-
-        return "$tempDir/$ffmpegOutFilename"
+    fun ffmpegExtractFrame(inputFilename: String, outFilename: String): Process {
+        val command = listOf("ffmpeg", "-ss", "00:00:05", "-i", inputFilename, "-vframes", "1", outFilename)
+        return executeFFmpeg(command)
     }
 
-    private fun executeStreamlink(sigintTimeout: Int, channel: String, outFilename: String) {
+    fun executeStreamlink(sigintTimeout: Int, channelName: String, outFilename: String): Process {
         val command =
             listOf(
                 "timeout", "-k", "10", "-s", "SIGINT", "$sigintTimeout",
-                "streamlink", "--twitch-disable-ads", "https://www.twitch.tv/$channel", "720p,720p60,best", "-o", outFilename
+                "streamlink", "--twitch-disable-ads", "https://www.twitch.tv/$channelName", "720p,720p60,best", "-o", outFilename
             )
 
-        startProcess(command)
+        return startProcess(command) ?: throw RuntimeException("failed to start streamlink process for channel: $channelName")
     }
 
-    private fun startProcess(command: List<String>) = try {
-        ProcessBuilder(command)
-            .directory(File(tempDir))
-            .start()
-            .waitFor(60, TimeUnit.SECONDS)
-    } catch (e: Exception) {
-        log.error(e.message, e)
-    }
+    private fun executeFFmpeg(command: List<String>) =
+        startProcess(command) ?: throw RuntimeException("failed to start ffmpeg process: ${command.joinToString(" ")}")
 
-    private fun String.plusUUID() =
-        "${this}_${UUID.randomUUID()}"
+    private fun startProcess(command: List<String>): Process? =
+        try {
+            ProcessBuilder(command)
+                .directory(File(javaTempDir))
+                .start()
+        } catch (e: Exception) {
+            log.error(e.message, e)
+            null
+        }
 }
