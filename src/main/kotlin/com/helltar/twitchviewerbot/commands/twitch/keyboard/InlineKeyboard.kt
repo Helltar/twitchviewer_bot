@@ -18,10 +18,13 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTT
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLOSE_LIST
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_DELETE_CHANNEL
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_NEXT_PAGE
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_PREV_PAGE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_SCREENSHOT
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_UPDATE
-import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.getChannelName
-import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.isStreamLive
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseChannelName
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseNavigationPage
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseStreamLiveState
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.string
 import com.helltar.twitchviewerbot.db.dao.userChannelsDao
 import com.helltar.twitchviewerbot.db.dao.usersDao
@@ -33,19 +36,24 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId: Long) {
 
+    private companion object {
+        const val CHANNELS_PER_PAGE = 8
+        const val CHANNELS_PER_ROW = 2
+    }
+
     private val context = MessageContext(ctx.sender, ctx.update(), String())
-    private val channelName = getChannelName(ctx.data())
+    private val channelName = parseChannelName(ctx.data())
+    private val navigationPage = parseNavigationPage(ctx.data())
     private var userLanguageCode: String? = null
 
     suspend fun channel() {
         val keyboard = InlineKeyboardMarkup.builder()
-        val isStreamLive = isStreamLive(ctx.data())
+        val isStreamLive = parseStreamLiveState(ctx.data())
 
         if (isStreamLive) {
             val buttonScreenshot = keyboardButton(localizedString(BTN_SCREENSHOT), BUTTON_SCREENSHOT, channelName)
             val buttonClip = keyboardButton(localizedString(BTN_SHORT_CLIP), BUTTON_CLIP, channelName)
-            keyboard.keyboardRow(InlineKeyboardRow(buttonScreenshot))
-            keyboard.keyboardRow(InlineKeyboardRow(buttonClip))
+            keyboard.keyboardRow(InlineKeyboardRow(listOf(buttonScreenshot, buttonClip)))
         }
 
         val buttonBack = keyboardButton(localizedString(BTN_BACK), BUTTON_BACK)
@@ -101,12 +109,15 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     suspend fun mainMenu(): InlineKeyboardMarkup {
-        val buttons = mutableListOf<InlineKeyboardButton>()
-        val channels = userChannelsDao.getChannels(ownerId)
-        val onlineList = Twitch().getOnlineList(channels) ?: listOf()
+        val userChannels = userChannelsDao.getChannels(ownerId)
+        val onlineList = Twitch().getOnlineList(userChannels) ?: listOf()
         val liveStreams = onlineList.map { it.login.lowercase() }
+        val sortedChannels = userChannels.sortedByDescending { it in liveStreams }
+        val paginatedChannels = sortedChannels.chunked(CHANNELS_PER_PAGE)
+        val safePage = navigationPage.coerceIn(0, paginatedChannels.lastIndex)
+        val buttons = mutableListOf<InlineKeyboardButton>()
 
-        channels.sortedByDescending { it in liveStreams }.forEach { channel ->
+        paginatedChannels[safePage].forEach { channel ->
             var channelStatus = "⚪️"
             var streamLive = false
 
@@ -120,15 +131,25 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
 
         val keyboard = InlineKeyboardMarkup.builder()
 
-        buttons.chunked(2).forEach { button ->
+        buttons.chunked(CHANNELS_PER_ROW).forEach { button ->
             keyboard.keyboardRow(InlineKeyboardRow(button))
         }
+
+        val navigationRow = mutableListOf<InlineKeyboardButton>()
+
+        if (safePage > 0)
+            navigationRow.add(keyboardButton("⬅\uFE0F", BUTTON_PREV_PAGE, page = safePage - 1))
+
+        if (safePage < paginatedChannels.lastIndex)
+            navigationRow.add(keyboardButton("➡\uFE0F", BUTTON_NEXT_PAGE, page = safePage + 1))
+
+        if (navigationRow.isNotEmpty())
+            keyboard.keyboardRow(InlineKeyboardRow(navigationRow))
 
         if (liveStreams.isNotEmpty()) {
             val buttonLive = keyboardButton(localizedString(Strings.BTN_WHO_IS_ONLINE), BUTTON_LIVE)
             val buttonClips = keyboardButton(localizedString(Strings.BTN_GET_ALL_SCREENS), BUTTON_CLIPS)
-            keyboard.keyboardRow(InlineKeyboardRow(buttonLive))
-            keyboard.keyboardRow(InlineKeyboardRow(buttonClips))
+            keyboard.keyboardRow(InlineKeyboardRow(listOf(buttonLive, buttonClips)))
         }
 
         val buttonClose = keyboardButton(localizedString(Strings.BTN_CLOSE_LIST), BUTTON_CLOSE_LIST)
@@ -148,8 +169,8 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
             .disableWebPagePreview()
             .call(ctx.sender)
 
-    private fun keyboardButton(text: String, command: String, channel: String = "-", streamLive: Boolean = false): InlineKeyboardButton {
-        val callbackData = ButtonCallbacks.CallbackData(command, ownerId, channel, streamLive)
+    private fun keyboardButton(text: String, buttonId: String, channelName: String = "-", isStreamLive: Boolean = false, page: Int = navigationPage): InlineKeyboardButton {
+        val callbackData = ButtonCallbacks.CallbackData(buttonId, ownerId, channelName, isStreamLive, page)
         return InlineKeyboardButton.builder().text(text).callbackData(callbackData.string()).build()
     }
 

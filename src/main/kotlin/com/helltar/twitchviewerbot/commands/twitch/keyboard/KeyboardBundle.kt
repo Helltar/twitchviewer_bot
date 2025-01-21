@@ -13,8 +13,10 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTT
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLOSE_LIST
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_DELETE_CHANNEL
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_NEXT_PAGE
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_PREV_PAGE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_SCREENSHOT
-import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.getOwnerId
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseOwnerId
 import org.slf4j.LoggerFactory
 
 class KeyboardBundle : CommandBundle<For> {
@@ -34,11 +36,13 @@ class KeyboardBundle : CommandBundle<For> {
             register(SimpleCallbackQueryCommand(BUTTON_DELETE_CHANNEL) { click(it, BUTTON_DELETE_CHANNEL) })
             register(SimpleCallbackQueryCommand(BUTTON_LIVE) { click(it, BUTTON_LIVE) })
             register(SimpleCallbackQueryCommand(BUTTON_SCREENSHOT) { click(it, BUTTON_SCREENSHOT) })
+            register(SimpleCallbackQueryCommand(BUTTON_NEXT_PAGE) { click(it, BUTTON_NEXT_PAGE) })
+            register(SimpleCallbackQueryCommand(BUTTON_PREV_PAGE) { click(it, BUTTON_PREV_PAGE) })
         }
     }
 
-    private fun click(ctx: CallbackQueryContext, buttonName: String) {
-        val ownerId = getOwnerId(ctx.data())
+    private fun click(ctx: CallbackQueryContext, buttonId: String) {
+        val ownerId = parseOwnerId(ctx.data())
         val user = ctx.user()
 
         log.debug("callback data: ${ctx.data()}")
@@ -50,11 +54,10 @@ class KeyboardBundle : CommandBundle<For> {
         }
 
         val launch =
-            commandExecutor.launch("$buttonName@$ownerId") {
+            commandExecutor.launch("$buttonId@$ownerId") {
                 val inlineKeyboard = InlineKeyboard(ctx.apply { update().message = ctx.message() }, ownerId)
 
-                when (buttonName) {
-                    BUTTON_BACK -> inlineKeyboard.update()
+                when (buttonId) {
                     BUTTON_CHANNEL -> inlineKeyboard.channel()
                     BUTTON_CLIP -> inlineKeyboard.clip()
                     BUTTON_CLIPS -> inlineKeyboard.clips()
@@ -62,6 +65,7 @@ class KeyboardBundle : CommandBundle<For> {
                     BUTTON_DELETE_CHANNEL -> inlineKeyboard.deleteChannel()
                     BUTTON_LIVE -> inlineKeyboard.live()
                     BUTTON_SCREENSHOT -> inlineKeyboard.screenshot()
+                    else -> inlineKeyboard.update()
                 }
             }
 
