@@ -2,14 +2,15 @@ package com.helltar.twitchviewerbot.commands.twitch
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Config.botUsername
-import com.helltar.twitchviewerbot.Config.creatorId
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.db.dao.userChannelsDao
 
 class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
-    private val maxChannelsSize = if (userId != creatorId) 10 else 12
+    private companion object {
+        const val MAX_USER_CHANNELS = 24
+    }
 
     override suspend fun run() {
         if (ctx.user().isBot)
@@ -27,7 +28,7 @@ class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
         val userChannelsListSize = getUserChannelsList().size
 
-        if (userChannelsListSize < maxChannelsSize) {
+        if (userChannelsListSize < MAX_USER_CHANNELS) {
             if (addChannelToUserList(channel))
                 replyToMessage(localizedString(Strings.CHANNEL_ADDED_TO_LIST).format(channel, botUsername))
             else
