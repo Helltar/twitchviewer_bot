@@ -1,14 +1,19 @@
 package com.helltar.twitchviewerbot.commands.twitch
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
+import com.helltar.twitchviewerbot.Config.javaTempDir
+import com.helltar.twitchviewerbot.Extensions.plusUUID
 import com.helltar.twitchviewerbot.Extensions.toHashTag
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
-import com.helltar.twitchviewerbot.twitch.Utils
+import com.helltar.twitchviewerbot.twitch.Utils.executeStreamlink
+import com.helltar.twitchviewerbot.twitch.Utils.ffmpegGenerateClip
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.TimeUnit
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
@@ -35,7 +40,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     suspend fun getClipsFromAll(userLogins: List<String>) {
         twitch.getOnlineList(userLogins)?.let {
             if (it.isNotEmpty())
-                sendClips(it)
+                getAndSendClips(it)
             else {
                 val text = if (userLogins.size > 1)
                     localizedString(Strings.EMPTY_ONLINE_LIST)
@@ -51,18 +56,36 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     suspend fun getClip(channel: String) =
         getClipsFromAll(listOf(channel))
 
-    private suspend fun sendClips(twitchBroadcastData: List<Twitch.BroadcastData>) = coroutineScope {
+    private suspend fun getAndSendClips(twitchBroadcastData: List<Twitch.BroadcastData>) = coroutineScope {
         twitchBroadcastData.chunked(MAX_SIMULTANEOUS_CLIP_DOWNLOADS).forEach { chunk ->
             val tempMessage = localizedString(Strings.START_GET_CLIP).format(chunk.joinToString { """<a href="https://www.twitch.tv/${it.login}">${it.username}</a>""" })
             val tempMessageId = replyToMessage(tempMessage)
 
-            try {
+            val processes = ConcurrentLinkedQueue<Process>()
+
+            val jobs =
                 chunk.map { broadcastData ->
                     launch {
                         val channelLogin = broadcastData.login
+                        val tempName = channelLogin.plusUUID()
+                        val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
+                        val streamlinkOutFilename = "streamlink_$tempName.mp4"
+                        val clipFilename = "$javaTempDir/$ffmpegOutFilename"
 
                         try {
-                            val clipFilename = Utils.getShortClip(channelLogin)
+                            val streamlinkProcess = executeStreamlink(35, channelLogin, streamlinkOutFilename).also { processes.add(it) }
+
+                            if (!streamlinkProcess.waitFor(60, TimeUnit.SECONDS))
+                                streamlinkProcess.destroy()
+
+                            ensureActive()
+
+                            val ffmpegProcess = ffmpegGenerateClip(streamlinkOutFilename, ffmpegOutFilename).also { processes.add(it) }
+
+                            if (!ffmpegProcess.waitFor(40, TimeUnit.SECONDS))
+                                ffmpegProcess.destroy()
+
+                            ensureActive()
 
                             if (!File(clipFilename).exists()) {
                                 replyToMessage(localizedString(Strings.GET_CLIP_FAIL))
@@ -78,13 +101,28 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                             val viewersHtml = localizedString(Strings.STREAM_VIEWERS).format(broadcastData.viewerCount) + "\n"
 
                             replyToMessageWithVideo(clipFilename, "$titleHtml$viewersHtml$startTimeHtml#${channelUsername}$categoryHtml")
-
-                            File(clipFilename).delete() // todo: File(clipFilename).delete()
                         } catch (e: Exception) {
                             log.error("error processing clip for $channelLogin: ${e.message}")
+                        } finally {
+                            File("$javaTempDir/$streamlinkOutFilename").delete()
+                            File(clipFilename).delete()
                         }
                     }
-                }.joinAll()
+                }
+
+            try {
+                jobs.joinAll()
+            } catch (e: CancellationException) {
+                log.warn("cancel all user-$userId jobs (${jobs.size}) and destroy processes (${processes.size}), message: ${e.message}")
+
+                processes.forEach {
+                    if (it.isAlive) {
+                        log.warn("destroying process ${it.pid()} due to user-$userId-task cancellation")
+                        it.destroy()
+                        it.waitFor(5, TimeUnit.SECONDS)
+                        if (it.isAlive) it.destroyForcibly()
+                    }
+                }
             } finally {
                 deleteMessage(tempMessageId)
             }

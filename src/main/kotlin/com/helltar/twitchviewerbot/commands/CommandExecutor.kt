@@ -1,5 +1,6 @@
 package com.helltar.twitchviewerbot.commands
 
+import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
@@ -7,6 +8,7 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTT
 import com.helltar.twitchviewerbot.db.dao.usersDao
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
+import org.telegram.telegrambots.meta.api.methods.ParseMode
 import java.util.concurrent.ConcurrentHashMap
 
 class CommandExecutor {
@@ -26,7 +28,7 @@ class CommandExecutor {
         private val requestsMap = ConcurrentHashMap<String, Job>()
     }
 
-    fun execute(botCommand: BotCommand, requestKey: String) {
+    fun executeCommand(botCommand: BotCommand, requestKey: String) {
         val user = botCommand.ctx.user()
         val userId = user.id
         val chat = botCommand.ctx.message().chat
@@ -58,10 +60,28 @@ class CommandExecutor {
                 try {
                     block()
                 } catch (e: Exception) {
-                    log.error(e.message, e)
+                    log.error("job --> $key: ${e.message}")
                 }
             }
 
         return true
+    }
+
+    fun cancelJobs(ctx: MessageContext) {
+
+        fun replyToMessage(text: String) = ctx.replyToMessage(text).setParseMode(ParseMode.HTML).callAsync(ctx.sender)
+
+        val userId = ctx.user().id
+        val languageCode = ctx.user().languageCode
+        val activeJobs = requestsMap.filter { it.key.endsWith("@$userId") && it.value.isActive }
+
+        if (activeJobs.isEmpty()) {
+            replyToMessage(Strings.localizedString(Strings.NO_ACTIVE_TASKS, languageCode))
+            return
+        }
+
+        activeJobs.values.forEach { job -> job.cancel() }
+
+        replyToMessage(Strings.localizedString(Strings.TASKS_ARE_CANCELLED, languageCode).format(activeJobs.size))
     }
 }

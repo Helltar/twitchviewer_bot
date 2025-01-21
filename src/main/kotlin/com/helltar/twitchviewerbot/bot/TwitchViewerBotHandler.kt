@@ -37,6 +37,7 @@ class TwitchViewerBotHandler(botModuleOptions: BotModuleOptions) : BotHandler(bo
             register(SimpleCommand("/live") { commandExecutor.executeCommand(LiveCommand(it), COMMAND_LIVE) })
             register(SimpleCommand("/screen") { commandExecutor.executeCommand(ScreenCommand(it), COMMAND_SCREENSHOT) })
             register(SimpleCommand("/list") { commandExecutor.executeCommand(ListCommand(it), COMMAND_LIST) })
+            register(SimpleCommand("/cancel") { commandExecutor.cancelJobs(it) })
 
             register(SimpleCommand("/start") { commandExecutor.executeCommand(StartCommand(it), COMMAND_START) })
             register(SimpleCommand("/help") { commandExecutor.executeCommand(HelpCommand(it), COMMAND_START) })
