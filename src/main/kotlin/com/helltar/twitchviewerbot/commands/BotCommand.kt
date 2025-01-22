@@ -20,9 +20,6 @@ abstract class BotCommand(val ctx: MessageContext) {
 
     abstract suspend fun run()
 
-    protected fun localizedString(key: String) =
-        Strings.localizedString(key, ctx.message().from.languageCode)
-
     fun replyToMessage(
         text: String,
         enableWebPagePreview: Boolean = false,
@@ -34,6 +31,9 @@ abstract class BotCommand(val ctx: MessageContext) {
             .setWebPagePreviewEnabled(enableWebPagePreview)
             .call(ctx.sender)
             .messageId
+
+    protected fun localizedString(key: String) =
+        Strings.localizedString(key, ctx.message().from.languageCode)
 
     protected fun replyToMessageWithPhoto(url: String, caption: String, messageId: Int = ctx.messageId()): Message =
         ctx.replyToMessageWithPhoto()

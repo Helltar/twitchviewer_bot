@@ -23,7 +23,7 @@ class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     }
 
     private suspend fun add(channel: String) {
-        if (!isChannelNameValid(channel))
+        if (!checkChannelNameAndReplyIfInvalid(channel))
             return
 
         val userChannelsListSize = getUserChannelsList().size

@@ -7,8 +7,8 @@ import com.annimon.tgbotsmodule.commands.SimpleCommand
 import com.annimon.tgbotsmodule.commands.authority.SimpleAuthority
 import com.helltar.twitchviewerbot.Config.botUsername
 import com.helltar.twitchviewerbot.Config.creatorId
-import com.helltar.twitchviewerbot.commands.CommandExecutor.cancelJobs
-import com.helltar.twitchviewerbot.commands.CommandExecutor.executeCommand
+import com.helltar.twitchviewerbot.bot.CommandExecutor.cancelJobs
+import com.helltar.twitchviewerbot.bot.CommandExecutor.executeCommand
 import com.helltar.twitchviewerbot.commands.simple.*
 import com.helltar.twitchviewerbot.commands.system.UpdatePrivacyPolicy
 import com.helltar.twitchviewerbot.commands.twitch.*

@@ -2,13 +2,14 @@ package com.helltar.twitchviewerbot.commands.twitch
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Config.javaTempDir
-import com.helltar.twitchviewerbot.Extensions.plusUUID
-import com.helltar.twitchviewerbot.Extensions.toHashTag
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
-import com.helltar.twitchviewerbot.twitch.Utils.executeStreamlink
+import com.helltar.twitchviewerbot.twitch.Utils.createTwitchHtmlLink
 import com.helltar.twitchviewerbot.twitch.Utils.ffmpegGenerateClip
+import com.helltar.twitchviewerbot.twitch.Utils.plusUUID
+import com.helltar.twitchviewerbot.twitch.Utils.startStreamlinkProcess
+import com.helltar.twitchviewerbot.twitch.Utils.toHashTag
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import java.io.File
@@ -31,7 +32,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         } else {
             val channel = arguments.first()
 
-            if (isChannelNameValid(channel))
+            if (checkChannelNameAndReplyIfInvalid(channel))
                 getClip(channel)
         }
     }
@@ -57,7 +58,9 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private suspend fun getAndSendClips(twitchBroadcastData: List<Twitch.BroadcastData>) = coroutineScope {
         twitchBroadcastData.chunked(MAX_SIMULTANEOUS_CLIP_DOWNLOADS).forEach { chunk ->
-            val tempMessage = localizedString(Strings.START_GET_CLIP).format(chunk.joinToString { """<a href="https://www.twitch.tv/${it.login}">${it.username}</a>""" })
+            ensureActive()
+
+            val tempMessage = localizedString(Strings.START_GET_CLIP).format(chunk.joinToString { createTwitchHtmlLink(it.login, it.username) })
             val tempMessageId = replyToMessage(tempMessage)
 
             val processes = ConcurrentLinkedQueue<Process>()
@@ -72,7 +75,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                         val clipFilename = "$javaTempDir/$ffmpegOutFilename"
 
                         try {
-                            val streamlinkProcess = executeStreamlink(35, channelLogin, streamlinkOutFilename).also { processes.add(it) }
+                            val streamlinkProcess = startStreamlinkProcess(35, channelLogin, streamlinkOutFilename).also { processes.add(it) }
 
                             if (!streamlinkProcess.waitFor(60, TimeUnit.SECONDS))
                                 streamlinkProcess.destroy()
@@ -94,7 +97,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                             val channelUsername = broadcastData.username
                             val streamCategory = broadcastData.gameName
 
-                            val titleHtml = "<b><a href=\"https://www.twitch.tv/$channelLogin\">$channelUsername</a></b> - ${broadcastData.title}\n\n"
+                            val titleHtml = "${createTwitchHtmlLink(channelLogin, channelUsername)} - ${broadcastData.title}\n\n"
                             val categoryHtml = if (streamCategory.isNotEmpty()) ", #${streamCategory.toHashTag()}" else ""
                             val startTimeHtml = localizedString(Strings.STREAM_START_TIME).format(broadcastData.uptime) + "\n\n"
                             val viewersHtml = localizedString(Strings.STREAM_VIEWERS).format(broadcastData.viewerCount) + "\n"

@@ -12,19 +12,16 @@ abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
     protected suspend fun getUserChannelsList(userId: Long = this.userId) =
         userChannelsDao.getChannels(userId)
 
-    protected suspend fun isUserListEmpty(userId: Long = this.userId) =
-        userChannelsDao.isChannelsListEmpty(userId)
-
     protected suspend fun isUserListNotEmpty(userId: Long = this.userId) =
         userChannelsDao.isChannelsListNotEmpty(userId)
 
-    protected fun isChannelNameValid(channelName: String): Boolean {
-        if (channelName.length !in 2..25) {
+    protected fun checkChannelNameAndReplyIfInvalid(name: String): Boolean {
+        if (name.length !in 2..25) {
             replyToMessage(localizedString(Strings.INVALID_CHANNEL_NAME_LENGTH))
             return false
         }
 
-        if (!channelName.matches("^[a-zA-Z0-9_]*$".toRegex())) {
+        if (!name.matches("^[a-zA-Z0-9_]*$".toRegex())) {
             replyToMessage(localizedString(Strings.INVALID_CHANNEL_NAME))
             return false
         }

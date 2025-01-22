@@ -1,7 +1,8 @@
-package com.helltar.twitchviewerbot.commands
+package com.helltar.twitchviewerbot.bot
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
+import com.helltar.twitchviewerbot.commands.BotCommand
 import com.helltar.twitchviewerbot.db.dao.usersDao
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*

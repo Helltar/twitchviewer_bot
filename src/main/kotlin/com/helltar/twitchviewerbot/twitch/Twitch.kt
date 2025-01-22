@@ -4,7 +4,7 @@ import com.github.twitch4j.TwitchClient
 import com.github.twitch4j.TwitchClientBuilder
 import com.helltar.twitchviewerbot.Config.twitchClientId
 import com.helltar.twitchviewerbot.Config.twitchClientSecret
-import com.helltar.twitchviewerbot.Extensions.escapeHtml
+import com.helltar.twitchviewerbot.twitch.Utils.escapeHtml
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalTime
 import java.time.ZoneId
@@ -35,11 +35,7 @@ class Twitch {
     )
 
     fun getOnlineList(userLogins: List<String>) = try {
-        twitchClient
-            .helix
-            .getStreams(null, null, null, 1, null, null, null, userLogins)
-            .execute()
-            .streams
+        twitchClient.helix.getStreams(null, null, null, 1, null, null, null, userLogins).execute().streams
             .map {
                 val formatter = DateTimeFormatter.ofPattern("HH:mm")
                 val startedAt = it.startedAtInstant.atZone(ZoneId.systemDefault()).format(formatter)

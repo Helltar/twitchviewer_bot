@@ -28,6 +28,7 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.stri
 import com.helltar.twitchviewerbot.db.dao.userChannelsDao
 import com.helltar.twitchviewerbot.db.dao.usersDao
 import com.helltar.twitchviewerbot.twitch.Twitch
+import com.helltar.twitchviewerbot.twitch.Utils.createTwitchHtmlLink
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
@@ -61,7 +62,7 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
 
         keyboard.keyboardRow(InlineKeyboardRow(buttonBack, buttonClose, buttonDelete))
 
-        val link = """<b><a href="https://www.twitch.tv/$channelName">$channelName</a></b>"""
+        val link = createTwitchHtmlLink(channelName, channelName)
         val text = localizedString(Strings.TITLE_CHANNEL_IS_SELECTED).format(link)
 
         editMessage(text, keyboard.build())

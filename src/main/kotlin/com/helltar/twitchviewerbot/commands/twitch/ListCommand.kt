@@ -7,12 +7,13 @@ import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.string
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.InlineKeyboard
+import com.helltar.twitchviewerbot.db.dao.userChannelsDao
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 
 class ListCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     override suspend fun run() {
-        if (isUserListEmpty()) {
+        if (userChannelsDao.isChannelsListEmpty(userId)) {
             replyToMessage(localizedString(Strings.LIST_IS_EMPTY))
             return
         }
