@@ -16,13 +16,11 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTT
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_NEXT_PAGE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_PREV_PAGE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseOwnerId
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
+
+private val log = KotlinLogging.logger {}
 
 class KeyboardBundle : CommandBundle<For> {
-
-    private val commandExecutor = CommandExecutor()
-
-    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun register(registry: CommandRegistry<For>) {
         registry.run {
@@ -43,7 +41,7 @@ class KeyboardBundle : CommandBundle<For> {
         val ownerId = parseOwnerId(ctx.data())
         val user = ctx.user()
 
-        log.debug("callback data: ${ctx.data()}")
+        log.debug { "callback data: ${ctx.data()}" }
 
         if (user.id != ownerId) {
             val text = localizedString(Strings.DONT_TOUCH_IS_NOT_YOUR_LIST, user.languageCode).format(user.firstName)
@@ -52,7 +50,7 @@ class KeyboardBundle : CommandBundle<For> {
         }
 
         val launch =
-            commandExecutor.launch("$buttonId@$ownerId") {
+            CommandExecutor.launch("$buttonId@$ownerId") {
                 val inlineKeyboard = InlineKeyboard(ctx.apply { update().message = ctx.message() }, ownerId)
 
                 when (buttonId) {

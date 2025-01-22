@@ -2,43 +2,30 @@ package com.helltar.twitchviewerbot.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIPS
-import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
 import com.helltar.twitchviewerbot.db.dao.usersDao
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
-import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import java.util.concurrent.ConcurrentHashMap
 
-class CommandExecutor {
+object CommandExecutor {
 
     private val scope = CoroutineScope(Dispatchers.IO)
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val requestsMap = ConcurrentHashMap<String, Job>()
 
-    companion object {
-        const val COMMAND_ADD = "cmdAdd"
-        const val COMMAND_LIST = "cmdList"
-        const val COMMAND_START = "cmdStart"
-        const val COMMAND_ABOUT = "cmdAbout"
-        const val COMMAND_PRIVACY = "cmdPrivacy"
-        const val COMMAND_CLIP = BUTTON_CLIPS
-        const val COMMAND_LIVE = BUTTON_LIVE
-        private val requestsMap = ConcurrentHashMap<String, Job>()
-    }
+    private val log = KotlinLogging.logger {}
 
-    fun executeCommand(botCommand: BotCommand, requestKey: String) {
+    fun executeCommand(botCommand: BotCommand, requestKey: String? = null) {
         val user = botCommand.ctx.user()
         val userId = user.id
         val chat = botCommand.ctx.message().chat
         val commandName = botCommand.javaClass.simpleName
 
-        log.info("$commandName: ${chat.id} $userId ${user.userName} ${user.firstName} ${chat.title}: ${botCommand.ctx.message().text}")
+        log.info { "$commandName: ${chat.id} $userId ${user.userName} ${user.firstName} ${chat.title}: ${botCommand.ctx.message().text}" }
 
         val launch =
-            launch("$requestKey@$userId") {
-                if (!usersDao.add(user))
-                    usersDao.update(user)
-
+            launch("${requestKey ?: commandName}@$userId") {
+                if (!usersDao.add(user)) usersDao.update(user)
                 botCommand.run()
             }
 
@@ -46,19 +33,19 @@ class CommandExecutor {
             botCommand.replyToMessage(Strings.localizedString(Strings.MANY_REQUEST, user.languageCode))
     }
 
-    fun launch(key: String, block: suspend () -> Unit): Boolean {
+    fun launch(key: String, task: suspend () -> Unit): Boolean {
         if (requestsMap.containsKey(key))
             if (requestsMap[key]?.isCompleted == false)
                 return false
 
-        log.debug("launch --> $key")
+        log.debug { "launch --> $key" }
 
         requestsMap[key] =
             scope.launch {
                 try {
-                    block()
+                    task()
                 } catch (e: Exception) {
-                    log.error("job --> $key: ${e.message}")
+                    log.error { "job --> $key: ${e.message}" }
                 }
             }
 
@@ -78,7 +65,10 @@ class CommandExecutor {
             return
         }
 
-        activeJobs.values.forEach { job -> job.cancel() }
+        activeJobs.forEach { (key, job) ->
+            log.debug { "job.cancel --> $key" }
+            job.cancel()
+        }
 
         replyToMessage(Strings.localizedString(Strings.TASKS_ARE_CANCELLED, languageCode).format(activeJobs.size))
     }

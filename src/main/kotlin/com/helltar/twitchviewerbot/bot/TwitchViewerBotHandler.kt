@@ -7,17 +7,13 @@ import com.annimon.tgbotsmodule.commands.SimpleCommand
 import com.annimon.tgbotsmodule.commands.authority.SimpleAuthority
 import com.helltar.twitchviewerbot.Config.botUsername
 import com.helltar.twitchviewerbot.Config.creatorId
-import com.helltar.twitchviewerbot.commands.CommandExecutor
-import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_ABOUT
-import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_ADD
-import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_CLIP
-import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_LIST
-import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_LIVE
-import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_PRIVACY
-import com.helltar.twitchviewerbot.commands.CommandExecutor.Companion.COMMAND_START
+import com.helltar.twitchviewerbot.commands.CommandExecutor.cancelJobs
+import com.helltar.twitchviewerbot.commands.CommandExecutor.executeCommand
 import com.helltar.twitchviewerbot.commands.simple.*
 import com.helltar.twitchviewerbot.commands.system.UpdatePrivacyPolicy
 import com.helltar.twitchviewerbot.commands.twitch.*
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIPS
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.KeyboardBundle
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -27,22 +23,20 @@ class TwitchViewerBotHandler(botModuleOptions: BotModuleOptions) : BotHandler(bo
     private val authority = SimpleAuthority(creatorId)
     private val commandRegistry = CommandRegistry(botUsername, authority)
 
-    private val commandExecutor = CommandExecutor()
-
     init {
         commandRegistry.run {
-            register(SimpleCommand("/add") { commandExecutor.executeCommand(AddCommand(it), COMMAND_ADD) })
-            register(SimpleCommand("/clip") { commandExecutor.executeCommand(ClipCommand(it), COMMAND_CLIP) })
-            register(SimpleCommand("/live") { commandExecutor.executeCommand(LiveCommand(it), COMMAND_LIVE) })
-            register(SimpleCommand("/list") { commandExecutor.executeCommand(ListCommand(it), COMMAND_LIST) })
-            register(SimpleCommand("/cancel") { commandExecutor.cancelJobs(it) })
+            register(SimpleCommand("/add") { executeCommand(AddCommand(it)) })
+            register(SimpleCommand("/clip") { executeCommand(ClipCommand(it), BUTTON_CLIPS) })
+            register(SimpleCommand("/live") { executeCommand(LiveCommand(it), BUTTON_LIVE) })
+            register(SimpleCommand("/list") { executeCommand(ListCommand(it)) })
+            register(SimpleCommand("/cancel") { cancelJobs(it) })
 
-            register(SimpleCommand("/start") { commandExecutor.executeCommand(StartCommand(it), COMMAND_START) })
-            register(SimpleCommand("/help") { commandExecutor.executeCommand(HelpCommand(it), COMMAND_START) })
-            register(SimpleCommand("/about") { commandExecutor.executeCommand(AboutCommand(it), COMMAND_ABOUT) })
+            register(SimpleCommand("/start") { executeCommand(StartCommand(it)) })
+            register(SimpleCommand("/help") { executeCommand(HelpCommand(it)) })
+            register(SimpleCommand("/about") { executeCommand(AboutCommand(it)) })
 
-            register(SimpleCommand("/updateprivacy") { commandExecutor.executeCommand(UpdatePrivacyPolicy(it), COMMAND_PRIVACY) })
-            register(SimpleCommand("/privacy") { commandExecutor.executeCommand(PrivacyCommand(it), COMMAND_PRIVACY) })
+            register(SimpleCommand("/updateprivacy") { executeCommand(UpdatePrivacyPolicy(it)) })
+            register(SimpleCommand("/privacy") { executeCommand(PrivacyCommand(it)) })
 
             registerBundle(KeyboardBundle())
         }

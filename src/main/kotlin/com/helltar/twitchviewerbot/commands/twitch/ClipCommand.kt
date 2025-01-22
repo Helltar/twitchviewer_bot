@@ -9,19 +9,18 @@ import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
 import com.helltar.twitchviewerbot.twitch.Utils.executeStreamlink
 import com.helltar.twitchviewerbot.twitch.Utils.ffmpegGenerateClip
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
-import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
-    companion object {
-        private const val MAX_SIMULTANEOUS_CLIP_DOWNLOADS = 3
+    private companion object {
+        const val MAX_SIMULTANEOUS_CLIP_DOWNLOADS = 3
+        val log = KotlinLogging.logger {}
     }
-
-    private val log = LoggerFactory.getLogger(javaClass)
 
     override suspend fun run() {
         if (arguments.isEmpty()) {
@@ -102,7 +101,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
                             replyToMessageWithVideo(clipFilename, "$titleHtml$viewersHtml$startTimeHtml#${channelUsername}$categoryHtml")
                         } catch (e: Exception) {
-                            log.error("error processing clip for $channelLogin: ${e.message}")
+                            log.error { "error processing clip for $channelLogin: ${e.message}" }
                         } finally {
                             File("$javaTempDir/$streamlinkOutFilename").delete()
                             File(clipFilename).delete()
@@ -113,11 +112,11 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             try {
                 jobs.joinAll()
             } catch (e: CancellationException) {
-                log.warn("cancel all user-$userId jobs (${jobs.size}) and destroy processes (${processes.size}), message: ${e.message}")
+                log.warn { "cancel all user-$userId jobs (${jobs.size}) and destroy processes (${processes.size}), message: ${e.message}" }
 
                 processes.forEach {
                     if (it.isAlive) {
-                        log.warn("destroying process ${it.pid()} due to user-$userId-task cancellation")
+                        log.warn { "destroying process ${it.pid()} due to user-$userId-task cancellation" }
                         it.destroy()
                         it.waitFor(5, TimeUnit.SECONDS)
                         if (it.isAlive) it.destroyForcibly()
