@@ -1,0 +1,32 @@
+services:
+
+  twitchbot:
+    container_name: twitchbot_container
+    image: ghcr.io/helltar/twitchbot:latest
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - postgres
+    volumes:
+      - twitchbot_data:/app/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "1"
+
+  postgres:
+    container_name: postgres_container
+    image: postgres:17.2-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      PGPORT: ${POSTGRESQL_PORT}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+  twitchbot_data:

@@ -1,0 +1,17 @@
+services:
+
+  twitchbot:
+    container_name: twitchbot_container
+    image: ghcr.io/helltar/twitchbot:latest
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - twitchbot_data:/app/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "1"
+
+volumes:
+  twitchbot_data:
