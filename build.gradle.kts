@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.helltar"
-version = "1.0.0"
+version = "0.9.0"
 
 repositories {
     mavenCentral()
