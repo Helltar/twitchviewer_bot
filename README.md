@@ -4,21 +4,40 @@
     <a href="https://t.me/twitchviewer_bot"><img src="https://helltar.com/projects/twitchviewer_bot/img/qr.png" alt="qr_code" width="50%"/></a>
 </p>
 
-Edit the **.env** file by specifying the tokens for the bot, and also provide the address and auth. data for **PostgreSQL**:
+## Installation
 
-- CREATOR_ID: your Telegram user-ID
-- BOT_TOKEN & BOT_USERNAME: [BotFather](https://t.me/BotFather)
-- TWITCH_CLIENT_ID & TWITCH_CLIENT_SECRET: [Twitch Developer Console](https://dev.twitch.tv/console/apps/create)
+### Docker Compose
 
 ```bash
-docker run --rm -d --name twitchviewerbot --env-file .env ghcr.io/helltar/twitchbot:latest
+mkdir twitchbot && cd twitchbot && \
+wget https://raw.githubusercontent.com/Helltar/twitchviewer_bot/master/{.env,compose.yaml,compose.with-postgres.yaml}
 ```
 
-### Commands
+Edit the **.env** file and specify the required tokens, database address, and credentials for **PostgreSQL**:
 
-- **/list** - Show your favorite channels
-- **/live** - Check who is online from your list
-- **/clip** - Get short clips from all channels on your list
-- **/screen** - Get a screenshot from a channel
-- **/add** - Add a channel to your list
-- **/updateprivacy** - Update bot privacy policy (_/privacy_)
+- `CREATOR_ID`: your Telegram user-ID
+- `BOT_TOKEN` & `BOT_USERNAME`: [BotFather](https://t.me/BotFather)
+- `TWITCH_CLIENT_ID` & `TWITCH_CLIENT_SECRET`: [Twitch Developer Console](https://dev.twitch.tv/console/apps/create)
+
+If you already have an external PostgreSQL database, use the `compose.yaml` file.
+In this configuration, PostgreSQL is **not** included as a container, and the bot will connect to your external database using the details provided in the **.env** file:
+
+```bash
+docker compose up -d
+```
+
+If you do not have an external PostgreSQL instance, use the `compose.with-postgres.yaml` file.
+This configuration will set up a separate PostgreSQL container, running alongside the bot:
+
+```bash
+docker compose -f compose.with-postgres.yaml up -d
+```
+
+## Commands
+
+- `/clip` - Get short clips from all the channels in your list
+- `/list` - View your favorite channels in your list
+- `/live` - See which of your favorite channels are currently online
+- `/add` - Add a new channel to your list
+- `/cancel` - End the recording process started using the `/clip` command
+- `/updateprivacy` - Update bot privacy policy (`/privacy`)
