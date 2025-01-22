@@ -1,12 +1,12 @@
 package com.helltar.twitchviewerbot.twitch
 
 import com.helltar.twitchviewerbot.Config.javaTempDir
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 
 object Utils {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val log = KotlinLogging.logger {}
 
     fun ffmpegGenerateClip(inputFilename: String, outFilename: String): Process {
         // if -fs > 10M --> black video preview (thumbnail) (telegram)
@@ -30,7 +30,7 @@ object Utils {
                 .directory(File(javaTempDir))
                 .start()
         } catch (e: Exception) {
-            log.error(e.message, e)
+            log.error(e) { e.message }
             null
         }
 }

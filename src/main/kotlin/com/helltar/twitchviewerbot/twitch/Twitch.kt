@@ -5,10 +5,12 @@ import com.github.twitch4j.TwitchClientBuilder
 import com.helltar.twitchviewerbot.Config.twitchClientId
 import com.helltar.twitchviewerbot.Config.twitchClientSecret
 import com.helltar.twitchviewerbot.Extensions.escapeHtml
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+
+private val log = KotlinLogging.logger {}
 
 class Twitch {
 
@@ -20,8 +22,6 @@ class Twitch {
                 .withEnableHelix(true)
                 .build()
     }
-
-    private val log = LoggerFactory.getLogger(javaClass)
 
     data class BroadcastData(
         val login: String,
@@ -52,7 +52,7 @@ class Twitch {
                 )
             }
     } catch (e: Exception) {
-        log.error(e.message)
+        log.error { e.message }
         null
     }
 }
