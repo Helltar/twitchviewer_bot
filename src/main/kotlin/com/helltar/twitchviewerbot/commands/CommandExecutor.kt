@@ -70,6 +70,6 @@ object CommandExecutor {
             job.cancel()
         }
 
-        replyToMessage(Strings.localizedString(Strings.TASKS_ARE_CANCELLED, languageCode).format(activeJobs.size))
+        replyToMessage(Strings.localizedString(Strings.TASKS_ARE_CANCELLED, languageCode))
     }
 }
