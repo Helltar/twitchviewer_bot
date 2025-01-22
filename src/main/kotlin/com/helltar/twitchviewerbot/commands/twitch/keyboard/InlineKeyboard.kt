@@ -40,7 +40,8 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
         const val CHANNELS_PER_ROW = 2
     }
 
-    private val context = MessageContext(ctx.sender, ctx.update(), String())
+    private val messageContext = MessageContext(ctx.sender, ctx.update(), String()).apply { this.user().id = ownerId } // todo: user().id
+
     private val channelName = parseChannelName(ctx.data())
     private val navigationPage = parseNavigationPage(ctx.data())
     private var userLanguageCode: String? = null
@@ -72,21 +73,21 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     suspend fun clip() {
-        ClipCommand(context).getClip(channelName)
+        ClipCommand(messageContext).getClip(channelName)
     }
 
     suspend fun clips() {
         val channels = userChannelsDao.getChannels(ownerId)
 
         if (channels.isNotEmpty())
-            ClipCommand(context).getClipsFromAll(channels)
+            ClipCommand(messageContext).getClipsFromAll(channels)
     }
 
     suspend fun live() {
         val channels = userChannelsDao.getChannels(ownerId)
 
         if (channels.isNotEmpty())
-            LiveCommand(context).sendOnlineList(channels)
+            LiveCommand(messageContext).sendOnlineList(channels)
     }
 
     suspend fun deleteChannel() {
