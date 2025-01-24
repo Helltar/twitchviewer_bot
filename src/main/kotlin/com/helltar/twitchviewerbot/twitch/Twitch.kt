@@ -10,17 +10,18 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-private val log = KotlinLogging.logger {}
-
 class Twitch {
 
     private companion object {
         val twitchClient: TwitchClient =
-            TwitchClientBuilder.builder()
+            TwitchClientBuilder
+                .builder()
                 .withClientId(twitchClientId)
                 .withClientSecret(twitchClientSecret)
                 .withEnableHelix(true)
                 .build()
+
+        val log = KotlinLogging.logger {}
     }
 
     data class BroadcastData(
