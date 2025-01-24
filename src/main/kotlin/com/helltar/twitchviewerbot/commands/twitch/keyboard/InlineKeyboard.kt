@@ -97,10 +97,9 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     suspend fun update() {
-        if (userChannelsDao.isChannelsListNotEmpty(ownerId)) {
-            editMessage(localizedString(Strings.WAIT_CHECK_ONLINE_MENU), waitingMenu())
+        if (userChannelsDao.isChannelsListNotEmpty(ownerId))
             editMessage(localizedString(Strings.TITLE_CHOOSE_CHANNEL_OR_ACTION), mainMenu())
-        } else
+        else
             editMessage(localizedString(Strings.LIST_IS_EMPTY))
     }
 
@@ -154,6 +153,7 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
         return keyboard.build()
     }
 
+    @Suppress("unused")
     fun waitingMenu(): InlineKeyboardMarkup {
         val button = keyboardButton("\uD83D\uDD04", BUTTON_UPDATE)
         return InlineKeyboardMarkup.builder().keyboardRow(InlineKeyboardRow(button)).build()

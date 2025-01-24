@@ -31,7 +31,6 @@ class ListCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         val callbackQueryContext = CallbackQueryContext(ctx.sender, update, String())
         val inlineKeyboard = InlineKeyboard(callbackQueryContext, userId)
 
-        val messageId = replyToMessage(localizedString(Strings.WAIT_CHECK_ONLINE_MENU), replyMarkup = inlineKeyboard.waitingMenu())
-        editMessageText(localizedString(Strings.TITLE_CHOOSE_CHANNEL_OR_ACTION), messageId, inlineKeyboard.mainMenu())
+        replyToMessage(localizedString(Strings.TITLE_CHOOSE_CHANNEL_OR_ACTION), replyMarkup = inlineKeyboard.mainMenu())
     }
 }
