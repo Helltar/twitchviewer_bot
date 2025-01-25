@@ -88,7 +88,7 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
         val channels = userChannelsDao.getChannels(ownerId)
 
         if (channels.isNotEmpty())
-            LiveCommand(messageContext).sendOnlineList(channels)
+            LiveCommand(messageContext).fetchAndSendLiveList(channels)
     }
 
     suspend fun deleteChannel() {
