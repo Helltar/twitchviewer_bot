@@ -40,7 +40,7 @@ class Twitch {
             .map {
                 val formatter = DateTimeFormatter.ofPattern("HH:mm")
                 val startedAt = it.startedAtInstant.atZone(ZoneId.systemDefault()).format(formatter)
-                val thumbnailUrl = it.getThumbnailUrl(1920, 1080)
+                val thumbnailUrl = it.getThumbnailUrl(1920, 1080) + "?t=${System.currentTimeMillis()}"
                 val uptime = LocalTime.MIN.plus(it.uptime).format(formatter)
 
                 BroadcastData(
