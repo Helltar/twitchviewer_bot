@@ -9,7 +9,6 @@ import com.helltar.twitchviewerbot.twitch.Utils.createTwitchHtmlLink
 import com.helltar.twitchviewerbot.twitch.Utils.ffmpegGenerateClip
 import com.helltar.twitchviewerbot.twitch.Utils.plusUUID
 import com.helltar.twitchviewerbot.twitch.Utils.startStreamlinkProcess
-import com.helltar.twitchviewerbot.twitch.Utils.toHashTag
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import java.io.File
@@ -41,14 +40,8 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         twitch.getOnlineList(userLogins)?.let {
             if (it.isNotEmpty())
                 getAndSendClips(it)
-            else {
-                val text = if (userLogins.size > 1)
-                    localizedString(Strings.EMPTY_ONLINE_LIST)
-                else
-                    localizedString(Strings.STREAM_OFFLINE).format(userLogins.first())
-
-                replyToMessage(text)
-            }
+            else
+                replyToMessage(localizedString(Strings.EMPTY_ONLINE_LIST))
         }
             ?: replyToMessage(localizedString(Strings.TWITCH_EXCEPTION))
     }
@@ -94,15 +87,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
                                 return@launch
                             }
 
-                            val channelUsername = broadcastData.username
-                            val streamCategory = broadcastData.gameName
-
-                            val titleHtml = "${createTwitchHtmlLink(channelLogin, channelUsername)} - ${broadcastData.title}\n\n"
-                            val categoryHtml = if (streamCategory.isNotEmpty()) ", #${streamCategory.toHashTag()}" else ""
-                            val startTimeHtml = localizedString(Strings.STREAM_START_TIME).format(broadcastData.uptime) + "\n\n"
-                            val viewersHtml = localizedString(Strings.STREAM_VIEWERS).format(broadcastData.viewerCount) + "\n"
-
-                            replyToMessageWithVideo(clipFilename, "$titleHtml$viewersHtml$startTimeHtml#${channelUsername}$categoryHtml")
+                            replyToMessageWithVideo(clipFilename, createHtmlCaption(broadcastData))
                         } catch (e: Exception) {
                             log.error { "error processing clip for $channelLogin: ${e.message}" }
                         } finally {
