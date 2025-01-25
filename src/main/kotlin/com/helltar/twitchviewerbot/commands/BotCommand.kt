@@ -1,13 +1,12 @@
 package com.helltar.twitchviewerbot.commands
 
-import com.annimon.tgbotsmodule.api.methods.Methods
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import org.telegram.telegrambots.meta.api.methods.ParseMode
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
 import org.telegram.telegrambots.meta.api.objects.message.Message
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import java.io.File
-import java.io.Serializable
 import java.net.URI
 import java.util.concurrent.CompletableFuture
 
@@ -32,14 +31,20 @@ abstract class BotCommand(val ctx: MessageContext) {
             .call(ctx.sender)
             .messageId
 
+    protected fun replyToMessageWithMediaGroup(media: List<InputMediaPhoto>) {
+        ctx.replyWithMediaGroup()
+            .setMedias(media)
+            .setReplyToMessageId(ctx.messageId())
+            .call(ctx.sender)
+    }
+
     protected fun localizedString(key: String) =
         Strings.localizedString(key, ctx.message().from.languageCode)
 
-    protected fun replyToMessageWithPhoto(url: String, caption: String, messageId: Int = ctx.messageId()): Message =
+    protected fun replyToMessageWithPhoto(url: String, caption: String): Message =
         ctx.replyToMessageWithPhoto()
             .setFile(url, URI.create(url).toURL().openStream())
             .setCaption(caption)
-            .setReplyToMessageId(messageId)
             .setParseMode(ParseMode.HTML)
             .call(ctx.sender)
 
@@ -57,13 +62,6 @@ abstract class BotCommand(val ctx: MessageContext) {
             .setHeight(height)
             .setWidth(width)
             .setParseMode(ParseMode.HTML)
-            .call(ctx.sender)
-
-    protected fun editMessageText(text: String, messageId: Int, replyMarkup: InlineKeyboardMarkup): Serializable =
-        Methods.editMessageText(ctx.chatId(), messageId, text)
-            .setReplyMarkup(replyMarkup)
-            .setParseMode(ParseMode.HTML)
-            .disableWebPagePreview()
             .call(ctx.sender)
 
     protected fun deleteMessage(messageId: Int): CompletableFuture<Boolean> =
