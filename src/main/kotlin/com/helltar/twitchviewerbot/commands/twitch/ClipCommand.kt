@@ -6,7 +6,7 @@ import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
 import com.helltar.twitchviewerbot.twitch.Utils.createTwitchHtmlLink
-import com.helltar.twitchviewerbot.twitch.Utils.ffmpegGenerateClip
+import com.helltar.twitchviewerbot.twitch.Utils.ffmpegPrepareClip
 import com.helltar.twitchviewerbot.twitch.Utils.plusUUID
 import com.helltar.twitchviewerbot.twitch.Utils.startStreamlinkProcess
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -14,13 +14,18 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.coroutineContext
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private companion object {
         const val MAX_SIMULTANEOUS_CLIP_DOWNLOADS = 3
+        const val MAX_STREAMLINK_CLIP_DURATION_SEC = 40L
+        const val FFMPEG_PROCESS_TIMEOUT = MAX_STREAMLINK_CLIP_DURATION_SEC
         val log = KotlinLogging.logger {}
     }
+
+    private val processes = ConcurrentLinkedQueue<Process>()
 
     override suspend fun run() {
         if (arguments.isEmpty()) {
@@ -53,66 +58,86 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         twitchBroadcastData.chunked(MAX_SIMULTANEOUS_CLIP_DOWNLOADS).forEach { chunk ->
             ensureActive()
 
-            val tempMessage = localizedString(Strings.START_GET_CLIP).format(chunk.joinToString { createTwitchHtmlLink(it.login, it.username) })
+            val localizedMessage = localizedString(Strings.START_GET_CLIP)
+            val chunkHtmlLinks = chunk.joinToString { createTwitchHtmlLink(it.login, it.username) }
+            val tempMessage = localizedMessage.format(chunkHtmlLinks)
             val tempMessageId = replyToMessage(tempMessage)
-
-            val processes = ConcurrentLinkedQueue<Process>()
 
             val jobs =
                 chunk.map { broadcastData ->
                     launch {
-                        val channelLogin = broadcastData.login
-                        val tempName = channelLogin.plusUUID()
-                        val ffmpegOutFilename = "ffmpeg_$tempName.mp4"
-                        val streamlinkOutFilename = "streamlink_$tempName.mp4"
-                        val clipFilename = "$javaTempDir/$ffmpegOutFilename"
-
-                        try {
-                            val streamlinkProcess = startStreamlinkProcess(35, channelLogin, streamlinkOutFilename).also { processes.add(it) }
-
-                            if (!streamlinkProcess.waitFor(60, TimeUnit.SECONDS))
-                                streamlinkProcess.destroy()
-
-                            ensureActive()
-
-                            val ffmpegProcess = ffmpegGenerateClip(streamlinkOutFilename, ffmpegOutFilename).also { processes.add(it) }
-
-                            if (!ffmpegProcess.waitFor(40, TimeUnit.SECONDS))
-                                ffmpegProcess.destroy()
-
-                            ensureActive()
-
-                            if (!File(clipFilename).exists()) {
-                                replyToMessage(localizedString(Strings.GET_CLIP_FAIL))
-                                return@launch
-                            }
-
-                            replyToMessageWithVideo(clipFilename, createHtmlCaption(broadcastData))
-                        } catch (e: Exception) {
-                            log.error { "error processing clip for $channelLogin: ${e.message}" }
-                        } finally {
-                            File("$javaTempDir/$streamlinkOutFilename").delete()
-                            File(clipFilename).delete()
-                        }
+                        processClip(broadcastData)
                     }
                 }
 
             try {
                 jobs.joinAll()
             } catch (e: CancellationException) {
-                log.warn { "cancel all user-$userId jobs (${jobs.size}) and destroy processes (${processes.size}), message: ${e.message}" }
-
-                processes.forEach {
-                    if (it.isAlive) {
-                        log.warn { "destroying process ${it.pid()} due to user-$userId-task cancellation" }
-                        it.destroy()
-                        it.waitFor(5, TimeUnit.SECONDS)
-                        if (it.isAlive) it.destroyForcibly()
-                    }
-                }
+                log.warn { "cancel all user-$userId jobs (${jobs.size}) and destroy processes (${processes.size}): ${e.message}" }
+                processes.forEach { it.kill() }
             } finally {
+                processes.clear()
                 deleteMessage(tempMessageId)
             }
         }
     }
+
+    private suspend fun processClip(broadcastData: Twitch.BroadcastData) {
+        val channelLogin = broadcastData.login
+        val tempName = channelLogin.plusUUID()
+        val streamlinkOutFilename = "$javaTempDir/streamlink_$tempName.mp4"
+        val ffmpegOutFilename = "$javaTempDir/ffmpeg_$tempName.mp4"
+
+        try {
+            ensureActive {
+                startStreamlinkProcess(channelLogin, streamlinkOutFilename)
+                    .wait(MAX_STREAMLINK_CLIP_DURATION_SEC)
+            }
+
+            ensureActive {
+                ffmpegPrepareClip(streamlinkOutFilename, ffmpegOutFilename, MAX_STREAMLINK_CLIP_DURATION_SEC)
+                    .wait(FFMPEG_PROCESS_TIMEOUT)
+            }
+
+            if (File(ffmpegOutFilename).exists())
+                replyToMessageWithVideo(ffmpegOutFilename, createHtmlCaption(broadcastData))
+            else
+                replyToMessage(localizedString(Strings.GET_CLIP_FAIL))
+        } catch (e: Exception) {
+            log.error { "error processing clip for $channelLogin: ${e.message}" }
+        } finally {
+            deleteFiles(ffmpegOutFilename, streamlinkOutFilename)
+        }
+    }
+
+    private suspend inline fun ensureActive(block: () -> Unit) {
+        block()
+        coroutineContext.ensureActive()
+    }
+
+    private fun Process.wait(timeout: Long) {
+        processes.add(this)
+
+        try {
+            if (!this.waitFor(timeout, TimeUnit.SECONDS))
+                this.destroy()
+        } finally {
+            processes.remove(this)
+        }
+    }
+
+    private fun Process.kill() {
+        if (this.isAlive) {
+            log.warn { "destroying process ${this.pid()}" }
+            this.destroy()
+
+            if (!this.waitFor(5, TimeUnit.SECONDS)) {
+                log.warn { "force destroying process ${this.pid()} after timeout" }
+                this.destroyForcibly()
+            }
+        }
+    }
+
+    private fun deleteFiles(vararg files: String) =
+        files.forEach { File(it).delete() }
 }
