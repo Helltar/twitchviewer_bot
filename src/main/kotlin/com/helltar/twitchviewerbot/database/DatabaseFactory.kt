@@ -1,12 +1,12 @@
-package com.helltar.twitchviewerbot.db
+package com.helltar.twitchviewerbot.database
 
 import com.helltar.twitchviewerbot.Config.databaseName
 import com.helltar.twitchviewerbot.Config.databasePassword
 import com.helltar.twitchviewerbot.Config.databaseUser
 import com.helltar.twitchviewerbot.Config.postgresqlHost
 import com.helltar.twitchviewerbot.Config.postgresqlPort
-import com.helltar.twitchviewerbot.db.tables.UserChannelsTable
-import com.helltar.twitchviewerbot.db.tables.UsersTable
+import com.helltar.twitchviewerbot.database.tables.UserChannelsTable
+import com.helltar.twitchviewerbot.database.tables.UsersTable
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils

@@ -7,7 +7,7 @@ import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.string
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.InlineKeyboard
-import com.helltar.twitchviewerbot.db.dao.userChannelsDao
+import com.helltar.twitchviewerbot.database.dao.userChannelsDao
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 
 class ListCommand(ctx: MessageContext) : TwitchCommand(ctx) {

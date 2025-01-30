@@ -1,9 +1,11 @@
-package com.helltar.twitchviewerbot.db.dao
+package com.helltar.twitchviewerbot.database.dao
 
-import com.helltar.twitchviewerbot.db.DatabaseFactory.dbQuery
-import com.helltar.twitchviewerbot.db.tables.UserChannelsTable
-import org.jetbrains.exposed.sql.*
+import com.helltar.twitchviewerbot.database.DatabaseFactory.dbQuery
+import com.helltar.twitchviewerbot.database.tables.UserChannelsTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insertIgnore
 import java.time.Clock
 import java.time.Instant
 

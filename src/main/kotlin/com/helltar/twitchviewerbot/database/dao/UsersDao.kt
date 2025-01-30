@@ -1,8 +1,8 @@
-package com.helltar.twitchviewerbot.db.dao
+package com.helltar.twitchviewerbot.database.dao
 
-import com.helltar.twitchviewerbot.db.DatabaseFactory.dbQuery
-import com.helltar.twitchviewerbot.db.tables.UsersTable
-import com.helltar.twitchviewerbot.db.tables.UsersTable.languageCode
+import com.helltar.twitchviewerbot.database.DatabaseFactory.dbQuery
+import com.helltar.twitchviewerbot.database.tables.UsersTable
+import com.helltar.twitchviewerbot.database.tables.UsersTable.languageCode
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.update
 import org.telegram.telegrambots.meta.api.objects.User

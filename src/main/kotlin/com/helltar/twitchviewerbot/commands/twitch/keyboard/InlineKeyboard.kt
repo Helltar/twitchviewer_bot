@@ -25,8 +25,8 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.pars
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseNavigationPage
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseStreamLiveState
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.string
-import com.helltar.twitchviewerbot.db.dao.userChannelsDao
-import com.helltar.twitchviewerbot.db.dao.usersDao
+import com.helltar.twitchviewerbot.database.dao.userChannelsDao
+import com.helltar.twitchviewerbot.database.dao.usersDao
 import com.helltar.twitchviewerbot.twitch.Twitch
 import com.helltar.twitchviewerbot.twitch.Utils.createTwitchHtmlLink
 import org.telegram.telegrambots.meta.api.methods.ParseMode

@@ -4,7 +4,7 @@ import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Config.botUsername
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
-import com.helltar.twitchviewerbot.db.dao.userChannelsDao
+import com.helltar.twitchviewerbot.database.dao.userChannelsDao
 
 class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 

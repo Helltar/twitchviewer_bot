@@ -1,4 +1,4 @@
-package com.helltar.twitchviewerbot.db.tables
+package com.helltar.twitchviewerbot.database.tables
 
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table

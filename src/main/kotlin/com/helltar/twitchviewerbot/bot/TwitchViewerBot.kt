@@ -5,7 +5,7 @@ import com.annimon.tgbotsmodule.BotModuleOptions
 import com.annimon.tgbotsmodule.Runner
 import com.annimon.tgbotsmodule.beans.Config
 import com.helltar.twitchviewerbot.Config.botToken
-import com.helltar.twitchviewerbot.db.DatabaseFactory
+import com.helltar.twitchviewerbot.database.DatabaseFactory
 
 class TwitchViewerBot : BotModule {
 

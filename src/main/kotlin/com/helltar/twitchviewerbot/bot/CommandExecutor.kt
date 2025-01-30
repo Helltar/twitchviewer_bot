@@ -3,7 +3,7 @@ package com.helltar.twitchviewerbot.bot
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.BotCommand
-import com.helltar.twitchviewerbot.db.dao.usersDao
+import com.helltar.twitchviewerbot.database.dao.usersDao
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import org.telegram.telegrambots.meta.api.methods.ParseMode

@@ -2,7 +2,7 @@ package com.helltar.twitchviewerbot.commands
 
 import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
-import com.helltar.twitchviewerbot.db.dao.userChannelsDao
+import com.helltar.twitchviewerbot.database.dao.userChannelsDao
 import com.helltar.twitchviewerbot.twitch.Twitch
 import com.helltar.twitchviewerbot.twitch.Utils.createTwitchHtmlLink
 import com.helltar.twitchviewerbot.twitch.Utils.toHashTag
