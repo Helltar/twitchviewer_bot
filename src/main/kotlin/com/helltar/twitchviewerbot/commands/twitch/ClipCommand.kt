@@ -45,7 +45,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     suspend fun getClipsFromAll(userLogins: List<String>) {
         twitch.getOnlineList(userLogins)?.let {
             if (it.isNotEmpty())
-                getAndSendClips(it)
+                retrieveAndSendClips(it)
             else
                 replyToMessage(localizedString(Strings.EMPTY_ONLINE_LIST))
         }
@@ -55,39 +55,42 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     suspend fun getClip(channel: String) =
         getClipsFromAll(listOf(channel))
 
-    private suspend fun getAndSendClips(twitchBroadcastData: List<Twitch.BroadcastData>) = coroutineScope {
+    private suspend fun retrieveAndSendClips(twitchBroadcastData: List<Twitch.BroadcastData>) = coroutineScope {
         twitchBroadcastData.chunked(MAX_SIMULTANEOUS_CLIP_DOWNLOADS).forEach { chunk ->
             ensureActive()
-
-            val localizedMessage = localizedString(Strings.START_GET_CLIP)
-            val chunkHtmlLinks = chunk.joinToString { it.login.toTwitchHtmlLink(it.username) }
-            val tempMessage = localizedMessage.format(chunkHtmlLinks)
-            val tempMessageId = replyToMessage(tempMessage)
-
-            val jobs =
-                chunk.map { broadcastData ->
-                    launch {
-                        processClip(broadcastData)
-                    }
-                }
-
-            try {
-                jobs.joinAll()
-            } catch (e: CancellationException) {
-                log.warn { "cancel all user-$userId jobs (${jobs.size}) and destroy processes (${processes.size}): ${e.message}" }
-                processes.forEach { it.kill() }
-            } finally {
-                processes.clear()
-                deleteMessage(tempMessageId)
-            }
+            processClipBatch(chunk)
         }
     }
 
-    private suspend fun processClip(broadcastData: Twitch.BroadcastData) {
+    private suspend fun processClipBatch(chunk: List<Twitch.BroadcastData>) = coroutineScope {
+        val localizedMessage = localizedString(Strings.START_GET_CLIP)
+        val chunkHtmlLinks = chunk.joinToString { it.login.toTwitchHtmlLink(it.username) }
+        val tempMessage = localizedMessage.format(chunkHtmlLinks)
+        val tempMessageId = replyToMessage(tempMessage)
+
+        val jobs =
+            chunk.map { broadcastData ->
+                launch {
+                    downloadAndSendClip(broadcastData)
+                }
+            }
+
+        try {
+            jobs.joinAll()
+        } catch (e: CancellationException) {
+            log.warn { "cancel all user-$userId jobs (${jobs.size}) and destroy processes (${processes.size}): ${e.message}" }
+            processes.forEach { it.kill() }
+        } finally {
+            processes.clear()
+            deleteMessage(tempMessageId)
+        }
+    }
+
+    private suspend fun downloadAndSendClip(broadcastData: Twitch.BroadcastData) {
         val channelLogin = broadcastData.login
         val tempName = channelLogin.plusUUID()
-        val streamlinkOutFilename = "$javaTempDir/streamlink_$tempName.mp4"
-        val ffmpegOutFilename = "$javaTempDir/ffmpeg_$tempName.mp4"
+        val streamlinkOutFilename = generateOutputFilename("streamlink", tempName)
+        val ffmpegOutFilename = generateOutputFilename("ffmpeg", tempName)
 
         try {
             ensureActive {
@@ -127,4 +130,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             processes.remove(this)
         }
     }
+
+    private fun generateOutputFilename(prefix: String, tempName: String) =
+        "$javaTempDir/${prefix}_$tempName.mp4"
 }
