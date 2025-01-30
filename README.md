@@ -40,4 +40,3 @@ docker compose -f compose.with-postgres.yaml up -d
 - `/live` - See which of your favorite channels are currently online
 - `/add` - Add a new channel to your list
 - `/cancel` - End the recording process started using the `/clip` command
-- `/updateprivacy` - Update bot privacy policy (`/privacy`)
