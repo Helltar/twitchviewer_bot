@@ -9,9 +9,13 @@ import com.helltar.twitchviewerbot.Config.botUsername
 import com.helltar.twitchviewerbot.Config.creatorId
 import com.helltar.twitchviewerbot.bot.CommandExecutor.cancelJobs
 import com.helltar.twitchviewerbot.bot.CommandExecutor.executeCommand
-import com.helltar.twitchviewerbot.commands.simple.*
-import com.helltar.twitchviewerbot.commands.system.UpdatePrivacyPolicy
-import com.helltar.twitchviewerbot.commands.twitch.*
+import com.helltar.twitchviewerbot.commands.simple.AboutCommand
+import com.helltar.twitchviewerbot.commands.simple.HelpCommand
+import com.helltar.twitchviewerbot.commands.simple.StartCommand
+import com.helltar.twitchviewerbot.commands.twitch.AddCommand
+import com.helltar.twitchviewerbot.commands.twitch.ClipCommand
+import com.helltar.twitchviewerbot.commands.twitch.ListCommand
+import com.helltar.twitchviewerbot.commands.twitch.LiveCommand
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.KeyboardBundle
@@ -30,13 +34,9 @@ class TwitchViewerBotHandler(botModuleOptions: BotModuleOptions) : BotHandler(bo
             register(SimpleCommand("/live") { executeCommand(LiveCommand(it), BUTTON_LIVE) })
             register(SimpleCommand("/list") { executeCommand(ListCommand(it)) })
             register(SimpleCommand("/cancel") { cancelJobs(it) })
-
             register(SimpleCommand("/start") { executeCommand(StartCommand(it)) })
             register(SimpleCommand("/help") { executeCommand(HelpCommand(it)) })
             register(SimpleCommand("/about") { executeCommand(AboutCommand(it)) })
-
-            register(SimpleCommand("/updateprivacy") { executeCommand(UpdatePrivacyPolicy(it)) })
-            register(SimpleCommand("/privacy") { executeCommand(PrivacyCommand(it)) })
 
             registerBundle(KeyboardBundle())
         }

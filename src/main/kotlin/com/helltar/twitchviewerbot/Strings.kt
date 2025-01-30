@@ -37,9 +37,6 @@ object Strings {
     const val TITLE_CHANNEL_IS_SELECTED = "title_channel_is_selected"
     const val TITLE_CHOOSE_CHANNEL_OR_ACTION = "title_choose_channel_or_action"
 
-    const val UPDATE_PRIVACY_POLICY_EXAMPLE = "update_privacy_policy_example"
-    const val PRIVACY_POLICY_SUCCESFULLY_UPDATED = "privacy_policy_succesfully_updated"
-
     private val localization = ResourceBundleLocalizationService("language")
 
     fun localizedString(key: String, languageCode: String?): String =
