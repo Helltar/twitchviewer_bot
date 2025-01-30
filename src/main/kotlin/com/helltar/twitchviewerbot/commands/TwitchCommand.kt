@@ -4,8 +4,8 @@ import com.annimon.tgbotsmodule.commands.context.MessageContext
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.database.dao.userChannelsDao
 import com.helltar.twitchviewerbot.twitch.Twitch
-import com.helltar.twitchviewerbot.twitch.Utils.createTwitchHtmlLink
-import com.helltar.twitchviewerbot.twitch.Utils.toHashTag
+import com.helltar.twitchviewerbot.utils.StringUtils.toHashTag
+import com.helltar.twitchviewerbot.utils.StringUtils.toTwitchHtmlLink
 
 abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
 
@@ -35,7 +35,7 @@ abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
         val username = broadcastData.username
         val category = broadcastData.gameName
 
-        val title = "${createTwitchHtmlLink(broadcastData.login, username)} - ${broadcastData.title}\n\n"
+        val title = "${broadcastData.login.toTwitchHtmlLink(username)} - ${broadcastData.title}\n\n"
         val categoryTag = if (category.isNotEmpty()) ", #${category.toHashTag()}" else ""
         val startTime = localizedString(Strings.STREAM_START_TIME).format(broadcastData.uptime) + "\n\n"
         val viewersCount = localizedString(Strings.STREAM_VIEWERS).format(broadcastData.viewerCount) + "\n"

@@ -4,7 +4,7 @@ import com.github.twitch4j.TwitchClient
 import com.github.twitch4j.TwitchClientBuilder
 import com.helltar.twitchviewerbot.Config.twitchClientId
 import com.helltar.twitchviewerbot.Config.twitchClientSecret
-import com.helltar.twitchviewerbot.twitch.Utils.escapeHtml
+import com.helltar.twitchviewerbot.utils.StringUtils.escapeHtml
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalTime
 import java.time.ZoneId

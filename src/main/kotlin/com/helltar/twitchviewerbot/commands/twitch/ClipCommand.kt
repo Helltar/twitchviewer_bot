@@ -5,10 +5,11 @@ import com.helltar.twitchviewerbot.Config.javaTempDir
 import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.TwitchCommand
 import com.helltar.twitchviewerbot.twitch.Twitch
-import com.helltar.twitchviewerbot.twitch.Utils.createTwitchHtmlLink
-import com.helltar.twitchviewerbot.twitch.Utils.ffmpegPrepareClip
-import com.helltar.twitchviewerbot.twitch.Utils.plusUUID
-import com.helltar.twitchviewerbot.twitch.Utils.startStreamlinkProcess
+import com.helltar.twitchviewerbot.utils.ProcessUtils.ffmpegPrepareClip
+import com.helltar.twitchviewerbot.utils.ProcessUtils.kill
+import com.helltar.twitchviewerbot.utils.ProcessUtils.startStreamlinkProcess
+import com.helltar.twitchviewerbot.utils.StringUtils.plusUUID
+import com.helltar.twitchviewerbot.utils.StringUtils.toTwitchHtmlLink
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import java.io.File
@@ -59,7 +60,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             ensureActive()
 
             val localizedMessage = localizedString(Strings.START_GET_CLIP)
-            val chunkHtmlLinks = chunk.joinToString { createTwitchHtmlLink(it.login, it.username) }
+            val chunkHtmlLinks = chunk.joinToString { it.login.toTwitchHtmlLink(it.username) }
             val tempMessage = localizedMessage.format(chunkHtmlLinks)
             val tempMessageId = replyToMessage(tempMessage)
 
@@ -106,7 +107,8 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         } catch (e: Exception) {
             log.error { "error processing clip for $channelLogin: ${e.message}" }
         } finally {
-            deleteFiles(ffmpegOutFilename, streamlinkOutFilename)
+            File(ffmpegOutFilename).delete()
+            File(streamlinkOutFilename).delete()
         }
     }
 
@@ -125,19 +127,4 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             processes.remove(this)
         }
     }
-
-    private fun Process.kill() {
-        if (this.isAlive) {
-            log.warn { "destroying process ${this.pid()}" }
-            this.destroy()
-
-            if (!this.waitFor(5, TimeUnit.SECONDS)) {
-                log.warn { "force destroying process ${this.pid()} after timeout" }
-                this.destroyForcibly()
-            }
-        }
-    }
-
-    private fun deleteFiles(vararg files: String) =
-        files.forEach { File(it).delete() }
 }

@@ -1,14 +1,14 @@
-package com.helltar.twitchviewerbot.twitch
+package com.helltar.twitchviewerbot.utils
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.util.*
+import java.util.concurrent.TimeUnit
 
-object Utils {
+object ProcessUtils {
 
     private val log = KotlinLogging.logger {}
 
     fun ffmpegPrepareClip(inputFilename: String, outFilename: String, lengthTime: Long): Process {
-        val command =
+        val process =
             listOf(
                 "ffmpeg", "-i", inputFilename,
                 "-fs", "9.9M", // if the file size exceeds 10MB, a black video thumbnail (preview) may appear on telegram
@@ -16,44 +16,39 @@ object Utils {
                 "-c", "copy",
                 "-loglevel", "quiet", outFilename
             )
+                .startProcess()
 
-        val process = startProcess(command)
-        return process ?: throw RuntimeException("failed to start ffmpeg process: ${command.joinToString(" ")}")
+        return process ?: throw RuntimeException("failed to start ffmpeg process: $inputFilename")
     }
 
     fun startStreamlinkProcess(channelName: String, outFilename: String): Process {
-        val command =
+        val process =
             listOf(
                 "streamlink", "--twitch-disable-ads",
                 "https://www.twitch.tv/$channelName",
                 "720p,720p60,best",
                 "-o", outFilename
             )
+                .startProcess()
 
-        val process = startProcess(command)
         return process ?: throw RuntimeException("failed to start streamlink process for channel: $channelName")
     }
 
-    fun createTwitchHtmlLink(login: String, username: String) =
-        """<b><a href="https://www.twitch.tv/$login">$username</a></b>"""
+    fun Process.kill() {
+        if (this.isAlive) {
+            log.warn { "destroying process ${this.pid()}" }
+            this.destroy()
 
-    fun String.escapeHtml() =
-        this
-            .replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace("\"", "&quot;")
-            .replace("'", "&#039;")
+            if (!this.waitFor(5, TimeUnit.SECONDS)) {
+                log.warn { "force destroying process ${this.pid()} after timeout" }
+                this.destroyForcibly()
+            }
+        }
+    }
 
-    fun String.toHashTag() =
-        this.replace("""[^\p{L}\p{Z}\d]""".toRegex(), "").replace("""\s""".toRegex(), "_")
-
-    fun String.plusUUID() =
-        "${this}_${UUID.randomUUID()}"
-
-    private fun startProcess(command: List<String>): Process? =
+    private fun List<String>.startProcess(): Process? =
         try {
-            ProcessBuilder(command).start()
+            ProcessBuilder(this).start()
         } catch (e: Exception) {
             log.error(e) { e.message }
             null
