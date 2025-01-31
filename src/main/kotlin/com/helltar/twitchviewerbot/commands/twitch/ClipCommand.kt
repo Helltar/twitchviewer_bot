@@ -82,7 +82,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             processes.forEach { it.kill() }
         } finally {
             processes.clear()
-            deleteMessage(tempMessageId)
+            deleteMessageAsync(tempMessageId)
         }
     }
 

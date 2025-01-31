@@ -47,7 +47,7 @@ class ScreenshotCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             } else
                 replyToMessage(localizedString(Strings.TWITCH_EXCEPTION))
         } finally {
-            deleteMessage(tempMessageId)
+            deleteMessageAsync(tempMessageId)
         }
     }
 

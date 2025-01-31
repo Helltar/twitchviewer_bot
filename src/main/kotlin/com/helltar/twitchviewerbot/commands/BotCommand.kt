@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.message.Message
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import java.io.File
 import java.net.URI
-import java.util.concurrent.CompletableFuture
 
 abstract class BotCommand(val ctx: MessageContext) {
 
@@ -17,15 +16,11 @@ abstract class BotCommand(val ctx: MessageContext) {
 
     abstract suspend fun run()
 
-    fun replyToMessage(
-        text: String,
-        enableWebPagePreview: Boolean = false,
-        replyMarkup: InlineKeyboardMarkup? = null
-    ): Int =
+    fun replyToMessage(text: String, webPagePreview: Boolean = false, replyMarkup: InlineKeyboardMarkup? = null): Int =
         ctx.replyToMessage(text)
             .setReplyMarkup(replyMarkup)
             .setParseMode(ParseMode.HTML)
-            .setWebPagePreviewEnabled(enableWebPagePreview)
+            .setWebPagePreviewEnabled(webPagePreview)
             .call(ctx.sender)
             .messageId
 
@@ -36,9 +31,6 @@ abstract class BotCommand(val ctx: MessageContext) {
             .call(ctx.sender)
     }
 
-    protected fun localizedString(key: String) =
-        Strings.localizedString(key, ctx.message().from.languageCode)
-
     protected fun replyToMessageWithPhoto(url: String, caption: String): Message =
         ctx.replyToMessageWithPhoto()
             .setFile(url, URI.create(url).toURL().openStream())
@@ -46,22 +38,17 @@ abstract class BotCommand(val ctx: MessageContext) {
             .setParseMode(ParseMode.HTML)
             .call(ctx.sender)
 
-    protected fun replyToMessageWithVideo(
-        filename: String,
-        caption: String = "",
-        duration: Int = 15,
-        height: Int = 1080,
-        width: Int = 1920
-    ): Message =
+    protected fun replyToMessageWithVideo(filename: String, caption: String): Message =
         ctx.replyToMessageWithVideo()
             .setFile(File(filename))
             .setCaption(caption)
-            .setDuration(duration)
-            .setHeight(height)
-            .setWidth(width)
             .setParseMode(ParseMode.HTML)
             .call(ctx.sender)
 
-    protected fun deleteMessage(messageId: Int): CompletableFuture<Boolean> =
+    protected fun deleteMessageAsync(messageId: Int) {
         ctx.deleteMessage().setMessageId(messageId).callAsync(ctx.sender)
+    }
+
+    protected fun localizedString(key: String) =
+        Strings.localizedString(key, ctx.message().from.languageCode)
 }
