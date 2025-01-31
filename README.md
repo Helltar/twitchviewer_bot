@@ -35,8 +35,8 @@ docker compose -f compose.with-postgres.yaml up -d
 
 ## Commands
 
-- `/clip` - Get short clips from all the channels in your list
-- `/list` - View your favorite channels in your list
-- `/live` - See which of your favorite channels are currently online
-- `/add` - Add a new channel to your list
+- `/clip` - Start recording clips from all channels or a specific channel
+- `/screenshot` - Take a screenshot from all channels or a specific channel
+- `/list` - View your favorite channels
+- `/add` - Add a new channel to your favorites
 - `/cancel` - End the recording process started using the `/clip` command
