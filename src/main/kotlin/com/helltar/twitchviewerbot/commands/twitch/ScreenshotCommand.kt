@@ -8,23 +8,23 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
 import java.net.URI
 
-class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
+class ScreenshotCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     override suspend fun run() {
         if (arguments.isEmpty()) {
             if (isUserListNotEmpty())
-                fetchAndSendLiveList(getUserChannelsList())
+                fetchAndSendScreenshots(getUserChannelsList())
             else
-                replyToMessage(localizedString(Strings.LIVE_COMMAND_INFO))
+                replyToMessage(localizedString(Strings.SCREENSHOT_COMMAND_INFO))
         } else {
             val channel = arguments.first()
 
             if (checkChannelNameAndReplyIfInvalid(channel))
-                fetchAndSendLiveList(channel)
+                fetchAndSendScreenshots(listOf(channel))
         }
     }
 
-    fun fetchAndSendLiveList(channels: List<String>) {
+    fun fetchAndSendScreenshots(channels: List<String>) {
         val tempMessageId = replyToMessage(localizedString(Strings.WAIT_CHECK_ONLINE))
 
         try {
@@ -50,9 +50,6 @@ class LiveCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             deleteMessage(tempMessageId)
         }
     }
-
-    private fun fetchAndSendLiveList(channel: String) =
-        fetchAndSendLiveList(listOf(channel))
 
     private fun buildMediaPhoto(broadcastData: Twitch.BroadcastData): InputMediaPhoto {
         val caption = createHtmlCaption(broadcastData)

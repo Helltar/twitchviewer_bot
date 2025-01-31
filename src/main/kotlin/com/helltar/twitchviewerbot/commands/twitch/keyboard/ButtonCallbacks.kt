@@ -8,7 +8,7 @@ object ButtonCallbacks {
     const val BUTTON_CLIPS = "4"
     const val BUTTON_CLOSE_LIST = "5"
     const val BUTTON_DELETE_CHANNEL = "6"
-    const val BUTTON_LIVE = "7"
+    const val BUTTON_SCREEN = "7"
     const val BUTTON_UPDATE = "9"
     const val BUTTON_NEXT_PAGE = "10"
     const val BUTTON_PREV_PAGE = "11"

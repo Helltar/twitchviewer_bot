@@ -1,6 +1,8 @@
 package com.helltar.twitchviewerbot.commands.twitch.keyboard
 
-import com.annimon.tgbotsmodule.commands.*
+import com.annimon.tgbotsmodule.commands.CommandBundle
+import com.annimon.tgbotsmodule.commands.CommandRegistry
+import com.annimon.tgbotsmodule.commands.SimpleCallbackQueryCommand
 import com.annimon.tgbotsmodule.commands.authority.For
 import com.annimon.tgbotsmodule.commands.context.CallbackQueryContext
 import com.helltar.twitchviewerbot.Strings
@@ -12,9 +14,9 @@ import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTT
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLOSE_LIST
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_DELETE_CHANNEL
-import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_NEXT_PAGE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_PREV_PAGE
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_SCREEN
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseOwnerId
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -31,7 +33,7 @@ class KeyboardBundle : CommandBundle<For> {
             register(SimpleCallbackQueryCommand(BUTTON_CLIPS) { click(it, BUTTON_CLIPS) })
             register(SimpleCallbackQueryCommand(BUTTON_CLOSE_LIST) { click(it, BUTTON_CLOSE_LIST) })
             register(SimpleCallbackQueryCommand(BUTTON_DELETE_CHANNEL) { click(it, BUTTON_DELETE_CHANNEL) })
-            register(SimpleCallbackQueryCommand(BUTTON_LIVE) { click(it, BUTTON_LIVE) })
+            register(SimpleCallbackQueryCommand(BUTTON_SCREEN) { click(it, BUTTON_SCREEN) })
             register(SimpleCallbackQueryCommand(BUTTON_NEXT_PAGE) { click(it, BUTTON_NEXT_PAGE) })
             register(SimpleCallbackQueryCommand(BUTTON_PREV_PAGE) { click(it, BUTTON_PREV_PAGE) })
         }
@@ -59,7 +61,7 @@ class KeyboardBundle : CommandBundle<For> {
                     BUTTON_CLIPS -> inlineKeyboard.clips()
                     BUTTON_CLOSE_LIST -> inlineKeyboard.close()
                     BUTTON_DELETE_CHANNEL -> inlineKeyboard.deleteChannel()
-                    BUTTON_LIVE -> inlineKeyboard.live()
+                    BUTTON_SCREEN -> inlineKeyboard.screenshot()
                     else -> inlineKeyboard.update()
                 }
             }

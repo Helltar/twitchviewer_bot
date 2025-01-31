@@ -10,16 +10,16 @@ import com.helltar.twitchviewerbot.Strings.BTN_EXIT
 import com.helltar.twitchviewerbot.Strings.BTN_SHORT_CLIP
 import com.helltar.twitchviewerbot.Strings.localizedString
 import com.helltar.twitchviewerbot.commands.twitch.ClipCommand
-import com.helltar.twitchviewerbot.commands.twitch.LiveCommand
+import com.helltar.twitchviewerbot.commands.twitch.ScreenshotCommand
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_BACK
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CHANNEL
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIP
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLIPS
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_CLOSE_LIST
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_DELETE_CHANNEL
-import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_LIVE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_NEXT_PAGE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_PREV_PAGE
+import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_SCREEN
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.BUTTON_UPDATE
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseChannelName
 import com.helltar.twitchviewerbot.commands.twitch.keyboard.ButtonCallbacks.parseNavigationPage
@@ -84,11 +84,11 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
             ClipCommand(messageContext).getClipsFromAll(channels)
     }
 
-    suspend fun live() {
+    suspend fun screenshot() {
         val channels = userChannelsDao.getChannels(ownerId)
 
         if (channels.isNotEmpty())
-            LiveCommand(messageContext).fetchAndSendLiveList(channels)
+            ScreenshotCommand(messageContext).fetchAndSendScreenshots(channels)
     }
 
     suspend fun deleteChannel() {
@@ -142,9 +142,9 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
             keyboard.keyboardRow(InlineKeyboardRow(navigationRow))
 
         if (liveStreams.isNotEmpty()) {
-            val buttonLive = keyboardButton(localizedString(Strings.BTN_WHO_IS_ONLINE), BUTTON_LIVE)
             val buttonClips = keyboardButton(localizedString(Strings.BTN_GET_ALL_SCREENS), BUTTON_CLIPS)
-            keyboard.keyboardRow(InlineKeyboardRow(listOf(buttonLive, buttonClips)))
+            val buttonScreen = keyboardButton(localizedString(Strings.BTN_WHO_IS_ONLINE), BUTTON_SCREEN)
+            keyboard.keyboardRow(InlineKeyboardRow(listOf(buttonClips, buttonScreen)))
         }
 
         val buttonClose = keyboardButton(localizedString(Strings.BTN_CLOSE_LIST), BUTTON_CLOSE_LIST)
