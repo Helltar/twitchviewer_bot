@@ -15,7 +15,7 @@ object Strings {
     const val INVALID_CHANNEL_NAME_LENGTH = "invalid_channel_name_length"
     const val LIST_FULL = "list_full"
     const val LIST_IS_EMPTY = "list_is_empty"
-    const val LIVE_COMMAND_INFO = "live_command_info"
+    const val SCREENSHOT_COMMAND_INFO = "screen_command_info"
     const val MANY_REQUEST = "many_request"
     const val NO_ACTIVE_TASKS = "no_active_tasks"
     const val START_COMMAND_INFO = "start_command_info"
