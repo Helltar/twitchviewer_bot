@@ -1,9 +1,6 @@
 name: Build Kotlin Project
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
@@ -15,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        java: [17, 21]
+        java: [ 17, 21 ]
 
     steps:
       - name: Checkout Repository

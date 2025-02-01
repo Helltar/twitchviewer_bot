@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.actor }}/twitchbot
+  IMAGE_NAME: ${{ toLower(github.actor) }}/twitchbot
 
 jobs:
   build-and-push:
