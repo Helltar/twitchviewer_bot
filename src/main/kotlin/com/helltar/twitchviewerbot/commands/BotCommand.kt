@@ -46,7 +46,9 @@ abstract class BotCommand(val ctx: MessageContext) {
             .call(ctx.sender)
 
     protected fun deleteMessageAsync(messageId: Int) {
-        ctx.deleteMessage().setMessageId(messageId).callAsync(ctx.sender)
+        ctx.deleteMessage()
+            .setMessageId(messageId)
+            .callAsync(ctx.sender)
     }
 
     protected fun localizedString(key: String) =
