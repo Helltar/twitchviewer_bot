@@ -20,7 +20,7 @@ dependencies {
         exclude("org.telegram", "telegrambots-webhook")
     }
 
-    implementation("com.github.twitch4j:twitch4j:1.23.0")
+    implementation("com.github.twitch4j:twitch4j:1.24.0")
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
     implementation("org.jetbrains.exposed:exposed-core:${Versions.EXPOSED}")
