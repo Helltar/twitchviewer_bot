@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 class ListCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     override suspend fun run() {
-        if (userChannelsDao.isChannelsListEmpty(userId)) {
+        if (userChannelsDao.doesUserHaveNoChannels(userId)) {
             replyToMessage(localizedString(Strings.LIST_IS_EMPTY))
             return
         }

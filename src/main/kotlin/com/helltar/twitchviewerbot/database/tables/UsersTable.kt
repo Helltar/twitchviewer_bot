@@ -1,16 +1,16 @@
 package com.helltar.twitchviewerbot.database.tables
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.timestamp
 
-object UsersTable : Table() {
+object UsersTable : IntIdTable() {
 
-    val userId = long("user_id")
+    val userId = long("user_id").uniqueIndex()
+
     val firstName = varchar("first_name", 64)
     val username = varchar("username", 32).nullable()
     val languageCode = varchar("language_code", 20).nullable()
-    val joined = timestamp("joined")
-    val lastUsage = timestamp("last_usage")
 
-    override val primaryKey = PrimaryKey(userId)
+    val createdAt = timestamp("created_at")
+    val updatedAt = timestamp("updated_at")
 }

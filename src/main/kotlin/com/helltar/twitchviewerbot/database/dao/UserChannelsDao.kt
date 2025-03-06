@@ -1,45 +1,49 @@
 package com.helltar.twitchviewerbot.database.dao
 
-import com.helltar.twitchviewerbot.database.DatabaseFactory.dbQuery
+import com.helltar.twitchviewerbot.database.Database.dbTransaction
+import com.helltar.twitchviewerbot.database.Database.utcNow
 import com.helltar.twitchviewerbot.database.tables.UserChannelsTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insertIgnore
-import java.time.Clock
-import java.time.Instant
 
 class UserChannelsDao {
 
-    suspend fun add(userId: Long, channel: String) = dbQuery {
-        UserChannelsTable.insertIgnore {
-            it[this.userId] = userId
-            it[this.channel] = channel
-            it[added] = Instant.now(Clock.systemUTC())
-        }.insertedCount > 0
+    suspend fun add(userId: Long, channelName: String): Boolean = dbTransaction {
+        UserChannelsTable
+            .insertIgnore {
+                it[this.userId] = userId
+                it[this.channelName] = channelName
+                it[this.createdAt] = utcNow()
+            }
+            .insertedCount > 0
     }
 
-    suspend fun delete(userId: Long, channel: String) = dbQuery {
+    suspend fun delete(userId: Long, channelName: String): Boolean = dbTransaction {
         UserChannelsTable
-            .deleteWhere { UserChannelsTable.userId eq userId and (UserChannelsTable.channel eq channel) } > 0
+            .deleteWhere {
+                UserChannelsTable.userId eq userId and
+                        (UserChannelsTable.channelName eq channelName)
+            } > 0
     }
 
-    suspend fun getChannels(userId: Long) = dbQuery {
+    suspend fun channels(userId: Long): List<String> = dbTransaction {
         UserChannelsTable
-            .select(UserChannelsTable.channel)
+            .select(UserChannelsTable.channelName)
             .where { UserChannelsTable.userId eq userId }
-            .map { it[UserChannelsTable.channel] }
+            .map { it[UserChannelsTable.channelName] }
     }
 
-    suspend fun isChannelsListNotEmpty(userId: Long) = dbQuery {
+    suspend fun userHasChannels(userId: Long): Boolean = dbTransaction {
         UserChannelsTable
             .select(UserChannelsTable.userId)
             .where { UserChannelsTable.userId eq userId }
             .count() > 0
     }
 
-    suspend fun isChannelsListEmpty(userId: Long) =
-        !isChannelsListNotEmpty(userId)
+    suspend fun doesUserHaveNoChannels(userId: Long): Boolean =
+        !userHasChannels(userId)
 }
 
 val userChannelsDao = UserChannelsDao()

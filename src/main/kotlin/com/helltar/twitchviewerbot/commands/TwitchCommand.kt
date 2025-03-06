@@ -12,10 +12,10 @@ abstract class TwitchCommand(ctx: MessageContext) : BotCommand(ctx) {
     protected val twitch = Twitch()
 
     protected suspend fun getUserChannelsList(userId: Long = this.userId) =
-        userChannelsDao.getChannels(userId)
+        userChannelsDao.channels(userId)
 
     protected suspend fun isUserListNotEmpty(userId: Long = this.userId) =
-        userChannelsDao.isChannelsListNotEmpty(userId)
+        userChannelsDao.userHasChannels(userId)
 
     protected fun checkChannelNameAndReplyIfInvalid(name: String): Boolean {
         if (name.length !in 2..25) {

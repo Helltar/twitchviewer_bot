@@ -78,14 +78,14 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     suspend fun clips() {
-        val channels = userChannelsDao.getChannels(ownerId)
+        val channels = userChannelsDao.channels(ownerId)
 
         if (channels.isNotEmpty())
             ClipCommand(messageContext).getClipsFromAll(channels)
     }
 
     suspend fun screenshot() {
-        val channels = userChannelsDao.getChannels(ownerId)
+        val channels = userChannelsDao.channels(ownerId)
 
         if (channels.isNotEmpty())
             ScreenshotCommand(messageContext).fetchAndSendScreenshots(channels)
@@ -97,14 +97,14 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     suspend fun update() {
-        if (userChannelsDao.isChannelsListNotEmpty(ownerId))
+        if (userChannelsDao.userHasChannels(ownerId))
             editMessage(localizedString(Strings.TITLE_CHOOSE_CHANNEL_OR_ACTION), mainMenu())
         else
             editMessage(localizedString(Strings.LIST_IS_EMPTY))
     }
 
     suspend fun mainMenu(): InlineKeyboardMarkup {
-        val userChannels = userChannelsDao.getChannels(ownerId)
+        val userChannels = userChannelsDao.channels(ownerId)
         val onlineList = Twitch().getOnlineList(userChannels) ?: listOf()
         val liveStreams = onlineList.map { it.login.lowercase() }
         val sortedChannels = userChannels.sortedByDescending { it in liveStreams }
@@ -171,5 +171,5 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     private suspend fun localizedString(key: String) =
-        localizedString(key, userLanguageCode ?: usersDao.getLanguageCode(ownerId).also { userLanguageCode = it })
+        localizedString(key, userLanguageCode ?: usersDao.languageCode(ownerId).also { userLanguageCode = it })
 }
