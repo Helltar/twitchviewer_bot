@@ -6,8 +6,8 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 
 object UserChannelsTable : IntIdTable() {
 
-    val userId = reference("user_id", UsersTable.userId, onDelete = ReferenceOption.CASCADE)
-    val channelName = varchar("channel_name", 50) // todo: ChannelsTable
+    val userId = reference("user_id", UsersTable.userId, onDelete = ReferenceOption.CASCADE).index()
+    val channelName = varchar("channel_name", 50).index() // todo: ChannelsTable
     val createdAt = timestamp("created_at")
 
     init {
