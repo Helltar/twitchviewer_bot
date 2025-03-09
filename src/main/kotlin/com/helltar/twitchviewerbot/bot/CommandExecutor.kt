@@ -5,7 +5,10 @@ import com.helltar.twitchviewerbot.Strings
 import com.helltar.twitchviewerbot.commands.BotCommand
 import com.helltar.twitchviewerbot.database.dao.usersDao
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import java.util.concurrent.ConcurrentHashMap
 
@@ -26,7 +29,7 @@ object CommandExecutor {
 
         val launch =
             launch("${requestKey ?: commandName}@$userId") {
-                if (!usersDao.add(user)) usersDao.update(user)
+                if (!usersDao.update(user)) usersDao.add(user)
                 botCommand.run()
             }
 
