@@ -18,7 +18,6 @@ class UsersDao {
                 it[username] = user.userName
                 it[languageCode] = user.languageCode
                 it[createdAt] = utcNow()
-                it[updatedAt] = utcNow()
             }
             .insertedCount > 0
     }

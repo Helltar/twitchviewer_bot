@@ -11,6 +11,6 @@ object UsersTable : IntIdTable() {
     val username = varchar("username", 32).nullable()
     val languageCode = varchar("language_code", 20).nullable()
 
+    val updatedAt = timestamp("updated_at").nullable()
     val createdAt = timestamp("created_at")
-    val updatedAt = timestamp("updated_at")
 }

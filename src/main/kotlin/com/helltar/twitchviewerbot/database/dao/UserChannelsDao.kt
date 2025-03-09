@@ -28,22 +28,23 @@ class UserChannelsDao {
             } > 0
     }
 
-    suspend fun channels(userId: Long): List<String> = dbTransaction {
+    suspend fun list(userId: Long): List<String> = dbTransaction {
         UserChannelsTable
             .select(UserChannelsTable.channelName)
             .where { UserChannelsTable.userId eq userId }
             .map { it[UserChannelsTable.channelName] }
     }
 
-    suspend fun userHasChannels(userId: Long): Boolean = dbTransaction {
+    suspend fun isListNotEmpty(userId: Long): Boolean = dbTransaction {
         UserChannelsTable
             .select(UserChannelsTable.userId)
             .where { UserChannelsTable.userId eq userId }
-            .count() > 0
+            .empty()
+            .not()
     }
 
-    suspend fun doesUserHaveNoChannels(userId: Long): Boolean =
-        !userHasChannels(userId)
+    suspend fun isListEmpty(userId: Long): Boolean =
+        !isListNotEmpty(userId)
 }
 
 val userChannelsDao = UserChannelsDao()
