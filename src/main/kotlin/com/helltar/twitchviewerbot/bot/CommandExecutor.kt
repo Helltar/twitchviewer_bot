@@ -29,7 +29,7 @@ object CommandExecutor {
 
         val launch =
             launch("${requestKey ?: commandName}@$userId") {
-                if (!usersDao.update(user)) usersDao.add(user)
+                usersDao.upsert(user)
                 botCommand.run()
             }
 
@@ -50,6 +50,9 @@ object CommandExecutor {
                     task()
                 } catch (e: Exception) {
                     log.error { "job --> $key: ${e.message}" }
+                } finally {
+                    requestsMap.remove(key)
+                    log.debug { "remove --> $key (${requestsMap.size})" }
                 }
             }
 
@@ -58,7 +61,8 @@ object CommandExecutor {
 
     fun cancelJobs(ctx: MessageContext) {
 
-        fun replyToMessage(text: String) = ctx.replyToMessage(text).setParseMode(ParseMode.HTML).callAsync(ctx.sender)
+        fun replyToMessage(text: String) =
+            ctx.replyToMessage(text).setParseMode(ParseMode.HTML).callAsync(ctx.sender)
 
         val userId = ctx.user().id
         val languageCode = ctx.user().languageCode
