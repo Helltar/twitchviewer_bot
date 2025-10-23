@@ -31,19 +31,29 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     override suspend fun run() {
         if (arguments.isEmpty()) {
             if (isUserListNotEmpty())
-                getClipsFromAll(getUserChannelsList())
+                fetchAndSendClips(loadUserChannels())
             else
                 replyToMessage(localizedString(Strings.CLIP_COMMAND_INFO))
         } else {
-            val channel = arguments.first()
+            val arg = arguments.first()
 
-            if (checkChannelNameAndReplyIfInvalid(channel))
-                getClip(channel)
+            if (arg.length == 1) { // clip by first letter of channel name
+                val userChannels = loadUserChannels()
+                val channels = userChannels.filter { it.startsWith(arg, ignoreCase = true) }
+
+                if (channels.isNotEmpty()) {
+                    fetchAndSendClips(channels)
+                    return
+                }
+            }
+
+            if (checkChannelNameAndReplyIfInvalid(arg))
+                clip(arg)
         }
     }
 
-    suspend fun getClipsFromAll(userLogins: List<String>) {
-        twitch.getOnlineList(userLogins)?.let {
+    suspend fun fetchAndSendClips(userLogins: List<String>) {
+        twitch.fetchActiveStreams(userLogins)?.let {
             if (it.isNotEmpty())
                 retrieveAndSendClips(it)
             else
@@ -52,8 +62,8 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             ?: replyToMessage(localizedString(Strings.TWITCH_EXCEPTION))
     }
 
-    suspend fun getClip(channel: String) =
-        getClipsFromAll(listOf(channel))
+    suspend fun clip(channel: String) =
+        fetchAndSendClips(listOf(channel))
 
     private suspend fun retrieveAndSendClips(twitchBroadcastData: List<Twitch.BroadcastData>) = coroutineScope {
         twitchBroadcastData.chunked(MAX_SIMULTANEOUS_CLIP_DOWNLOADS).forEach { chunk ->
