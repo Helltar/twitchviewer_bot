@@ -35,7 +35,7 @@ class Twitch {
         val uptime: String
     )
 
-    fun getOnlineList(userLogins: List<String>) = try {
+    fun fetchActiveStreams(userLogins: List<String>) = try {
         twitchClient.helix.getStreams(null, null, null, 1, null, null, null, userLogins).execute().streams
             .map {
                 val formatter = DateTimeFormatter.ofPattern("HH:mm")

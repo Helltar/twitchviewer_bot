@@ -26,7 +26,7 @@ class AddCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         if (!checkChannelNameAndReplyIfInvalid(channel))
             return
 
-        val userChannelsListSize = getUserChannelsList().size
+        val userChannelsListSize = loadUserChannels().size
 
         if (userChannelsListSize < MAX_USER_CHANNELS) {
             if (addChannelToUserList(channel))

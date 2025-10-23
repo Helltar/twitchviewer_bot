@@ -13,7 +13,7 @@ class ScreenshotCommand(ctx: MessageContext) : TwitchCommand(ctx) {
     override suspend fun run() {
         if (arguments.isEmpty()) {
             if (isUserListNotEmpty())
-                fetchAndSendScreenshots(getUserChannelsList())
+                fetchAndSendScreenshots(loadUserChannels())
             else
                 replyToMessage(localizedString(Strings.SCREENSHOT_COMMAND_INFO))
         } else {
@@ -28,7 +28,7 @@ class ScreenshotCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         val tempMessageId = replyToMessage(localizedString(Strings.WAIT_CHECK_ONLINE))
 
         try {
-            val liveList = twitch.getOnlineList(channels)
+            val liveList = twitch.fetchActiveStreams(channels)
 
             if (liveList != null) {
                 if (liveList.isNotEmpty()) {

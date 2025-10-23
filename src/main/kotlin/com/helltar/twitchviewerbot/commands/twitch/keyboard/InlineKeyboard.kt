@@ -74,14 +74,14 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
     }
 
     suspend fun clip() {
-        ClipCommand(messageContext).getClip(channelName)
+        ClipCommand(messageContext).clip(channelName)
     }
 
     suspend fun clips() {
         val channels = userChannelsDao.list(ownerId)
 
         if (channels.isNotEmpty())
-            ClipCommand(messageContext).getClipsFromAll(channels)
+            ClipCommand(messageContext).fetchAndSendClips(channels)
     }
 
     suspend fun screenshot() {
@@ -105,7 +105,7 @@ class InlineKeyboard(private val ctx: CallbackQueryContext, private val ownerId:
 
     suspend fun mainMenu(): InlineKeyboardMarkup {
         val userChannels = userChannelsDao.list(ownerId)
-        val onlineList = Twitch().getOnlineList(userChannels) ?: listOf()
+        val onlineList = Twitch().fetchActiveStreams(userChannels) ?: listOf()
         val liveStreams = onlineList.map { it.login.lowercase() }
         val sortedChannels = userChannels.sortedByDescending { it in liveStreams }
         val paginatedChannels = sortedChannels.chunked(CHANNELS_PER_PAGE)
