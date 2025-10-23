@@ -15,7 +15,6 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.coroutineContext
 
 class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
@@ -127,7 +126,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
 
     private suspend inline fun ensureActive(block: () -> Unit) {
         block()
-        coroutineContext.ensureActive()
+        currentCoroutineContext().ensureActive()
     }
 
     private fun Process.wait(timeout: Long) {
