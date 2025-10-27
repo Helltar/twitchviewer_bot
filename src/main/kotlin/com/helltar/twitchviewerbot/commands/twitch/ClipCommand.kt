@@ -34,7 +34,7 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
             else
                 replyToMessage(localizedString(Strings.CLIP_COMMAND_INFO))
         } else {
-            val arg = arguments.first()
+            val arg = arguments.first().trim().take(26)
 
             if (arg.endsWith(".") && arg.length > 1) {
                 val prefix = arg.removeSuffix(".")
