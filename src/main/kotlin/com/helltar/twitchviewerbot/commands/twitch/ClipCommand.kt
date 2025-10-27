@@ -36,9 +36,10 @@ class ClipCommand(ctx: MessageContext) : TwitchCommand(ctx) {
         } else {
             val arg = arguments.first()
 
-            if (arg.length == 1) { // clip by first letter of channel name
+            if (arg.startsWith("@") && arg.length > 1) {
+                val prefix = arg.removePrefix("@")
                 val userChannels = loadUserChannels()
-                val channels = userChannels.filter { it.startsWith(arg, ignoreCase = true) }
+                val channels = userChannels.filter { it.startsWith(prefix, ignoreCase = true) }
 
                 if (channels.isNotEmpty()) {
                     fetchAndSendClips(channels)
