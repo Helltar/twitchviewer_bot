@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
     id("com.gradleup.shadow") version "9.2.2"
     application
 }
@@ -28,10 +28,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:${Versions.EXPOSED}")
     implementation("org.jetbrains.exposed:exposed-java-time:${Versions.EXPOSED}")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2")
-
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
-    implementation("ch.qos.logback:logback-classic:1.5.18")
+    implementation("ch.qos.logback:logback-classic:1.5.20")
 }
 
 application {
