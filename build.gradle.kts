@@ -12,23 +12,21 @@ repositories {
 }
 
 object Versions {
-    const val EXPOSED = "0.61.0"
+    const val EXPOSED = "1.0.0-rc-2"
+    const val R2DBC_POSTGRESQL = "1.1.1.RELEASE"
 }
 
 dependencies {
-    implementation("com.annimon:tgbots-module:8.0.0") {
-        exclude("org.telegram", "telegrambots-webhook")
-    }
-
+    implementation("com.annimon:tgbots-module:8.0.0") { exclude("org.telegram", "telegrambots-webhook") }
     implementation("com.github.twitch4j:twitch4j:1.25.0")
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
 
-    runtimeOnly("org.postgresql:postgresql:42.7.3")
-    runtimeOnly("org.jetbrains.exposed:exposed-jdbc:${Versions.EXPOSED}")
+    implementation("org.postgresql:r2dbc-postgresql:${Versions.R2DBC_POSTGRESQL}")
     implementation("org.jetbrains.exposed:exposed-core:${Versions.EXPOSED}")
+    implementation("org.jetbrains.exposed:exposed-r2dbc:${Versions.EXPOSED}")
     implementation("org.jetbrains.exposed:exposed-java-time:${Versions.EXPOSED}")
 
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
     implementation("ch.qos.logback:logback-classic:1.5.20")
 }
 

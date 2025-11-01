@@ -8,28 +8,33 @@ import com.helltar.twitchviewerbot.Config.postgresqlPort
 import com.helltar.twitchviewerbot.database.tables.UserChannelsTable
 import com.helltar.twitchviewerbot.database.tables.UsersTable
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabase
+import org.jetbrains.exposed.v1.r2dbc.R2dbcTransaction
+import org.jetbrains.exposed.v1.r2dbc.SchemaUtils
+import org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import java.time.Clock
 import java.time.Instant
 
 object Database {
 
     fun init() {
-        val driverClassName = "org.postgresql.Driver"
-        val jdbcURL = "jdbc:postgresql://$postgresqlHost:$postgresqlPort/$databaseName"
-        val database = Database.connect(jdbcURL, driverClassName, databaseUser, databasePassword)
+        val url = "r2dbc:postgresql://$postgresqlHost:$postgresqlPort/$databaseName"
+        val database = R2dbcDatabase.connect(url, user = databaseUser, password = databasePassword)
 
-        transaction(database) {
-            SchemaUtils.create(UsersTable, UserChannelsTable)
+        runBlocking {
+            suspendTransaction(database) {
+                SchemaUtils.create(UsersTable, UserChannelsTable)
+            }
         }
     }
 
     fun utcNow(): Instant =
         Instant.now(Clock.systemUTC())
 
-    suspend fun <T> dbTransaction(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
+    suspend fun <T> dbTransaction(block: suspend R2dbcTransaction.() -> T): T =
+        withContext(Dispatchers.IO) {
+            suspendTransaction { block() }
+        }
 }
