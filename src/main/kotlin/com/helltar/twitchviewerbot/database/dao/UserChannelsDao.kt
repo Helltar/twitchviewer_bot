@@ -3,10 +3,13 @@ package com.helltar.twitchviewerbot.database.dao
 import com.helltar.twitchviewerbot.database.Database.dbTransaction
 import com.helltar.twitchviewerbot.database.Database.utcNow
 import com.helltar.twitchviewerbot.database.tables.UserChannelsTable
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insertIgnore
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.r2dbc.deleteWhere
+import org.jetbrains.exposed.v1.r2dbc.insertIgnore
+import org.jetbrains.exposed.v1.r2dbc.select
 
 class UserChannelsDao {
 
@@ -33,6 +36,7 @@ class UserChannelsDao {
             .select(UserChannelsTable.channelName)
             .where { UserChannelsTable.userId eq userId }
             .map { it[UserChannelsTable.channelName] }
+            .toList()
     }
 
     suspend fun isListNotEmpty(userId: Long): Boolean = dbTransaction {
