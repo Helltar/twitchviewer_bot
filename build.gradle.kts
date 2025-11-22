@@ -5,14 +5,14 @@ plugins {
 }
 
 group = "com.helltar"
-version = "0.9.8"
+version = "0.9.9"
 
 repositories {
     mavenCentral()
 }
 
 object Versions {
-    const val EXPOSED = "1.0.0-rc-2"
+    const val EXPOSED = "1.0.0-rc-3"
     const val R2DBC_POSTGRESQL = "1.1.1.RELEASE"
 }
 
@@ -26,8 +26,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-r2dbc:${Versions.EXPOSED}")
     implementation("org.jetbrains.exposed:exposed-java-time:${Versions.EXPOSED}")
 
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
-    implementation("ch.qos.logback:logback-classic:1.5.20")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
+    implementation("ch.qos.logback:logback-classic:1.5.21")
 }
 
 application {
