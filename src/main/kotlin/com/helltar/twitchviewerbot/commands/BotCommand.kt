@@ -11,7 +11,7 @@ import java.net.URI
 
 abstract class BotCommand(val ctx: MessageContext) {
 
-    protected val userId = ctx.user().id
+    protected val userId: Long = ctx.user().id
     protected val arguments: Array<String> = ctx.arguments()
 
     abstract suspend fun run()
